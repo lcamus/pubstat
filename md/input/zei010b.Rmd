@@ -5,12 +5,8 @@ output:
 ---
 
 ```{r setup, include=F}
-Sys.setlocale("LC_TIME", "French_France.1252")
-library(highcharter)
-library(dplyr)
-library(htmltools)
-library(knitr)
-read_chunk("R/footer.R")
+read_chunk("R/ccze_init.R")
+read_chunk("R/ccze_footer.R")
 knitr::opts_chunk$set(echo = FALSE)
 ```
 ```{r include=T}
@@ -20,8 +16,8 @@ includeCSS("css/ccze.css")
 ## Performance indicators within the euro area
 
 ***
-<p style="text-align: right; font-size:75%;">*NACE revision 2; % change*</p>
-<p class="titlechart">**Hourly labour cost**; 4-quarterly change *(a)(b)*</p>
+<p style="text-align: right; font-size:75%; font-style: italic;">*Glissement annuel en pourcentage*</p>
+<p class="titlechart">**Coût total horaire de la main-d'œuvre** *(a)(b)*</p>
 
 ```{r}
 
