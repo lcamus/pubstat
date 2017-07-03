@@ -2,7 +2,7 @@
 #' @param template template name of data file to process
 #' @return a list compiling the data imported
 #' @export
-getData <- function(path=".", template="bdf.bsme2.req") {
+importData <- function(path=".", template="bdf.bsme2.req") {
 
   getFile <- function(f,template) {
 
@@ -33,5 +33,15 @@ getData <- function(path=".", template="bdf.bsme2.req") {
   for (f in l.f)
     l.data[[length(l.data)+1]] <- getFile(f,template)
   return(l.data)
+
+}
+
+#' @param dc data collection
+#' @param dr a data resource which belongs to the data collection
+#' @return the data of a data resource
+#' @export
+getData <- function(dc, dr) {
+
+  return(dc[["dr"]])
 
 }
