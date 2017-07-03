@@ -5,16 +5,20 @@ output:
 ---
 
 ```{r setup, include=F}
-library(knitr)
-read_chunk("R/data.R")
-read_chunk("R/ccze_init.R")
-read_chunk("R/ccze_footer.R")
 knitr::opts_chunk$set(echo = FALSE)
-data.collection <- getDataCollection("data/")
+knitr::read_chunk("../../R/data.R")
+knitr::read_chunk("../../R/ccze_init.R")
+knitr::read_chunk("../../R/ccze_footer.R")
 ```
+```{r}
 <<init>>
+<<data>>
+```
 ```{r include=T}
-includeCSS("css/ccze.css")
+includeCSS("../../css/ccze.css")
+```
+```{r}
+data.collection <- getDataCollection("data/")
 ```
 
 ## Performance indicators within the euro area
@@ -25,16 +29,16 @@ includeCSS("css/ccze.css")
 
 ```{r}
 
-data <- getData(data.collection,"ZEA010BD1.TXT")
+data <- getData(data.collection,"ZEA010BD1.TXT")[[2]]
 
 c1 <- highchart(width=800) %>%
   hc_add_theme(hc_theme_elementary()) %>%
     hc_legend(width=800,itemDistance=50) %>%
   hc_xAxis(categories=data[,1]) %>%
-  hc_add_series(name=names(data)[2],data=pull(data[2])) %>%
-  hc_add_series(name=names(data)[3],data=pull(data[3])) %>%
-  hc_add_series(name=names(data)[4],data=pull(data[4])) %>%
-  hc_add_series(name=names(data)[5],data=pull(data[5]))
+  hc_add_series(name=names(data)[2],data=data[,2]) %>%
+  hc_add_series(name=names(data)[3],data=data[,3]) %>%
+  hc_add_series(name=names(data)[4],data=data[,4]) %>%
+  hc_add_series(name=names(data)[5],data=data[,5])
   
 ```
 
