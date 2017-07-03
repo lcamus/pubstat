@@ -3,22 +3,35 @@
 #' @return a list compiling the data imported
 #' @export
 getData <- function(path=".", template="bdf.bsme2.req") {
-  
-  getFile <- function(f) {
-    
-    df <- read.table(file=f,header=T,sep="\t",quote="",skip=5,nrows=1)
-    df <- read.table(file=f,header=T,sep="\t",quote="",dec=",",na.strings="",
-                     colClasses=c("character",rep("numeric",ncol(df)-1)), skip=5)
-    df <- setNames(df,gsub("\\.{2,}","\\.",colnames(df)))
-    return(df)
-    
+
+  getFile <- function(f,template) {
+
+    if (template!="bdf.bsme2.req")
+      l <- list()
+    else {
+
+      df_meta <- read.table(file=f,header=T,sep="\t",quote="",skip=3,nrows=2,stringsAsFactors=F)
+      df_meta <- setNames(df_meta,c("meta",colnames(df_meta)[2:length(colnames(df_meta))]))
+      for (i in 1:2)
+        df_meta[i,] <- gsub(" {2,}"," ",df_meta[i,])
+
+      df_data <- read.table(file=f,sep="\t",quote="",dec=",",na.strings="",
+                       colClasses=c("character",rep("numeric",ncol(df_meta)-1)), skip=6)
+      df_data <- setNames(df_data,c("date",colnames(df_meta)[2:length(colnames(df_meta))]))
+      df_data[,]$date <- gsub("/","-",df_data[,]$date)
+
+      l <- list(df_meta,df_data)
+      attr(l,"filename") <- f
+
+    }
+    return(l)
+
   }
-    
+
   l.f <- list.files(path,full.names=T)
-  l.df <- list()  
+  l.data <- list()
   for (f in l.f)
-    l.df[[length(l.df)+1]] <- getFile(f)
-  # getFile(l.f[1])
-  return(l.df)
+    l.data[[length(l.data)+1]] <- getFile(f,template)
+  return(l.data)
 
 }

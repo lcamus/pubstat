@@ -1,0 +1,53 @@
+---
+always_allow_html: yes
+output:
+  html_document: default
+---
+
+```{r setup, include=F}
+Sys.setlocale("LC_TIME", "French_France.1252")
+library(highcharter)
+library(dplyr)
+library(htmltools)
+library(knitr)
+read_chunk("R/footer.R")
+knitr::opts_chunk$set(echo = FALSE)
+```
+```{r include=T}
+includeCSS("css/ccze.css")
+```
+
+## Performance indicators within the euro area
+
+***
+<p style="text-align: right; font-size:75%;">*NACE revision 2; % change*</p>
+<p class="titlechart">**Hourly labour cost**; 4-quarterly change *(a)(b)*</p>
+
+```{r}
+
+xl.data <- read_xls(path="data/zai010b.xls", sheet="Feuil4", range="A2:E34")
+
+c1 <- highchart(width=800) %>%
+  hc_add_theme(hc_theme_elementary()) %>%
+    hc_legend(width=800,itemDistance=50) %>%
+  hc_xAxis(categories=xl.data[,1]) %>%
+  hc_add_series(name=names(xl.data)[2],data=pull(xl.data[2])) %>%
+  hc_add_series(name=names(xl.data)[3],data=pull(xl.data[3])) %>%
+  hc_add_series(name=names(xl.data)[4],data=pull(xl.data[4])) %>%
+  hc_add_series(name=names(xl.data)[5],data=pull(xl.data[5]))
+  
+```
+
+<table><tr><td width="100%">
+
+```{r}
+c1
+```
+
+</td</tr></table>
+
+```{r eval = T}
+<<footer>>
+```
+
+

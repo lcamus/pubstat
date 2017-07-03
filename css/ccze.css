@@ -1,0 +1,5 @@
+@media print {
+    footer {page-break-after: always;}
+}
+.titlechart {background-color:peachpuff; padding-left:10px; padding-top:5px; padding-bottom:5px}
+.footer {font-family: "Century Gothic", Verdana, sans-serif;}
