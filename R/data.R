@@ -2,9 +2,9 @@
 #' @param template template name of data file to process
 #' @return a list compiling the data imported
 #' @export
-importData <- function(path=".", template="bdf.bsme2.req") {
+getDataCollection <- function(path=".", template="bdf.bsme2.req") {
 
-  getFile <- function(f,template) {
+  getDataResource <- function(f,template) {
 
     if (template!="bdf.bsme2.req")
       l <- list()
@@ -31,8 +31,9 @@ importData <- function(path=".", template="bdf.bsme2.req") {
   l.f <- list.files(path,full.names=T)
   l.data <- list()
   for (f in l.f) {
-    l.data[[length(l.data)+1]] <- getFile(f,template)
-    # tail(strsplit("data/input/ZEA010BD1.TXT","/")[[1]],1)
+    key <- tail(strsplit(f,"/")[[1]],1)
+    # l.data[[length(l.data)+1]] <- getFile(f,template)
+    l.data[[key]] <- getDataResource(f,template)
   }
   return(l.data)
 
@@ -44,6 +45,6 @@ importData <- function(path=".", template="bdf.bsme2.req") {
 #' @export
 getData <- function(dc, dr) {
 
-  return(dc[["dr"]])
+  return(dc[[dr]])
 
 }

@@ -5,10 +5,14 @@ output:
 ---
 
 ```{r setup, include=F}
+library(knitr)
+read_chunk("R/data.R")
 read_chunk("R/ccze_init.R")
 read_chunk("R/ccze_footer.R")
 knitr::opts_chunk$set(echo = FALSE)
+data.collection <- getDataCollection("data/")
 ```
+<<init>>
 ```{r include=T}
 includeCSS("css/ccze.css")
 ```
@@ -17,20 +21,20 @@ includeCSS("css/ccze.css")
 
 ***
 <p style="text-align: right; font-size:75%; font-style: italic;">*Glissement annuel en pourcentage*</p>
-<p class="titlechart">**Coût total horaire de la main-d'œuvre** *(a)(b)*</p>
+<p class="titlechart">**Co�t total horaire de la main-d'ouvre** *(a)(b)*</p>
 
 ```{r}
 
-xl.data <- read_xls(path="data/zai010b.xls", sheet="Feuil4", range="A2:E34")
+data <- getData(data.collection,"ZEA010BD1.TXT")
 
 c1 <- highchart(width=800) %>%
   hc_add_theme(hc_theme_elementary()) %>%
     hc_legend(width=800,itemDistance=50) %>%
-  hc_xAxis(categories=xl.data[,1]) %>%
-  hc_add_series(name=names(xl.data)[2],data=pull(xl.data[2])) %>%
-  hc_add_series(name=names(xl.data)[3],data=pull(xl.data[3])) %>%
-  hc_add_series(name=names(xl.data)[4],data=pull(xl.data[4])) %>%
-  hc_add_series(name=names(xl.data)[5],data=pull(xl.data[5]))
+  hc_xAxis(categories=data[,1]) %>%
+  hc_add_series(name=names(data)[2],data=pull(data[2])) %>%
+  hc_add_series(name=names(data)[3],data=pull(data[3])) %>%
+  hc_add_series(name=names(data)[4],data=pull(data[4])) %>%
+  hc_add_series(name=names(data)[5],data=pull(data[5]))
   
 ```
 
