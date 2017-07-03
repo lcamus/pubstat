@@ -30,8 +30,10 @@ importData <- function(path=".", template="bdf.bsme2.req") {
 
   l.f <- list.files(path,full.names=T)
   l.data <- list()
-  for (f in l.f)
+  for (f in l.f) {
     l.data[[length(l.data)+1]] <- getFile(f,template)
+    # tail(strsplit("data/input/ZEA010BD1.TXT","/")[[1]],1)
+  }
   return(l.data)
 
 }
