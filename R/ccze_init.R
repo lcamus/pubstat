@@ -17,12 +17,8 @@ style.color.ES="gold"
 style.color.GB="darkorchid"
 
 #set decimal separators for charts
-# hcopts <- getOption("highcharter.options")
-# hcopts$lang$decimalPoint <- ifelse(lang=="FR",",",".")
-# options(highcharter.options = hcopts)
-# print(getOption("highcharter.options"))
-opts <- getOption("highcharter.options")
-opts$lang$decimalPoint <- ","
-options(highcharter.options = opts)
+opts <- getOption("highcharter.lang")
+opts$decimalPoint <- ifelse(lang=="FR",",",".")
+options(highcharter.lang = opts)
 
 ## ---- end
