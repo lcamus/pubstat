@@ -30,11 +30,10 @@ getDataCollection <- function(path=".", template="bdf.bsme2.req") {
 
   }
 
-  l.f <- list.files(path,full.names=T)
+  l.f <- list.files(path,full.names=T, recursive=F)
   l.data <- list()
   for (f in l.f) {
     key <- tail(strsplit(f,"/")[[1]],1)
-    # l.data[[length(l.data)+1]] <- getFile(f,template)
     l.data[[key]] <- getDataResource(f,template)
   }
   return(l.data)

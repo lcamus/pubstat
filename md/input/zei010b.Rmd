@@ -33,29 +33,40 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 data <- getData(data.collection,"ZEI010BD1.TXT")[[2]]
 meta <- getData(data.collection,"ZEI010BD1.TXT")[[1]]
 
+#select series
+series <- c(1, #variable
+            2, #France
+            3, #Germany
+            5, #Spain
+            8) #Euro area
+
 #set date periods to quarter format
 data$date <- format(as.yearqtr(data$date,"%Y-%m"),"T%q %Y")
 
 #keep current year + 7 previous whole years
 end.period <- tail(grep("T1",data$date),1)
 begin.period <- end.period-28
+end.period <- length(data$date)
 periods <- rev(seq(end.period,begin.period,-1))
-dat <- data[periods,1:5]
+dat <- data[periods,series]
 
 rm(begin.period,end.period,periods)
 
 #set metadata
-met <- as.character(meta[2,2:6])
-#unlist(lapply(strsplit(met,":"),"[[",1))
+met <- as.character(meta[2,series])
+met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
 
 c1 <- highchart(width=800) %>%
-  hc_add_theme(hc_theme_elementary()) %>%
-    hc_legend(width=800,itemDistance=50) %>%
-  hc_xAxis(categories=dat[,1]) %>%
-  hc_add_series(name=met[2],data=dat[,2]) %>%
+  hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA)) %>%
+  hc_plotOptions(
+    line=list(marker=list(enabled=F))) %>%
+  hc_tooltip(valueDecimals=1,shared=T) %>%
+  hc_legend(width=800,itemDistance=50) %>%
+  hc_xAxis(categories=dat[,1],gridLineWidth=1) %>%
+  hc_add_series(name=met[2],data=dat[,2],lineWidth=3) %>%
   hc_add_series(name=met[3],data=dat[,3]) %>%
   hc_add_series(name=met[4],data=dat[,4]) %>%
-  hc_add_series(name=met[5],data=dat[,5])
+  hc_add_series(name=met[5],data=dat[,5],lineWidth=3)
   
 ```
 
