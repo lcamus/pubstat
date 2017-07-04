@@ -18,18 +18,18 @@ knitr::read_chunk("../../R/ccze_footer.R")
 includeCSS("../../css/ccze.css")
 ```
 ```{r}
-data.collection <- getDataCollection("data/")
+data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```
 
 ## Performance indicators within the euro area
 
 ***
 <p style="text-align: right; font-size:75%; font-style: italic;">*Glissement annuel en pourcentage*</p>
-<p class="titlechart">**Coût total horaire de la main-d'ouvre** *(a)(b)*</p>
+<p class="titlechart">**Co&ucirc;t total horaire de la main-d'&oelig;uvre** *(a)(b)*</p>
 
 ```{r}
 
-data <- getData(data.collection,"ZEA010BD1.TXT")[[2]]
+data <- getData(data.collection,"ZEI010BD1.TXT")[[2]]
 
 c1 <- highchart(width=800) %>%
   hc_add_theme(hc_theme_elementary()) %>%

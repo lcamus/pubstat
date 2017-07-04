@@ -3,8 +3,8 @@
 #' @export
 stringToHtmlEntities <- function(s) {
 
-  f_he.src <- "data/html-entities.xlsx"
-  f_he <- "data/html-entities.RData"
+  f_he.src <- "../../data/html-entities.xlsx"
+  f_he <- "../../data/html-entities.RData"
  #source: https://www.freeformatter.com/html-entities.html
   if (!exists("html.entities")) {
     if (file.exists(f_he))
