@@ -21,7 +21,7 @@ includeCSS("../../css/ccze.css")
 data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```
 
-## Performance indicators within the euro area
+## Indicateurs de performances au sein de la zone euro
 
 ***
 <p style="text-align: right; font-size:75%; font-style: italic;">*Glissement annuel en pourcentage*</p>
@@ -29,16 +29,33 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 
 ```{r}
 
+#get data & metadata
 data <- getData(data.collection,"ZEI010BD1.TXT")[[2]]
+meta <- getData(data.collection,"ZEI010BD1.TXT")[[1]]
+
+#set date periods to quarter format
+data$date <- format(as.yearqtr(data$date,"%Y-%m"),"T%q %Y")
+
+#keep current year + 7 previous whole years
+end.period <- tail(grep("T1",data$date),1)
+begin.period <- end.period-28
+periods <- rev(seq(end.period,begin.period,-1))
+dat <- data[periods,1:5]
+
+rm(begin.period,end.period,periods)
+
+#set metadata
+met <- as.character(meta[2,2:6])
+#unlist(lapply(strsplit(met,":"),"[[",1))
 
 c1 <- highchart(width=800) %>%
   hc_add_theme(hc_theme_elementary()) %>%
     hc_legend(width=800,itemDistance=50) %>%
-  hc_xAxis(categories=data[,1]) %>%
-  hc_add_series(name=names(data)[2],data=data[,2]) %>%
-  hc_add_series(name=names(data)[3],data=data[,3]) %>%
-  hc_add_series(name=names(data)[4],data=data[,4]) %>%
-  hc_add_series(name=names(data)[5],data=data[,5])
+  hc_xAxis(categories=dat[,1]) %>%
+  hc_add_series(name=met[2],data=dat[,2]) %>%
+  hc_add_series(name=met[3],data=dat[,3]) %>%
+  hc_add_series(name=met[4],data=dat[,4]) %>%
+  hc_add_series(name=met[5],data=dat[,5])
   
 ```
 

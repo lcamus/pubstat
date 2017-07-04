@@ -23,3 +23,4 @@ stringToHtmlEntities <- function(s) {
   return(s)
 
 }
+
