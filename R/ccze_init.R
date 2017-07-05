@@ -1,9 +1,9 @@
 ## ---- init
 
-lang <- "FR"
+LANG <- "FR"
 
-o <- Sys.setlocale("LC_TIME", 
-                   ifelse(lang=="FR","French_France.1252","English"))
+o <- Sys.setlocale("LC_TIME",
+                   ifelse(LANG=="FR","French_France.1252","English"))
 
 suppressMessages(library(highcharter))
 library(htmltools)
@@ -18,7 +18,7 @@ style.color.GB="darkorchid"
 
 #set decimal separators for charts
 opts <- getOption("highcharter.lang")
-opts$decimalPoint <- ifelse(lang=="FR",",",".")
+opts$decimalPoint <- ifelse(LANG=="FR",",",".")
 options(highcharter.lang = opts)
 
 ## ---- end

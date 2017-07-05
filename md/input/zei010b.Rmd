@@ -62,7 +62,14 @@ c1 <- highchart(width=800) %>%
     line=list(marker=list(enabled=F))) %>%
   hc_tooltip(valueDecimals=1,shared=T) %>%
   hc_legend(width=800,itemDistance=50) %>%
-  hc_xAxis(categories=dat[,1],gridLineWidth=1) %>%
+  # hc_xAxis(categories=sub(" ","<br>",sub("\\d{2}(?=\\d{2})","",dat[,1],perl=T)),
+  hc_xAxis(categories=dat[,1],
+           labels=list(formatter=JS("function () {
+                var label=(this.value).toString();
+                var res=(label.replace(' ','<br>')).replace(/\\d{2}(?=\\d{2})/,'');
+                return res;
+            }")),
+           gridLineWidth=1,tickInterval=4) %>%
   hc_add_series(name=met[2],data=dat[,2],lineWidth=3) %>%
   hc_add_series(name=met[3],data=dat[,3]) %>%
   hc_add_series(name=met[4],data=dat[,4]) %>%
