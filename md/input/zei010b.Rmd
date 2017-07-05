@@ -24,7 +24,7 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ## Indicateurs de performances au sein de la zone euro
 
 ***
-<p style="text-align: right; font-size:75%; font-style: italic;">*Glissement annuel en pourcentage*</p>
+<p style="text-align: right; font-size:90%; font-style: italic;">*Glissement annuel en pourcentage*</p>
 <p class="titlechart">**Co&ucirc;t total horaire de la main-d'&oelig;uvre** *(a)(b)*</p>
 
 ```{r}
@@ -56,13 +56,13 @@ rm(begin.period,end.period,periods)
 met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
 
-c1 <- highchart(width=800) %>%
+c1 <- highchart(width=450) %>%
+  hc_exporting(enabled=T) %>%
   hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA)) %>%
   hc_plotOptions(
     line=list(marker=list(enabled=F))) %>%
-  hc_tooltip(valueDecimals=1,shared=T) %>%
-  hc_legend(width=800,itemDistance=50) %>%
-  # hc_xAxis(categories=sub(" ","<br>",sub("\\d{2}(?=\\d{2})","",dat[,1],perl=T)),
+  hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %") %>%
+  hc_legend(width=450,itemDistance=50) %>%
   hc_xAxis(categories=dat[,1],
            labels=list(formatter=JS("function () {
                 var label=(this.value).toString();
@@ -77,13 +77,23 @@ c1 <- highchart(width=800) %>%
   
 ```
 
-<table><tr><td width="100%">
+<table><tr>
+<td width="50%">
 
 ```{r}
 c1
 ```
 
-</td</tr></table>
+</td>
+<td width="50%">
+
+```{r}
+c1
+```
+
+</td>
+
+</tr></table>
 
 ```{r eval = T}
 <<footer>>
