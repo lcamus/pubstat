@@ -2,18 +2,16 @@
 require(htmltools)
 tags$footer(
   hr(),
-  p(style="text-align: right;",
-    paste0(
-      "Réalisé le ",
-      format(Sys.Date(),"%d %b %Y")
-    )
-  ),
+  p(style="text-align: left; font-style: italic;",
+    "Basé sur la méthodologie NACE révision 2"),
+  p(style="text-align: left;",
+    "Source : Eurostat",
+    span(style="float:right;",
+    paste0("Réalisé le ",format(Sys.Date(),"%d %B %Y")))),
   p(),
-  p(
-    span(style="text-align: left;","Banque de France"),
-    span(style="text-align: right;",
-         HTML("Zone euro &bull; Principaux indicateurs économiques et financiers"))
-  )
-
+  p(style="text-align: left;",
+    "Banque de France",
+    span(style="float:right; font-style: italic;",
+         HTML("Zone euro &bull; Principaux indicateurs économiques et financiers")))
 )
 ## ---- end
