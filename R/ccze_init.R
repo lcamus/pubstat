@@ -11,10 +11,12 @@ suppressMessages(library(zoo))
 
 style.color.FR="dodgerblue"
 style.color.EA="black"
-style.color.IT="green"
-style.color.DE="firebrick"
+style.color.IT="limegreen"
+style.color.DE="orangered"
 style.color.ES="gold"
 style.color.GB="darkorchid"
+style.color.BE="hotpink"
+style.color.NL="darkkhaki"
 
 #set decimal separators for charts
 opts <- getOption("highcharter.lang")
