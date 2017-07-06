@@ -64,7 +64,7 @@ c_max <- ceiling(max(dat[,-c(1)]))
 c_min <- floor(min(dat[,-c(1)]))
 
 #chart 1
-c1 <- highchart(width=450) %>%
+c1 <- highchart(width=500) %>%
   hc_exporting(enabled=T) %>%
   hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
   hc_plotOptions(
@@ -104,8 +104,10 @@ c1 <- c1 %>%
 
 #ouput the charts in HTML
 div(class = "hc-link-legend",
-  c1,
-  c2
+    tags$table(
+      tags$tr(
+        tags$td(c1),
+        tags$td(c2)))
 )
   
 ```
