@@ -23,4 +23,22 @@ opts <- getOption("highcharter.lang")
 opts$decimalPoint <- ifelse(LANG=="FR",",",".")
 options(highcharter.lang = opts)
 
+#JS function to share legend on multiple charts
+sharelegend = JS('function(event){
+    var vis = this.visible;
+                 var conall = $(this.chart.container).parents(".hc-link-legend").find("div.highchart");
+                 for(var i = 0; i < conall.length; i++){
+                 var hc = $(conall[i]).highcharts();
+                 var series = hc.get(this.options.id);
+                 if(series){
+                 if(vis){
+                 series.hide();
+                 } else{
+                 series.show();
+                 }
+                 }
+                 }
+                 return false;
+                 }')
+
 ## ---- end
