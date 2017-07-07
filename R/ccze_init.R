@@ -18,9 +18,16 @@ style.color.GB="darkorchid"
 style.color.BE="hotpink"
 style.color.NL="darkkhaki"
 
-#set decimal separators for charts
+#set decimal separators and labels export menu for charts
 opts <- getOption("highcharter.lang")
 opts$decimalPoint <- ifelse(LANG=="FR",",",".")
+if (LANG=="FR") {
+  opts$downloadJPEG <- "T&eacute;l&eacute;charger en image JPEG"
+  opts$downloadPDF <- "T&eacute;l&eacute;charger en document PDF"
+  opts$downloadPNG <- "T&eacute;l&eacute;charger en image PNG"
+  opts$downloadSVG <- "T&eacute;l&eacute;charger en image SVG"
+  opts$printChart <- "Imprimer"
+}
 options(highcharter.lang = opts)
 
 #JS function to share legend on multiple charts
