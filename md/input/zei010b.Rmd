@@ -71,7 +71,8 @@ c1 <- highchart(width=500) %>%
     line=list(marker=list(enabled=F))) %>%
   hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %") %>%
   # hc_legend(width=450,itemDistance=50,layout="vertical",align="right") %>%
-  hc_legend(layout="vertical",verticalAlign="middle",align="right") %>%
+  # hc_legend(layout="vertical",verticalAlign="middle",align="right") %>%
+  hc_legend(layout="horizontal",width=800,floating=T,x=100) %>%
   hc_xAxis(categories=dat[,1],
            labels=list(formatter=JS("function () {
                 var label=(this.value).toString();
@@ -92,22 +93,24 @@ c1 <- highchart(width=500) %>%
 c2 <- c1 %>%
   hc_legend(enabled = FALSE) %>%
   hc_colors(c(style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
-  # hc_rm_series(name=c(met[2],met[3],met[4])) %>% #keep Euro area
   hc_rm_series(name=c(met[2],met[3],met[4],met[6],met[7],met[8])) %>% #keep Euro area
   hc_add_series(name=met[6],data=dat[,6], id=met[6]) %>%
   hc_add_series(name=met[7],data=dat[,7], id=met[7]) %>%
   hc_add_series(name=met[8],data=dat[,8], id=met[8])
+
+c2$width <- 400
+c1$style <- list("opacity: 0;")
 
 #share the legend between the charts
 c1 <- c1 %>%
   hc_plotOptions(series = list(events = list(legendItemClick = sharelegend)))
 
 #ouput the charts in HTML
-div(class = "hc-link-legend",
-    tags$table(
-      tags$tr(
-        tags$td(c1),
-        tags$td(c2)))
+div(class = "hc-link-legend",c1,c2
+    # tags$table(
+    #   tags$tr(
+    #     tags$td(c1),
+    #     tags$td(c2)))
 )
   
 ```
