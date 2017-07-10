@@ -13,7 +13,7 @@ tags$footer(style="font-size: 90%",
     span(style="float:right;",
          paste0("Réalisé le ",format(Sys.Date(),"%e %B %Y")))),
   p(),
-  p(style="text-align: left; color: MidnightBlue; font-size: 100%",
+  p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
     "Banque de France",
     span(style="float:right; font-style: italic;",
          HTML("Zone euro &bull; Principaux indicateurs économiques et financiers")))

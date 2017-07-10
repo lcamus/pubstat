@@ -22,6 +22,7 @@ style.color.NL="darkkhaki"
 opts <- getOption("highcharter.lang")
 opts$decimalPoint <- ifelse(LANG=="FR",",",".")
 if (LANG=="FR") {
+  opts$contextButtonTitle  <- "Exports & donn&#xE9;es"
   opts$downloadJPEG <- "T&eacute;l&eacute;charger en image JPEG"
   opts$downloadPDF <- "T&eacute;l&eacute;charger en document PDF"
   opts$downloadPNG <- "T&eacute;l&eacute;charger en image PNG"

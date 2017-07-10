@@ -25,7 +25,7 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 
 ***
 <p style="text-align: right; font-size:90%; font-style: italic;">*Glissement annuel en pourcentage*</p>
-<p class="titlechart">**Co&ucirc;t total horaire de la main-d'&oelig;uvre** *(a)(b)*</p>
+<p class="titlechart title">**Co&ucirc;t total horaire de la main-d'&oelig;uvre** *(a)(b)*</p>
 
 ```{r}
 
@@ -65,7 +65,7 @@ c_min <- floor(min(dat[,-c(1)]))
 
 #chart 1
 c1 <- highchart(width=450) %>%
-  hc_exporting(enabled=T) %>%
+  hc_exporting(enabled=T, filename = "bdf_ccze") %>%
   hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
   hc_plotOptions(
     line=list(marker=list(enabled=F))) %>%
@@ -90,15 +90,16 @@ c1 <- highchart(width=450) %>%
 #chart 2
 c2 <- c1 %>%
   hc_legend(align="left",itemDistance=25) %>%
+  hc_yAxis_multiples(
+    list(min=c_min,max=c_max,startOnTick=F,endOnTick=F,allowDecimals=F,minPadding=0,maxPadding=0,
+         tickInterval=1,title=list(text=NULL)),
+    list(linkedTo=0,opposite=T,title=list(text=NULL))) %>%
   hc_colors(c(style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
   hc_rm_series(name=c(met[2],met[3],met[4],met[5],met[6],met[7],met[8])) %>%
   hc_add_series(name=met[5],data=dat[,5], id=met[5],lineWidth=3, showInLegend=F) %>%
   hc_add_series(name=met[6],data=dat[,6], id=met[6]) %>%
   hc_add_series(name=met[7],data=dat[,7], id=met[7]) %>%
   hc_add_series(name=met[8],data=dat[,8], id=met[8])
-
-# c2$width <- 400
-# c1$style <- list("opacity: 0;")
 
 #share the legend between the charts
 c1 <- c1 %>%
@@ -159,6 +160,10 @@ c3 <- c1 %>%
 #chart 4
 c4 <- c3 %>%
   hc_legend(align="left",itemDistance=25) %>%
+  hc_yAxis_multiples(
+    list(min=c_min,max=c_max,startOnTick=F,endOnTick=F,allowDecimals=F,minPadding=0,maxPadding=0,
+         tickInterval=1,title=list(text=NULL)),
+    list(linkedTo=0,opposite=T,title=list(text=NULL))) %>%  
   hc_colors(c(style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
   hc_rm_series(name=c(met[2],met[3],met[4],met[5],met[6],met[7],met[8])) %>%
   hc_add_series(name=met[5],data=dat[,5], id=met[5],lineWidth=3, showInLegend=F) %>%
@@ -174,26 +179,6 @@ div(class = "hc-link-legend",
         tags$td(c4))
     )
 )
-  
-```
-
-<!-- <table><tr> -->
-<!-- <td width="50%"> -->
-
-<!-- ```{r} -->
-<!-- c1 -->
-<!-- ``` -->
-
-<!-- </td> -->
-<!-- <td width="50%"> -->
-
-<!-- ```{r} -->
-<!-- c2 -->
-<!-- ``` -->
-
-<!-- </td> -->
-
-<!-- </tr></table> -->
 
 ```{r eval = T}
 <<footer>>

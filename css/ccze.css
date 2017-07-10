@@ -1,10 +1,25 @@
 @media print {
     footer {page-break-after: always;}
 }
-.titlechart {background-color:peachpuff; padding-left:10px; padding-top:5px; padding-bottom:5px}
-.footer {font-family: "Century Gothic", Verdana, sans-serif;}
+
+body {
+  position:relative;
+  border:0;
+  width:calc(210mm*1.25);
+  height:calc(297mm*1.25);
+  padding:0;
+  font-family:arial;
+}
+
+.title {
+  font-family: "Century Gothic", Verdana, sans-serif;
+}
+.titlechart {
+  background-color:peachpuff; padding-left:10px; padding-top:5px; padding-bottom:5px;
+}
 
 .laparent ol { counter-reset: item }
 .laparent li { display: block ; counter-increment: item; }
 .laparent li:before { content: " ("counter(item,lower-alpha)") "; }
-  
+
+

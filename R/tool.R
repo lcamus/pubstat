@@ -24,3 +24,19 @@ stringToHtmlEntities <- function(s) {
 
 }
 
+
+#' @param s string to convert to HTML-entities
+#' @return a string whose special characters are converted to HTML entities
+#' @export
+convertToPDF <- function (f.in, f.out, p) {
+  print(getwd())
+  system(paste0("cmd /c phantomjs ",
+                "\\js\\rasterize_bdf.js ",
+                f.in,
+                " ",
+                f.out,
+                " ",
+                p
+                ))
+}
+
