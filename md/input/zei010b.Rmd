@@ -65,7 +65,7 @@ c_min <- floor(min(dat[,-c(1)]))
 
 #chart 1
 c1 <- highchart(width=450) %>%
-  hc_exporting(enabled=T, filename = "bdf_ccze") %>%
+  hc_exporting(enabled=T, filename = "bdf_ccze",buttons=exporting.buttons) %>%
   hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
   hc_plotOptions(
     line=list(marker=list(enabled=F))) %>%

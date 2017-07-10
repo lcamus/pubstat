@@ -22,14 +22,32 @@ style.color.NL="darkkhaki"
 opts <- getOption("highcharter.lang")
 opts$decimalPoint <- ifelse(LANG=="FR",",",".")
 if (LANG=="FR") {
-  opts$contextButtonTitle  <- "Exports & donn&#xE9;es"
+  opts$contextButtonTitle  <- "Exports du graphique"
   opts$downloadJPEG <- "T&eacute;l&eacute;charger en image JPEG"
   opts$downloadPDF <- "T&eacute;l&eacute;charger en document PDF"
   opts$downloadPNG <- "T&eacute;l&eacute;charger en image PNG"
   opts$downloadSVG <- "T&eacute;l&eacute;charger en image SVG"
+  opts$downloadCSV <- "T&eacute;l&eacute;charger en tableur CSV"
+  opts$downloadXLS <- "T&eacute;l&eacute;charger en classeur Excel"
   opts$printChart <- "Imprimer"
 }
 options(highcharter.lang = opts)
+
+#configuration of export menu in charts
+exporting.buttons <- list(contextButton=list(menuItems=list(
+  list(textKey='printChart',
+       onclick=JS("function(){this.print();}")),
+  list(separator=T),
+  list(textKey='downloadPNG',
+       onclick=JS("function(){this.exportChartLocal();}")),
+  list(textKey='downloadPDF',
+       onclick=JS("function(){this.exportChartLocal({type: 'application/pdf'});}")),
+  list(separator=T),
+  list(textKey="downloadCSV",text=opts$downloadCSV,
+       onclick=JS("function(){this.downloadCSV();}")),
+  list(textKey="downloadXLS",text=opts$downloadXLS,
+       onclick=JS("function(){this.downloadXLS();}"))
+)))
 
 #JS function to share legend on multiple charts
 sharelegend = JS('function(event){
