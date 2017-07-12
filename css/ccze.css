@@ -1,5 +1,6 @@
 @media print {
     footer {page-break-after: always;}
+    .highcharts-contextbutton {visibility: hidden;}
 }
 
 body {

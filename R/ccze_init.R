@@ -1,9 +1,7 @@
 ## ---- init
 
-LANG <- "FR"
-
 o <- Sys.setlocale("LC_TIME",
-                   ifelse(LANG=="FR","French_France.1252","English"))
+                   ifelse(params$lang=="FR","French_France.1252","English"))
 
 suppressMessages(library(highcharter))
 library(htmltools)
@@ -20,15 +18,14 @@ style.color.NL <- "darkkhaki"
 
 style.point.format <- paste0('<span style="color:{point.color}">',
                              "\u25CF",
-                             # JS("String.fromCharCode(9679);"),
                              "</span> {series.name}",
-                             ifelse(LANG=="FR"," : ",": "),
+                             ifelse(params$lang=="FR"," : ",": "),
                              "<b>{point.y}</b><br/>")
 
 #set decimal separators and labels export menu for charts
 opts <- getOption("highcharter.lang")
-opts$decimalPoint <- ifelse(LANG=="FR",",",".")
-if (LANG=="FR") {
+opts$decimalPoint <- ifelse(params$lang=="FR",",",".")
+if (params$lang=="FR") {
   opts$contextButtonTitle  <- "Exports du graphique"
   opts$downloadJPEG <- "T&eacute;l&eacute;charger en image JPEG"
   opts$downloadPDF <- "T&eacute;l&eacute;charger en document PDF"

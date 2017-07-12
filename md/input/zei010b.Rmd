@@ -2,11 +2,8 @@
 always_allow_html: yes
 output:
   html_document: default
-    #   pandoc_args: [ 
-    #   "--self-contained"
-    # ]
-header-includes: default
-  # <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+params: 
+  lang: "EN"
 ---
 
 ```{r setup, include=F}
@@ -26,11 +23,11 @@ includeCSS("../../css/ccze.css")
 data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```
 
-## Indicateurs de performances au sein de la zone euro
+## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la zone euro","Performance indicators within the euro area")`
 
 ***
-<p style="text-align: right; font-size:90%; font-style: italic;">*Glissement annuel en pourcentage*</p>
-<p class="titlechart title">**Co&ucirc;t total horaire de la main-d'&oelig;uvre** *(a)(b)*</p>
+<p style="text-align: right; font-size:90%; font-style: italic;">*`r ifelse(params$lang=="FR","Glissement annuel en pourcentage","Year-overyear percentage change")`*</p>
+<p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *(a)(b)*</p>
 
 ```{r}
 
