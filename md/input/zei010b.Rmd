@@ -2,6 +2,11 @@
 always_allow_html: yes
 output:
   html_document: default
+    #   pandoc_args: [ 
+    #   "--self-contained"
+    # ]
+header-includes: default
+  # <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 ---
 
 ```{r setup, include=F}
@@ -69,7 +74,7 @@ c1 <- highchart(width=450) %>%
   hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
   hc_plotOptions(
     line=list(marker=list(enabled=F))) %>%
-  hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %") %>%
+  hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %", pointFormat=style.point.format) %>%
   hc_legend(align="right",x=10,itemDistance=25) %>%
   hc_xAxis(categories=dat[,1],
            labels=list(formatter=JS("function () {
