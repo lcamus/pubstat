@@ -27,7 +27,7 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 
 ***
 <p style="text-align: right; font-size:90%; font-style: italic;">*`r ifelse(params$lang=="FR","Glissement annuel en pourcentage","Year-overyear percentage change")`*</p>
-<p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *(a)(b)*</p>
+<p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *`r tags$sup("(a)(b)")`*</p>
 
 ```{r}
 
@@ -46,10 +46,12 @@ series <- c(1, #variable
             7) #Netherlands 
 
 #set date periods to quarter format
-data$date <- format(as.yearqtr(data$date,"%Y-%m"),"T%q %Y")
+data$date <- format(as.yearqtr(data$date,"%Y-%m"),ifelse(params$lang=="FR",
+                                                        "T%q %Y",
+                                                        "%Y Q%q"))
 
 #keep current year + 7 previous whole years
-end.period <- tail(grep("T1",data$date),1)
+end.period <- tail(grep(ifelse(params$lang=="FR","T1","Q1"),data$date),1)
 begin.period <- end.period-28
 end.period <- length(data$date)
 periods <- rev(seq(end.period,begin.period,-1))
@@ -143,7 +145,7 @@ div(class = "hc-link-legend",
 ```
 
 <p>&nbsp;</p>
-<p class="titlechart">**Co&ucirc;t salarial horaire** *(b)*</p>
+<p class="titlechart">**`r ifelse(params$lang=="FR","Co&ucirc;t salarial horaire","Hourly wage cost")`** *`r tags$sup("(b)")`*</p>
 
 ```{r}
 

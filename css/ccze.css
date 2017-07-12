@@ -21,6 +21,11 @@ body {
 
 .laparent ol { counter-reset: item }
 .laparent li { display: block ; counter-increment: item; }
-.laparent li:before { content: " ("counter(item,lower-alpha)") "; }
+/*.laparent li:before { content: " ("counter(item,lower-alpha)") "; }*/
+.laparent li:before {
+  content: " ("counter(item,lower-alpha)") ";
+  vertical-align: super;
+  font-size: smaller;
+}
 
 
