@@ -9,14 +9,21 @@ suppressMessages(library(highcharter))
 library(htmltools)
 suppressMessages(library(zoo))
 
-style.color.FR="dodgerblue"
-style.color.EA="black"
-style.color.IT="limegreen"
-style.color.DE="orangered"
-style.color.ES="gold"
-style.color.GB="darkorchid"
-style.color.BE="hotpink"
-style.color.NL="darkkhaki"
+style.color.FR <- "dodgerblue"
+style.color.EA <- "black"
+style.color.IT <- "limegreen"
+style.color.DE <- "orangered"
+style.color.ES <- "gold"
+style.color.GB <- "darkorchid"
+style.color.BE <- "hotpink"
+style.color.NL <- "darkkhaki"
+
+style.point.format <- paste0('<span style="color:{point.color}">',
+                             "\u25CF",
+                             # JS("String.fromCharCode(9679);"),
+                             "</span> {series.name}",
+                             ifelse(LANG=="FR"," : ",": "),
+                             "<b>{point.y}</b><br/>")
 
 #set decimal separators and labels export menu for charts
 opts <- getOption("highcharter.lang")
