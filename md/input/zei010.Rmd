@@ -1,0 +1,195 @@
+---
+always_allow_html: yes
+output:
+  html_document: default
+params: 
+  lang: "FR"
+  numpage: 19
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::read_chunk("../../R/tool.R")
+knitr::read_chunk("../../R/data.R")
+knitr::read_chunk("../../R/ccze_init_table.R")
+knitr::read_chunk("../../R/ccze_footer.R")
+```
+```{r}
+<<init>>
+<<tool>>
+<<data>>
+```
+```{r include=T}
+includeCSS("../../css/ccze.css")
+```
+```{r}
+data.collection <- getDataCollection("../../data/input/ze!nonquot")
+```
+
+## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la zone euro","Performance indicators within the euro area")`
+
+***
+<p class="unitlegend">*`r ifelse(params$lang=="FR","Glissement annuel en pourcentage","Year-overyear percentage change")`*</p>
+<p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *`r tags$sup("(a)(b)")`*</p>
+
+```{r}
+
+#get data & metadata
+data <- getData(data.collection,"ZEI010AD1.TXT")[[2]]
+meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
+
+#select series
+series <- c(1, #variable
+            2, #France
+            3, #Germany
+            5, #Spain
+            8, #Euro area
+            4, #Belgium
+            6, #Italy
+            7) #Netherlands 
+
+#set date periods to quarter format
+data$date <- format(as.yearqtr(data$date,"%Y-%m"),ifelse(params$lang=="FR",
+                                                        "T%q %Y",
+                                                        "%Y Q%q"))
+
+#keep current year + 7 previous whole years
+end.period <- tail(grep(ifelse(params$lang=="FR","T1","Q1"),data$date),1)
+begin.period <- end.period-28
+end.period <- length(data$date)
+periods <- rev(seq(end.period,begin.period,-1))
+dat <- data[periods,series]
+rm(begin.period,end.period)
+
+#set metadata
+met <- as.character(meta[2,series])
+met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
+met <- countrynameFR2EN(met)
+
+#min and max of Y-Axis for the two charts
+c_max <- ceiling(max(dat[,-c(1)]))
+c_min <- floor(min(dat[,-c(1)]))
+
+#chart 1
+c1 <- highchart(width=450) %>%
+  hc_exporting(enabled=T, filename = "bdf_ccze",buttons=exporting.buttons) %>%
+  hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
+  hc_plotOptions(line=list(marker=list(enabled=F))) %>%
+  hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %",
+             pointFormat=style.point.format, headerFormat=style.header.format) %>%
+  hc_legend(align="right",x=10,itemDistance=25) %>%
+  hc_xAxis(categories=dat[,1],
+           labels=list(formatter=JS("function () {
+                var label=(this.value).toString();
+                var res=(label.replace(' ','<br>')).replace(/\\d{2}(?=\\d{2})/,'');
+                return res;
+            }")),
+           gridLineWidth=1,tickInterval=4) %>%
+  hc_yAxis(min=c_min,max=c_max,startOnTick=F,endOnTick=F,allowDecimals=F,minPadding=0,maxPadding=0,tickInterval=1) %>%
+  hc_add_series(name=met[2],data=dat[,2], id=met[2], lineWidth=3) %>%
+  hc_add_series(name=met[3],data=dat[,3], id=met[3]) %>%
+  hc_add_series(name=met[4],data=dat[,4], id=met[4]) %>%
+  hc_add_series(name=met[5],data=dat[,5], id=met[5], lineWidth=3) %>%
+  hc_add_series(name=met[6],id=met[6],showInLegend=F) %>% #fake series (for sharing legend)
+  hc_add_series(name=met[7],id=met[7],showInLegend=F) %>%
+  hc_add_series(name=met[8],id=met[8],showInLegend=F)
+  
+#chart 2
+c2 <- c1 %>%
+  hc_legend(align="left",itemDistance=25) %>%
+  hc_yAxis_multiples(
+    list(min=c_min,max=c_max,startOnTick=F,endOnTick=F,allowDecimals=F,minPadding=0,maxPadding=0,
+         tickInterval=1,title=list(text=NULL)),
+    list(linkedTo=0,opposite=T,title=list(text=NULL))) %>%
+  hc_colors(c(style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
+  hc_rm_series(name=c(met[2],met[3],met[4],met[5],met[6],met[7],met[8])) %>%
+  hc_add_series(name=met[5],data=dat[,5], id=met[5],lineWidth=3, showInLegend=F) %>%
+  hc_add_series(name=met[6],data=dat[,6], id=met[6]) %>%
+  hc_add_series(name=met[7],data=dat[,7], id=met[7]) %>%
+  hc_add_series(name=met[8],data=dat[,8], id=met[8])
+
+#share the legend between the charts
+c1 <- c1 %>%
+  hc_plotOptions(series = list(events = list(legendItemClick = sharelegend)))
+
+#---charts 3 & 4:
+
+#select series
+series <- c(1, #variable
+            9, #France
+            10, #Germany
+            12, #Spain
+            15, #Euro area
+            11, #Belgium
+            13, #Italy
+            14) #Netherlands 
+
+#keep current year + 7 previous whole years
+dat <- data[periods,series]
+rm(periods)
+
+#set metadata
+met <- as.character(meta[2,series])
+met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
+met <- countrynameFR2EN(met)
+
+#min and max of Y-Axis for the two charts
+c_max <- ceiling(max(dat[,-c(1)]))
+c_min <- floor(min(dat[,-c(1)]))
+
+#ouput the charts in HTML
+div(class = "hc-link-legend",
+    tags$table(
+      tags$tr(
+        tags$td(c1),
+        tags$td(c2))
+    )
+)
+
+```
+
+<p>&nbsp;</p>
+<p class="titlechart">**`r ifelse(params$lang=="FR","Co&ucirc;t salarial horaire","Hourly wage cost")`** *`r tags$sup("(b)")`*</p>
+
+```{r}
+
+#chart 3
+c3 <- c1 %>%
+  hc_yAxis(min=c_min,max=c_max,startOnTick=F,endOnTick=F,allowDecimals=F,minPadding=0,maxPadding=0,tickInterval=1) %>%
+  hc_rm_series(name=c(met[2],met[3],met[4],met[5],met[6],met[7],met[8])) %>%
+  hc_add_series(name=met[2],data=dat[,2], id=met[2], lineWidth=3) %>%
+  hc_add_series(name=met[3],data=dat[,3], id=met[3]) %>%
+  hc_add_series(name=met[4],data=dat[,4], id=met[4]) %>%
+  hc_add_series(name=met[5],data=dat[,5], id=met[5], lineWidth=3) %>%
+  hc_add_series(name=met[6],id=met[6],showInLegend=F) %>% #fake series (for sharing legend)
+  hc_add_series(name=met[7],id=met[7],showInLegend=F) %>%
+  hc_add_series(name=met[8],id=met[8],showInLegend=F)
+
+#chart 4
+c4 <- c3 %>%
+  hc_legend(align="left",itemDistance=25) %>%
+  hc_yAxis_multiples(
+    list(min=c_min,max=c_max,startOnTick=F,endOnTick=F,allowDecimals=F,minPadding=0,maxPadding=0,
+         tickInterval=1,title=list(text=NULL)),
+    list(linkedTo=0,opposite=T,title=list(text=NULL))) %>%  
+  hc_colors(c(style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
+  hc_rm_series(name=c(met[2],met[3],met[4],met[5],met[6],met[7],met[8])) %>%
+  hc_add_series(name=met[5],data=dat[,5], id=met[5],lineWidth=3, showInLegend=F) %>%
+  hc_add_series(name=met[6],data=dat[,6], id=met[6]) %>%
+  hc_add_series(name=met[7],data=dat[,7], id=met[7]) %>%
+  hc_add_series(name=met[8],data=dat[,8], id=met[8])
+
+#ouput the charts in HTML
+div(class = "hc-link-legend",
+    tags$table(
+      tags$tr(
+        tags$td(c3),
+        tags$td(c4))
+    )
+)
+
+```{r eval = T}
+<<footer>>
+```
+
+
