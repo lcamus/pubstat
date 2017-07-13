@@ -29,6 +29,8 @@ employment."))),
               span(style="float:right; font-style: italic;",
                    HTML(ifelse(params$lang=="FR",
                                "Zone euro &bull; Principaux indicateurs économiques et financiers",
-                               "The Euro Area &bull; Main economic and financial indicators"))))
+                               "The Euro Area &bull; Main economic and financial indicators")))),
+            p(),
+            p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
 )
 ## ---- end

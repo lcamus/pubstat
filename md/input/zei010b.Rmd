@@ -4,6 +4,7 @@ output:
   html_document: default
 params: 
   lang: "FR"
+  numpage: 20
 ---
 
 ```{r setup, include=F}
