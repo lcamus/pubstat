@@ -1,3 +1,5 @@
+## ---- tool
+
 #' @param s string to convert to HTML-entities
 #' @return a string whose special characters are converted to HTML entities
 #' @export
@@ -24,19 +26,34 @@ stringToHtmlEntities <- function(s) {
 
 }
 
-
-#' @param s string to convert to HTML-entities
-#' @return a string whose special characters are converted to HTML entities
+#' @param c vector of countries names in FR to translate to EN
+#' @return a vector whose names are translated from FR to EN
 #' @export
-convertToPDF <- function (f.in, f.out, p) {
-  print(getwd())
-  system(paste0("cmd /c phantomjs ",
-                "\\js\\rasterize_bdf.js ",
-                f.in,
-                " ",
-                f.out,
-                " ",
-                p
-                ))
+countrynameFR2EN <- function(c) {
+  if (params$lang=="EN") {
+    c <- sub("Allemagne","Germany",c)
+    c <- sub("Espagne","Spain",c)
+    c <- sub("Zone euro","Euro area",c)
+    c <- sub("Belgique","Belgium",c)
+    c <- sub("Italie","Italy",c)
+    c <- sub("Pays-Bas","Netherlands",c)
+  }
+  return(c)
 }
 
+#' #' @param s string to convert to HTML-entities
+#' #' @return a string whose special characters are converted to HTML entities
+#' #' @export
+#' convertToPDF <- function (f.in, f.out, p) {
+#'   print(getwd())
+#'   system(paste0("cmd /c phantomjs ",
+#'                 "\\js\\rasterize_bdf.js ",
+#'                 f.in,
+#'                 " ",
+#'                 f.out,
+#'                 " ",
+#'                 p
+#'                 ))
+#' }
+
+## ---- end

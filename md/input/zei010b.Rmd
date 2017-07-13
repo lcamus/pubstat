@@ -3,17 +3,19 @@ always_allow_html: yes
 output:
   html_document: default
 params: 
-  lang: "EN"
+  lang: "FR"
 ---
 
 ```{r setup, include=F}
 knitr::opts_chunk$set(echo = FALSE)
+knitr::read_chunk("../../R/tool.R")
 knitr::read_chunk("../../R/data.R")
 knitr::read_chunk("../../R/ccze_init.R")
 knitr::read_chunk("../../R/ccze_footer.R")
 ```
 ```{r}
 <<init>>
+<<tool>>
 <<data>>
 ```
 ```{r include=T}
@@ -26,7 +28,7 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la zone euro","Performance indicators within the euro area")`
 
 ***
-<p style="text-align: right; font-size:90%; font-style: italic;">*`r ifelse(params$lang=="FR","Glissement annuel en pourcentage","Year-overyear percentage change")`*</p>
+<p class="unitchart">*`r ifelse(params$lang=="FR","Glissement annuel en pourcentage","Year-overyear percentage change")`*</p>
 <p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *`r tags$sup("(a)(b)")`*</p>
 
 ```{r}
@@ -56,12 +58,12 @@ begin.period <- end.period-28
 end.period <- length(data$date)
 periods <- rev(seq(end.period,begin.period,-1))
 dat <- data[periods,series]
-
 rm(begin.period,end.period)
 
 #set metadata
 met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
+met <- countrynameFR2EN(met)
 
 #min and max of Y-Axis for the two charts
 c_max <- ceiling(max(dat[,-c(1)]))
@@ -71,9 +73,9 @@ c_min <- floor(min(dat[,-c(1)]))
 c1 <- highchart(width=450) %>%
   hc_exporting(enabled=T, filename = "bdf_ccze",buttons=exporting.buttons) %>%
   hc_colors(c(style.color.FR,style.color.DE,style.color.ES,style.color.EA,style.color.BE,style.color.IT,style.color.NL)) %>%
-  hc_plotOptions(
-    line=list(marker=list(enabled=F))) %>%
-  hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %", pointFormat=style.point.format) %>%
+  hc_plotOptions(line=list(marker=list(enabled=F))) %>%
+  hc_tooltip(valueDecimals=1,shared=T,valueSuffix=" %",
+             pointFormat=style.point.format, headerFormat=style.header.format) %>%
   hc_legend(align="right",x=10,itemDistance=25) %>%
   hc_xAxis(categories=dat[,1],
            labels=list(formatter=JS("function () {
@@ -128,6 +130,7 @@ rm(periods)
 #set metadata
 met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
+met <- countrynameFR2EN(met)
 
 #min and max of Y-Axis for the two charts
 c_max <- ceiling(max(dat[,-c(1)]))

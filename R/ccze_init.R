@@ -22,6 +22,8 @@ style.point.format <- paste0('<span style="color:{point.color}">',
                              ifelse(params$lang=="FR"," : ",": "),
                              "<b>{point.y}</b><br/>")
 
+style.header.format <- "<span><b>{point.key}</b></span><br/>"
+
 #set decimal separators and labels export menu for charts
 opts <- getOption("highcharter.lang")
 opts$decimalPoint <- ifelse(params$lang=="FR",",",".")

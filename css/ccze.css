@@ -15,8 +15,13 @@ body {
 .title {
   font-family: "Century Gothic", Verdana, sans-serif;
 }
+
 .titlechart {
   background-color:peachpuff; padding-left:10px; padding-top:5px; padding-bottom:5px;
+}
+
+.unitchart {
+  text-align: right; font-size:90%; font-style: italic;
 }
 
 .laparent ol { counter-reset: item }
