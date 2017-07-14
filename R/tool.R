@@ -37,6 +37,11 @@ countrynameFR2EN <- function(c) {
     c <- sub("Belgique","Belgium",c)
     c <- sub("Italie","Italy",c)
     c <- sub("Pays-Bas","Netherlands",c)
+    c <- sub("Autriche","Austria",c)
+    c <- sub("Finlande","Finland",c)
+    c <- sub("Grèce","Greece",c)
+    c <- sub("Irlande","Irland",c)
+    c <- sub("Slovénie","Slovenia",c)
   }
   return(c)
 }
