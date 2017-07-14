@@ -40,7 +40,7 @@ countrynameFR2EN <- function(c) {
     c <- sub("Autriche","Austria",c)
     c <- sub("Finlande","Finland",c)
     c <- sub("Grèce","Greece",c)
-    c <- sub("Irlande","Irland",c)
+    c <- sub("Irlande","Ireland",c)
     c <- sub("Slovénie","Slovenia",c)
   }
   return(c)

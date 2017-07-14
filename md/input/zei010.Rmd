@@ -35,7 +35,8 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```{r}
 
 #get data & metadata
-data <- getData(data.collection,"ZEI010AD1.TXT")[[2]]
+data.y <- tail(getData(data.collection,"ZEI010AD1.TXT")[[2]],3)
+data.q <- tail(getData(data.collection,"ZEI010AD2.TXT")[[2]],13)
 meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
 
 #select series
@@ -47,13 +48,19 @@ series <- c(1, #variable
             6, #Spain
             7, #Finland
             8, #Greece
-            9, #Irland
+            9, #Ireland
             10, #Italy
             11, #Luxembourg
             12, #Netherlands
             13, #Portugal
             14, #Slovenia
             15) #Euro area 
+
+data.y <- t(data.y[,series])
+data.q <- t(data.q[,series])
+
+# print(data.y)
+# print(data.q)
 
 # #set date periods to quarter format
 # data$date <- format(as.yearqtr(data$date,"%Y-%m"),ifelse(params$lang=="FR",
@@ -73,6 +80,13 @@ met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
 met <- countrynameFR2EN(met)
 
+#generate datatable
+data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
+colnames(data)
+data$date <- met
+
+t1 <- datatable(data)
+
 # #min and max of Y-Axis for the two charts
 # c_max <- ceiling(max(dat[,-c(1)]))
 # c_min <- floor(min(dat[,-c(1)]))
@@ -87,6 +101,7 @@ met <- countrynameFR2EN(met)
 #         tags$td(c2))
 #     )
 # )
+t1
 
 ```
 
