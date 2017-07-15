@@ -59,22 +59,6 @@ series <- c(1, #variable
 data.y <- t(data.y[,series])
 data.q <- t(data.q[,series])
 
-# print(data.y)
-# print(data.q)
-
-# #set date periods to quarter format
-# data$date <- format(as.yearqtr(data$date,"%Y-%m"),ifelse(params$lang=="FR",
-#                                                         "T%q %Y",
-#                                                         "%Y Q%q"))
-
-# #keep current year + 7 previous whole years
-# end.period <- tail(grep(ifelse(params$lang=="FR","T1","Q1"),data$date),1)
-# begin.period <- end.period-28
-# end.period <- length(data$date)
-# periods <- rev(seq(end.period,begin.period,-1))
-# dat <- data[periods,series]
-# rm(begin.period,end.period)
-
 #set metadata
 met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
@@ -82,16 +66,9 @@ met <- countrynameFR2EN(met)
 
 #generate datatable
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-colnames(data)
-data$date <- met
-
-t1 <- datatable(data)
-
-# #min and max of Y-Axis for the two charts
-# c_max <- ceiling(max(dat[,-c(1)]))
-# c_min <- floor(min(dat[,-c(1)]))
-
-
+t1 <- datatable(cbind(country=met[-1],round(sapply(data[-1,],as.numeric),1)),
+                rownames=F, colnames=c("",as.character(data[1,])),
+                options = list(paging=F,searching=F,info=F))
 
 # #ouput the charts in HTML
 # div(class = "hc-link-legend",
