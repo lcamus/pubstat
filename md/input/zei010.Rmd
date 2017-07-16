@@ -68,7 +68,9 @@ met <- countrynameFR2EN(met)
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
 t1 <- datatable(cbind(country=met[-1],round(sapply(data[-1,],as.numeric),1)),
                 rownames=F, colnames=c("",as.character(data[1,])),
-                options = list(paging=F,searching=F,info=F))
+                options = list(paging=F,searching=F,info=F,
+                               language=list(decimal=","))) %>%
+  formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1)
 
 # #ouput the charts in HTML
 # div(class = "hc-link-legend",
