@@ -7,6 +7,7 @@ o <- Sys.setlocale("LC_TIME",
 suppressMessages({
   if (!require("DT")) install.packages('DT')
   if (!require("htmltools")) install.packages('htmltools')
+  if (!require("zoo")) install.packages('zoo')
 })
 
 ## ---- end

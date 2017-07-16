@@ -66,10 +66,16 @@ met <- countrynameFR2EN(met)
 
 #generate datatable
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t1 <- datatable(cbind(country=met[-1],round(sapply(data[-1,],as.numeric),1)),
-                rownames=F, colnames=c("",as.character(data[1,])),
+t1 <- datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+                rownames=F, colnames=c("",
+                                       as.character(data.y[1,]),
+                                       format(as.yearqtr(as.character(data.q[1,]),"%Y-%m"),
+                                              ifelse(params$lang=="FR","T%q","Q%q"))
+                ),
                 options = list(paging=F,searching=F,info=F,
-                               language=list(decimal=","))) %>%
+                               language=list(decimal=","),
+                               columnDefs = list(list(className = 'dt-right', defaultContent="nd",targets = 1:16))
+                )) %>%
   formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1)
 
 # #ouput the charts in HTML
