@@ -84,7 +84,6 @@ sketch = htmltools::withTags(table(
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
       lapply(seq_along(t),function(x){th(names(t)[[x]],colspan=t[x],style="font-weight:bold;")})
-      # lapply(col.q.y, th)
     ),
     tr(
       lapply(col.q.q, th, style="font-weight:normal;")
@@ -106,14 +105,7 @@ t1 <- htmlwidgets::prependContent(
                            columnDefs = list(list(className='dt-right',targets=1:16,
                                                   defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>"))),
                            rowCallback=DT::JS(
-                             'function(row,data) {
-                    if (data[0]=="France") {
-                    $("td",row).css("border-top","1px solid dodgerblue");
-                    $("td",row).css("border-bottom","1px solid dodgerblue");
-                    $("td:eq(0)",row).css("border-left","1px solid dodgerblue");
-                    $("td:eq(16)",row).css("border-right","1px solid dodgerblue");
-                    }
-        }'       
+                             highlightTableRowByCountry(country="fr",begin=0,end=16)
                            )
             ),
         class="compact") %>%

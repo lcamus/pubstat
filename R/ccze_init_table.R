@@ -8,6 +8,7 @@ suppressMessages({
   if (!require("DT")) install.packages('DT')
   if (!require("htmltools")) install.packages('htmltools')
   if (!require("zoo")) install.packages('zoo')
+  if (!require(ISOcodes)) install.packages("ISOcodes")
 })
 
 style.color.FR <- "dodgerblue"
