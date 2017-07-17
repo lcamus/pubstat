@@ -26,10 +26,10 @@ includeCSS("../../css/ccze.css")
 data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```
 
-## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la zone euro","Performance indicators within the euro area")`
+## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area")`
 
 ***
-<p class="unitlegend">*`r ifelse(params$lang=="FR","Glissement annuel en pourcentage","Year-overyear percentage change")`*</p>
+<p class="unitlegend">*`r ifelse(params$lang=="FR","Variation en pourcentage","Percentage change")`*</p>
 <p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *`r tags$sup("(a)(b)")`*</p>
 
 ```{r}
@@ -64,28 +64,76 @@ met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
 met <- countrynameFR2EN(met)
 
-#generate datatable
-data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t1 <- datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
-                rownames=F, colnames=c("",
-                                       as.character(data.y[1,]),
-                                       format(as.yearqtr(as.character(data.q[1,]),"%Y-%m"),
-                                              ifelse(params$lang=="FR","T%q","Q%q"))
-                ),
-                options = list(paging=F,searching=F,info=F,
-                               language=list(decimal=","),
-                               columnDefs = list(list(className = 'dt-right', defaultContent="nd",targets = 1:16))
-                )) %>%
-  formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1)
+#generate datatable:
 
-# #ouput the charts in HTML
-# div(class = "hc-link-legend",
-#     tags$table(
-#       tags$tr(
-#         tags$td(c1),
-#         tags$td(c2))
-#     )
-# )
+#header:
+
+col.q <- as.yearqtr(as.character(data.q[1,]),"%Y-%m")
+col.q.y <- as.character(format(col.q,"%Y"))
+col.q.q <- as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q")))
+
+t <- base::table(col.q.y)
+sketch = htmltools::withTags(table(
+  class = 'display',
+  thead(
+    tr(
+      th(colspan=1,rowspan=3),
+      th(colspan=3,rowspan=1,ifelse(params$lang=="FR","Moyenne annuelle","Annual average")),
+      th(colspan=13,rowspan=1,ifelse(params$lang=="FR","Glissement annuel","4-quarterly change"))
+    ),
+    tr(
+      lapply(as.character(data.y[1,]), th, rowspan=2),
+      lapply(seq_along(t),function(x){th(names(t)[[x]],colspan=t[x],style="font-weight:bold;")})
+      # lapply(col.q.y, th)
+    ),
+    tr(
+      lapply(col.q.q, th, style="font-weight:normal;")
+    )
+  )
+))
+rm(t)
+
+#end header
+
+#data
+data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
+id <- paste0("dt-",htmlwidgets:::createWidgetId())
+t1 <- htmlwidgets::prependContent(
+  datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+            rownames=F, container=sketch,
+            options = list(paging=F,searching=F,info=F,
+                           language=list(decimal=","),
+                           columnDefs = list(list(className='dt-right',targets=1:16,
+                                                  defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>"))),
+                           rowCallback=DT::JS(
+                             'function(row,data) {
+                    if (data[0]=="France") {
+                    $("td",row).css("border-top","1px solid dodgerblue");
+                    $("td",row).css("border-bottom","1px solid dodgerblue");
+                    $("td:eq(0)",row).css("border-left","1px solid dodgerblue");
+                    $("td:eq(16)",row).css("border-right","1px solid dodgerblue");
+                    }
+        }'       
+                           )
+            ),
+        class="compact") %>%
+    formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
+    formatStyle(1,target="row",
+                fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
+                color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
+                                 c(style.color.FR,style.color.EA))
+                # paste0(c(style.color.FR,style.color.EA),';'))
+                # c('1px solid blue','1px solid red'))
+    ),
+  tags$style(sprintf(
+    '#%s table.dataTable {
+    border-collapse: collapse;
+}'
+,
+id
+  )))
+
+#ouput the table
 t1
 
 ```

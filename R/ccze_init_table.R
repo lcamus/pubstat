@@ -10,4 +10,7 @@ suppressMessages({
   if (!require("zoo")) install.packages('zoo')
 })
 
+style.color.FR <- "dodgerblue"
+style.color.EA <- "black"
+
 ## ---- end

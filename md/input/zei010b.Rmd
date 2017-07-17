@@ -26,7 +26,7 @@ includeCSS("../../css/ccze.css")
 data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```
 
-## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la zone euro","Performance indicators within the euro area")`
+## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area")`
 
 ***
 <p class="unitlegend">*`r ifelse(params$lang=="FR","Variation en pourcentage","Percentage change")`*</p>
