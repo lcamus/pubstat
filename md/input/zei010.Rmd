@@ -59,10 +59,13 @@ series <- c(1, #variable
 data.y <- t(data.y[,series])
 data.q <- t(data.q[,series])
 
-#set metadata
+#set metadata:
 met <- as.character(meta[2,series])
 met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
 met <- countrynameFR2EN(met)
+c.fi <- getCountryByCode("fi",params$lang)
+met <- sub(c.fi,paste0(c.fi," <sup><i>(c)</i></sup>"),met,ignore.case=T)
+rm(c.fi)
 
 #generate datatable:
 
@@ -103,19 +106,18 @@ t1 <- htmlwidgets::prependContent(
             options = list(paging=F,searching=F,info=F,
                            language=list(decimal=","),
                            columnDefs = list(list(className='dt-right',targets=1:16,
-                                                  defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>"))),
+                                                  defaultContent=ifelse(params$lang=="FR",
+                                                                        "<i>nd</i>","<i>na</i>"))),
                            rowCallback=DT::JS(
-                             highlightTableRowByCountry(country="ea",begin=0,end=16)
+                             highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
                            )
             ),
-        class="compact") %>%
+            class="compact",escape=F) %>%
     formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
     formatStyle(1,target="row",
                 fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
                 color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
                                  c(style.color.FR,style.color.EA))
-                # paste0(c(style.color.FR,style.color.EA),';'))
-                # c('1px solid blue','1px solid red'))
     ),
   tags$style(sprintf(
     '#%s table.dataTable {

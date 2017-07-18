@@ -34,34 +34,35 @@ countrynameFR2EN <- function(c,lang=params$lang) {
   # if (missing(lang)) lang <- params$lang
   if (tolower(lang)=="en") {
     c <- tolower(c)
-    c <- sub("allemagne","Germany",c)
-    c <- sub("espagne","Spain",c)
-    c <- sub("zone euro","Euro area",c)
-    c <- sub("belgique","Belgium",c)
-    c <- sub("italie","Italy",c)
-    c <- sub("pays-bas","Netherlands",c)
-    c <- sub("autriche","Austria",c)
-    c <- sub("finlande","Finland",c)
-    c <- sub("grèce","Greece",c)
-    c <- sub("irlande","Ireland",c)
-    c <- sub("slovénie","Slovenia",c)
+    c <- sub("^allemagne$","Germany",c)
+    c <- sub("^espagne$","Spain",c)
+    c <- sub("^zone euro$","Euro area",c)
+    c <- sub("^belgique$","Belgium",c)
+    c <- sub("^italie$","Italy",c)
+    c <- sub("^pays-bas$","Netherlands",c)
+    c <- sub("^autriche$","Austria",c)
+    c <- sub("^finlande$","Finland",c)
+    c <- sub("^grèce$","Greece",c)
+    c <- sub("^irlande$","Ireland",c)
+    c <- sub("^slovénie$","Slovenia",c)
   } else {
     c <- tolower(c)
-    c <- sub("germany","Allemagne",c)
-    c <- sub("spain","Espagne",c)
-    c <- sub("euro area","Zone euro",c)
-    c <- sub("belgium","Belgique",c)
-    c <- sub("italy","Italie",c)
-    c <- sub("netherlands","Pays-Bas",c)
-    c <- sub("austria","Autriche",c)
-    c <- sub("finland","Finlande",c)
-    c <- sub("greece","Grèce",c)
-    c <- sub("ireland","Irlande",c)
-    c <- sub("slovenia","Slovénie",c)
+    c <- sub("^germany$","Allemagne",c)
+    c <- sub("^spain$","Espagne",c)
+    c <- sub("^euro area$","Zone euro",c)
+    c <- sub("^belgium$","Belgique",c)
+    c <- sub("^italy$","Italie",c)
+    c <- sub("^netherlands$","Pays-Bas",c)
+    c <- sub("^austria$","Autriche",c)
+    c <- sub("^finland$","Finlande",c)
+    c <- sub("^greece$","Grèce",c)
+    c <- sub("^ireland$","Irlande",c)
+    c <- sub("^slovenia$","Slovénie",c)
   }
   c <- stringr::str_to_title(c)
-  c <- sub("Zone Euro","Zone euro",c)
-  c <- sub("Euro Area","Euro area",c)
+  c <- sub("^Zone Euro$","Zone euro",c)
+  c <- sub("^Euro Area$","Euro area",c)
+  # c <- sub("^Finlande$",htmltools::HTML("Finlande <sup>(c)</sup>"),c)
 
   return(c)
   
@@ -104,8 +105,9 @@ getCountryByCode <- function(c,lang=params$lang) {
 }
 
 highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
-  # if (missing(color)) color <- get(paste0("style.color.",toupper(country)))
+  
   if (missing(color)) color <- sapply(paste0("style.color.",toupper(country)),get)
+  
   country.lib <- getCountryByCode(country)
   js <- sapply(seq_along(country),function(x){
     stringr::str_interp('if (data[0]=="${country.lib[x]}") {
@@ -115,25 +117,10 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");
     }\n')    
   })
-  js <- paste0('function(row,data) {\n',js,'}\n')
-  # js <- stringr::str_interp('function(row,data) {
-  #   if (data[0]=="${country.lib}") {
-  #     $("td",row).css("border-top","${width} solid ${color}");
-  #     $("td",row).css("border-bottom","${width} solid ${color}");
-  #     $("td:eq(${begin})",row).css("border-left","${width} solid ${color}");
-  #     $("td:eq(${end})",row).css("border-right","${width} solid ${color}");
-  #   }
-  # }')
-  # cat(js)
+  js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
+
   return(js)
-  # js <- 'function(row,data) {
-  #   if (data[0]=="France") {
-  #     $("td",row).css("border-top","1px solid dodgerblue");
-  #     $("td",row).css("border-bottom","1px solid dodgerblue");
-  #     $("td:eq(0)",row).css("border-left","1px solid dodgerblue");
-  #     $("td:eq(16)",row).css("border-right","1px solid dodgerblue");
-  #   }
-  # }'
+
 }
 
 #' #' @param s string to convert to HTML-entities
