@@ -99,33 +99,27 @@ rm(t)
 
 #data
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-id <- paste0("dt-",htmlwidgets:::createWidgetId())
-t1 <- htmlwidgets::prependContent(
-  datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
-            rownames=F, container=sketch,
-            options = list(paging=F,searching=F,info=F,
-                           language=list(decimal=","),
-                           columnDefs = list(list(className='dt-right',targets=1:16,
-                                                  defaultContent=ifelse(params$lang=="FR",
-                                                                        "<i>nd</i>","<i>na</i>"))),
-                           rowCallback=DT::JS(
-                             highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
-                           )
-            ),
-            class="compact",escape=F) %>%
-    formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
-    formatStyle(1,target="row",
-                fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
-                color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
-                                 c(style.color.FR,style.color.EA))
-    ),
-  tags$style(sprintf(
-    '#%s table.dataTable {
-    border-collapse: collapse;
-}'
-,
-id
-  )))
+# id <- paste0("dt-",htmlwidgets:::createWidgetId())
+# t1 <- htmlwidgets::prependContent(
+t1 <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+                    rownames=F, container=sketch,
+                    options = list(paging=F,searching=F,info=F,
+                                   language=list(decimal=","),
+                                   columnDefs = list(list(className='dt-right',targets=1:16,
+                                                          defaultContent=ifelse(params$lang=="FR",
+                                                                                "<i>nd</i>","<i>na</i>"))),
+                                   rowCallback=DT::JS(
+                                     highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
+                                   )
+                    ),
+                    class="compact",escape=F) %>%
+  formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
+  formatStyle(1,target="row",
+              fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
+              color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
+                               c(style.color.FR,style.color.EA))) %>%
+  formatStyle(5, `border-left`='2px solid black')
+
 
 #ouput the table
 t1
