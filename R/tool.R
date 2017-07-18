@@ -45,6 +45,19 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("grèce","Greece",c)
     c <- sub("irlande","Ireland",c)
     c <- sub("slovénie","Slovenia",c)
+  } else {
+    c <- tolower(c)
+    c <- sub("germany","Allemagne",c)
+    c <- sub("spain","Espagne",c)
+    c <- sub("euro area","Zone euro",c)
+    c <- sub("belgium","Belgique",c)
+    c <- sub("italy","Italie",c)
+    c <- sub("netherlands","Pays-Bas",c)
+    c <- sub("austria","Autriche",c)
+    c <- sub("finland","Finlande",c)
+    c <- sub("greece","Grèce",c)
+    c <- sub("ireland","Irlande",c)
+    c <- sub("slovenia","Slovénie",c)
   }
   c <- stringr::str_to_title(c)
   c <- sub("Zone Euro","Zone euro",c)
@@ -77,28 +90,40 @@ getCountryByCode <- function(c,lang=params$lang) {
   c <- tolower(c)
   lang <- tolower(lang)
   
-  if (c=="ea")
-    res <- ifelse(lang=="fr","Zone euro","Euro area")
-  else
-    res <- countrynameFR2EN(
-      ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==c,]$Name,
-      lang)
+  res <- sapply(c,function(x){
+    if (x=="ea")
+      ifelse(lang=="fr","Zone euro","Euro area")
+    else
+      countrynameFR2EN(
+        ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
+        lang)
+  })
   
   return(res) 
    
 }
 
 highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
-  if (missing(color)) color <- get(paste0("style.color.",toupper(country)))
+  # if (missing(color)) color <- get(paste0("style.color.",toupper(country)))
+  if (missing(color)) color <- sapply(paste0("style.color.",toupper(country)),get)
   country.lib <- getCountryByCode(country)
-  js <- stringr::str_interp('function(row,data) {
-    if (data[0]=="${country.lib}") {
-      $("td",row).css("border-top","${width} solid ${color}");
-      $("td",row).css("border-bottom","${width} solid ${color}");
-      $("td:eq(${begin})",row).css("border-left","${width} solid ${color}");
-      $("td:eq(${end})",row).css("border-right","${width} solid ${color}");
-    }
-  }')
+  js <- sapply(seq_along(country),function(x){
+    stringr::str_interp('if (data[0]=="${country.lib[x]}") {
+      $("td",row).css("border-top","${width} solid ${color[x]}");
+      $("td",row).css("border-bottom","${width} solid ${color[x]}");
+      $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
+      $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");
+    }\n')    
+  })
+  js <- paste0('function(row,data) {\n',js,'}\n')
+  # js <- stringr::str_interp('function(row,data) {
+  #   if (data[0]=="${country.lib}") {
+  #     $("td",row).css("border-top","${width} solid ${color}");
+  #     $("td",row).css("border-bottom","${width} solid ${color}");
+  #     $("td:eq(${begin})",row).css("border-left","${width} solid ${color}");
+  #     $("td:eq(${end})",row).css("border-right","${width} solid ${color}");
+  #   }
+  # }')
   # cat(js)
   return(js)
   # js <- 'function(row,data) {

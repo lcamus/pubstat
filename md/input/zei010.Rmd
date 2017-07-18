@@ -105,7 +105,7 @@ t1 <- htmlwidgets::prependContent(
                            columnDefs = list(list(className='dt-right',targets=1:16,
                                                   defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>"))),
                            rowCallback=DT::JS(
-                             highlightTableRowByCountry(country="fr",begin=0,end=16)
+                             highlightTableRowByCountry(country="ea",begin=0,end=16)
                            )
             ),
         class="compact") %>%
