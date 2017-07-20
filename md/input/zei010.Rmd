@@ -78,7 +78,7 @@ col.q.q <- as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q")))
 t <- base::table(col.q.y)
 sep.style <- "box-shadow:-2px 0 0 black;"
 sketch = htmltools::withTags(table(
-  class = 'display',
+  # class = 'display',
   thead(
     tr(
       th(colspan=1,rowspan=3),
@@ -95,8 +95,9 @@ sketch = htmltools::withTags(table(
     ),
     tr(
       lapply(utils::head(col.q.q,1), th,
-             style=paste0("font-weight:normal; ",sep.style)),
-      lapply(tail(col.q.q,length(col.q.q)-1), th, style="font-weight:normal;")
+             # style=paste0("font-weight:normal; ",sep.style)),
+             style="font-weight:normal; box-shadow:-2px 0 0 black;"),
+      lapply(tail(col.q.q,length(col.q.q)-1), th, style="font-weight:normal; ")
     )
   )
 ))
