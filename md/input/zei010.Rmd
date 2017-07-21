@@ -90,13 +90,12 @@ sketch = htmltools::withTags(table(
       lapply(as.character(data.y[1,]), th, rowspan=2),
       lapply(seq_along(t),function(x){th(
         names(t)[[x]],colspan=t[x],
-        style=paste0("font-weight:bold; text-align:left; ",ifelse(x==1,sep.style,""))
+        style=paste0("font-weight:bold; text-align:left; border:none;",ifelse(x==1,sep.style,""))
       )})
     ),
     tr(
       lapply(utils::head(col.q.q,1), th,
-             # style=paste0("font-weight:normal; ",sep.style)),
-             style="font-weight:normal; box-shadow:-2px 0 0 black;"),
+             style=paste0("font-weight:normal; ",sep.style)),
       lapply(tail(col.q.q,length(col.q.q)-1), th, style="font-weight:normal; ")
     )
   )
@@ -119,7 +118,7 @@ t1 <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
                                      highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
                                    )
                     ),
-                    class="compact",escape=F) %>%
+                    class="compact hover",escape=F) %>%
   formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
   formatStyle(1,target="row",
               fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
