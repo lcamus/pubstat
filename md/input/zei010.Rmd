@@ -34,9 +34,34 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 
 ```{r}
 
+genDataTable <- function(data,met,sketch) {
+  
+  res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+                    rownames=F, container=sketch,
+                    options = list(paging=F,searching=F,info=F,
+                                   language=list(decimal=","),
+                                   columnDefs = list(list(className='dt-right',targets=1:16,
+                                                          defaultContent=ifelse(params$lang=="FR",
+                                                                                "<i>nd</i>","<i>na</i>"))),
+                                   rowCallback=DT::JS(
+                                     highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
+                                   )
+                    ),
+                    class="compact hover",escape=F) %>%
+  formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
+  formatStyle(1,target="row",
+              fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
+              color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
+                               c(style.color.FR,style.color.EA))) %>%
+  formatStyle(5, `box-shadow`='-2px 0 0 black')
+
+  return(res)
+  
+}
+
 #get data & metadata
-data.y <- tail(getData(data.collection,"ZEI010AD1.TXT")[[2]],3)
-data.q <- tail(getData(data.collection,"ZEI010AD2.TXT")[[2]],13)
+data.y.0 <- tail(getData(data.collection,"ZEI010AD1.TXT")[[2]],3)
+data.q.0 <- tail(getData(data.collection,"ZEI010AD2.TXT")[[2]],13)
 meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
 
 #select series
@@ -56,8 +81,8 @@ series <- c(1, #variable
             14, #Slovenia
             15) #Euro area 
 
-data.y <- t(data.y[,series])
-data.q <- t(data.q[,series])
+data.y <- t(data.y.0[,series])
+data.q <- t(data.q.0[,series])
 
 #set metadata:
 met <- as.character(meta[2,series])
@@ -106,26 +131,7 @@ rm(t,sep.style)
 
 #data
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-
-t1 <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
-                    rownames=F, container=sketch,
-                    options = list(paging=F,searching=F,info=F,
-                                   language=list(decimal=","),
-                                   columnDefs = list(list(className='dt-right',targets=1:16,
-                                                          defaultContent=ifelse(params$lang=="FR",
-                                                                                "<i>nd</i>","<i>na</i>"))),
-                                   rowCallback=DT::JS(
-                                     highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
-                                   )
-                    ),
-                    class="compact hover",escape=F) %>%
-  formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
-  formatStyle(1,target="row",
-              fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
-              color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
-                               c(style.color.FR,style.color.EA))) %>%
-  formatStyle(5, `box-shadow`='-2px 0 0 black')
-
+t1 <- genDataTable(data,met,sketch)
 
 #ouput the table
 t1
@@ -133,10 +139,45 @@ t1
 ```
 
 <p>&nbsp;</p>
+<p>&nbsp;</p>
 <p class="titlechart">**`r ifelse(params$lang=="FR","Co&ucirc;t salarial horaire","Hourly wage cost")`** *`r tags$sup("(b)")`*</p>
 
 ```{r}
 
+#select series
+series <- c(1, #variable
+            16, #France
+            17, #Germany
+            18, #Austria
+            19, #Belgium
+            20, #Spain
+            21, #Finland
+            22, #Greece
+            23, #Ireland
+            24, #Italy
+            25, #Luxembourg
+            26, #Netherlands
+            27, #Portugal
+            28, #Slovenia
+            29) #Euro area 
+
+data.y <- t(data.y.0[,series])
+data.q <- t(data.q.0[,series])
+
+#set metadata:
+#same as for t1
+
+#generate datatable:
+
+#header:
+#same as for t1
+
+#data:
+data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
+t2 <- genDataTable(data,met,sketch)
+
+#ouput the table
+t2
 
 
 ```{r eval = T}
