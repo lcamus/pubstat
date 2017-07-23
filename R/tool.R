@@ -31,7 +31,6 @@ stringToHtmlEntities <- function(s) {
 #' @export
 countrynameFR2EN <- function(c,lang=params$lang) {
   
-  # if (missing(lang)) lang <- params$lang
   if (tolower(lang)=="en") {
     c <- tolower(c)
     c <- sub("^allemagne$","Germany",c)
@@ -45,6 +44,25 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^grèce$","Greece",c)
     c <- sub("^irlande$","Ireland",c)
     c <- sub("^slovénie$","Slovenia",c)
+    c <- sub("^etats-unis$","United States",c)
+    c <- sub("^japon$","Japan",c)
+    c <- sub("^chypre$","Cyprus",c)
+    c <- sub("^estonie$","Estonia",c)
+    c <- sub("^lettonie$","Latvia",c)
+    c <- sub("^lituanie$","Lithuania",c)
+    c <- sub("^malte$","Malta",c)
+    c <- sub("^slovaquie$","Slovakia",c)
+    c <- sub("^bulgarie$","Bulgaria",c)
+    c <- sub("^croatie$","Crotia",c)
+    c <- sub("^danemark$","Denmark",c)
+    c <- sub("^hongrie$","Hungary",c)
+    c <- sub("^pologne$","Poland",c)
+    c <- sub("^roumanie$","Romania",c)
+    c <- sub("^royaume-uni$","United Kingdom",c)
+    c <- sub("^suède$","Sweden",c)
+    c <- sub("^république tchèque$","Czech Republic",c)
+    c <- sub("^union européenne$","European union",c)
+    c <- sub("^japon$","Japan",c)
   } else {
     c <- tolower(c)
     c <- sub("^germany$","Allemagne",c)
@@ -58,11 +76,30 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^greece$","Grèce",c)
     c <- sub("^ireland$","Irlande",c)
     c <- sub("^slovenia$","Slovénie",c)
+    c <- sub("^united states$","Etats-Unis",c)
+    c <- sub("^japan$","Japon",c)
+    c <- sub("^cyprus$","Chypre",c)
+    c <- sub("^estonia$","Estonie",c)
+    c <- sub("^latvia$","Lettonie",c)
+    c <- sub("^lithuania$","Lituanie",c)
+    c <- sub("^malta$","Malte",c)
+    c <- sub("^slovakia$","Slovaquie",c)
+    c <- sub("^bulgaria$","Bulgarie",c)
+    c <- sub("^crotia$","Croatie",c)
+    c <- sub("^denmark$","Danemark",c)
+    c <- sub("^hungary$","Hongrie",c)
+    c <- sub("^poland$","Pologne",c)
+    c <- sub("^romania$","Roumanie",c)
+    c <- sub("^united kingdom$","Royaume-uni",c)
+    c <- sub("^sweden$","Suède",c)
+    c <- sub("^czech republic$","République tchèque",c)
+    c <- sub("^european union$","Union européenne",c)
   }
   c <- stringr::str_to_title(c)
   c <- sub("^Zone Euro$","Zone euro",c)
   c <- sub("^Euro Area$","Euro area",c)
-  # c <- sub("^Finlande$",htmltools::HTML("Finlande <sup>(c)</sup>"),c)
+  c <- sub("^Union Européenne$","Union européenne",c)
+  c <- sub("^European Union$","European union",c)
 
   return(c)
   
@@ -76,6 +113,8 @@ getCountryByName <- function(c) {
   c <- tolower(countrynameFR2EN(c,"EN"))
   if (c=="euro area")
     res <- "EA"
+  else if (c=="european union")
+    res <- "EU"
   else
     res <- ISO_3166_1[tolower(ISO_3166_1$Name)==c,]$Alpha_2
   
@@ -94,6 +133,8 @@ getCountryByCode <- function(c,lang=params$lang) {
   res <- sapply(c,function(x){
     if (x=="ea")
       ifelse(lang=="fr","Zone euro","Euro area")
+    else if (x=="eu")
+      ifelse(lang=="fr","Union européenne","European union")
     else
       countrynameFR2EN(
         ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
