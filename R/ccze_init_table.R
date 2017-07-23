@@ -13,8 +13,8 @@ suppressMessages({
 
 style.color.FR <- "dodgerblue"
 style.color.EA <- "black"
-style.color.EU <- "grey"
-style.color.US <- "pink"
-style.color.JP <- "red"  
+style.color.EU <- "dimgray"
+style.color.US <- "navy"
+style.color.JP <- "deeppink"  
 
 ## ---- end

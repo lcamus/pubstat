@@ -26,7 +26,7 @@ includeCSS("../../css/ccze.css")
 data.collection <- getDataCollection("../../data/input/ze_bm_piemf")
 ```
 
-## `r ifelse(params$lang=="FR","Prix &agrave; la consommation : Indices harmonis&eacute;s","Consumer prices: Harmonised indices")`
+## `r ifelse(params$lang=="FR","Prix &agrave; la consommation : indices harmonis&eacute;s","Consumer prices: harmonised indices")`
 
 ***
 <p class="unitlegend">*`r ifelse(params$lang=="FR","Variation en pourcentage","Percentage change")`*</p>
@@ -39,31 +39,32 @@ genDataTable <- function(data,met,sketch) {
                     rownames=F, container=sketch,
                     options = list(paging=F,searching=F,info=F,
                                    language=list(decimal=","),
-                                   columnDefs = list(list(className='dt-right',targets=1:16,
+                                   columnDefs = list(list(className='dt-right',targets=1:15,
                                                           defaultContent=ifelse(params$lang=="FR",
                                                                                 "<i>nd</i>","<i>na</i>"))),
                                    rowCallback=DT::JS(
-                                     highlightTableRowByCountry(country=c("fr","ea","eu","us","jp"),begin=0,end=16,width="1px")
+                                     highlightTableRowByCountry(country=c("fr","ea","eu","us","jp"),begin=0,end=15,width="1px")
                                    )
                     ),
-                    class="compact hover",escape=F) %>%
+                    class="compact hover stripe",escape=F) %>%
   formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
   formatStyle(1,target="row",
               fontWeight=styleEqual(countrynameFR2EN(
-                c("France","Zone euro","Union européenne","Etats-Unis","Japon")),rep("bold",2)),
-              color=styleEqual(countrynameFR2EN(c("France","Zone euro","Union européenne","Etats-Unis","Japon")),
-                               c(style.color.FR,style.color.EA))) %>%
-  formatStyle(5, `box-shadow`='-2px 0 0 black')
+                c("France","Zone euro","Union européenne","États-Unis","Japon")),rep("bold",5)),
+              color=styleEqual(countrynameFR2EN(c("France","Zone euro","Union européenne","États-Unis","Japon")),
+                               c(style.color.FR,style.color.EA,style.color.EU,style.color.US,style.color.JP))) %>%
+  formatStyle(c(5,11), `box-shadow`='-2px 0 0 black')
 
   return(res)
   
 }
 
 #get data & metadata
-data.y.avg.0 <- getData(data.collection,"ZEB010AD2.TXT")[[2]]
-data.m.0 <- getData(data.collection,"ZEB010AD1.TXT")[[2]]
-# data.y.yoy.0 <- getData(data.collection,"ZEB010AD1.TXT")[[2]]
-meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
+data.y.0 <- getData(data.collection,"ZEB010AD2.TXT") #annual average
+meta <- data.y.0[[1]] #metadata
+data.y.0 <- data.y.0[[2]]
+data.m.yoy.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,1:33],6) #monthly change
+data.m.mc.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,c(1,34:65)],6) #year-on-year change
 
 #select series
 series <- c(1, #variable
@@ -108,7 +109,8 @@ if (all(is.na(tail(data.y.0[,tail(series,length(series)-1)],1)))) { #if last obs
 } else
   data.y <- t(tail(data.y.0[,series],3))
 
-data.m <- t(data.m.0[,series])
+data.m.mc <- t(data.m.mc.0[,series])
+data.m.yoy <- t(data.m.yoy.0[,series])
 
 #set metadata:
 met <- as.character(meta[2,series])
@@ -119,40 +121,54 @@ met <- countrynameFR2EN(met)
 
 #header:
 
-col.m <- as.yearqtr(as.character(data.m[1,]),"%Y-%m")
-col.m.y <- as.character(format(col.m,"%Y"))
-col.m.m <- as.character(format(col.m,ifelse(params$lang=="FR","%m","%m")))
+col.m.mc <- as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
+col.m.mc.y <- as.character(format(col.m.mc,"%Y"))
+col.m.mc.m <- as.character(format(col.m.mc,"%b"))
 
-t <- base::table(col.m.y)
+col.m.yoy <- as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
+col.m.yoy.y <- as.character(format(col.m.mc,"%Y"))
+col.m.yoy.m <- as.character(format(col.m.mc,"%b"))
+
+t.mc <- base::table(col.m.mc.y)
+t.yoy <- base::table(col.m.yoy.y)
 sep.style <- "box-shadow:-2px 0 0 black;"
 sketch = htmltools::withTags(table(
   thead(
     tr(
       th(colspan=1,rowspan=3),
       th(colspan=3,rowspan=1,ifelse(params$lang=="FR","Moyenne annuelle","Annual average")),
-      th(colspan=13,rowspan=1,ifelse(params$lang=="FR","Variation mensuelle","Monthly variation"),
+      th(colspan=6,rowspan=1,ifelse(params$lang=="FR","Variation mensuelle","Monthly variation"),
+         style=sep.style),
+      th(colspan=6,rowspan=1,ifelse(params$lang=="FR","Glissement annuel","Year-on-year"),
          style=sep.style)
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
-      lapply(seq_along(t),function(x){th(
-        names(t)[[x]],colspan=t[x],
+      lapply(seq_along(t.mc),function(x){th(
+        names(t.mc)[[x]],colspan=t.mc[x],
+        style=paste0("font-weight:bold; text-align:left; border:none;",ifelse(x==1,sep.style,""))
+      )}),
+      lapply(seq_along(t.yoy),function(x){th(
+        names(t.yoy)[[x]],colspan=t.yoy[x],
         style=paste0("font-weight:bold; text-align:left; border:none;",ifelse(x==1,sep.style,""))
       )})
     ),
     tr(
-      lapply(utils::head(col.m.m,1), th,
+      lapply(utils::head(col.m.mc.m,1), th,
              style=paste0("font-weight:normal; ",sep.style)),
-      lapply(tail(col.m.m,length(col.m.m)-1), th, style="font-weight:normal; ")
+      lapply(tail(col.m.mc.m,length(col.m.mc.m)-1), th, style="font-weight:normal; "),
+      lapply(utils::head(col.m.yoy.m,1), th,
+             style=paste0("font-weight:normal; ",sep.style)),
+      lapply(tail(col.m.yoy.m,length(col.m.yoy.m)-1), th, style="font-weight:normal; ")
     )
   )
 ))
-rm(t,sep.style)
+rm(t.mc,t.yoy,col.m.mc,col.m.yoy,col.m.mc.y,col.m.mc.m,col.m.yoy.y,col.m.yoy.m,sep.style)
 
 #end header
 
 #data
-data <- as.data.frame(cbind(data.y,data.m), stringsAsFactors=F)
+data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
 t1 <- genDataTable(data,met,sketch)
 
 #ouput the table

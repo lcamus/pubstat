@@ -76,7 +76,7 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^greece$","Grèce",c)
     c <- sub("^ireland$","Irlande",c)
     c <- sub("^slovenia$","Slovénie",c)
-    c <- sub("^united states$","Etats-Unis",c)
+    c <- sub("^united states$","États-Unis",c)
     c <- sub("^japan$","Japon",c)
     c <- sub("^cyprus$","Chypre",c)
     c <- sub("^estonia$","Estonie",c)
