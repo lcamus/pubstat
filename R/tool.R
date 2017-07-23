@@ -26,6 +26,28 @@ stringToHtmlEntities <- function(s) {
 
 }
 
+setFooter <- function(o) {
+  
+  if (!require(htmltools)) install.packages("htmltools")
+  
+  res <- htmltools::withTags(footer(style="font-size: 90%",
+                                    hr(),
+                                    o,
+                                    p(),
+                                    p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
+                                      "Banque de France",
+                                      span(style="float:right; font-style: italic;",
+                                           HTML(ifelse(params$lang=="FR",
+                                                       "Zone euro &bull; Principaux indicateurs économiques et financiers",
+                                                       "The Euro Area &bull; Main economic and financial indicators")))),
+                                    p(),
+                                    p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
+  ))
+  
+  return(res)
+  
+}
+
 #' @param c vector of countries names in FR to translate to EN
 #' @return a vector whose names are translated from FR to EN
 #' @export

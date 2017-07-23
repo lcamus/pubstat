@@ -129,17 +129,8 @@ met <- countrynameFR2EN(met)
 
 #header:
 
-col.m.mc <- as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
-# col.m.mc.y <- as.character(format(col.m.mc,"%Y"))
-# col.m.mc.m <- as.character(format(col.m.mc,"%b"))
-
-col.m.yoy <- as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-# col.m.yoy.y <- as.character(format(col.m.yoy,"%Y"))
-# col.m.yoy.m <- as.character(format(col.m.yoy,"%b"))
-
-# t.mc <- base::table(col.m.mc.y)
-# t.yoy <- base::table(col.m.yoy.y)
-
+col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
+col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
 style.sep <- "box-shadow:-2px 0 0 black;"
 
 getTH <- function(variable,liblevel) {
@@ -206,31 +197,30 @@ t1
 
 ```{r}
 
-htmltools::withTags(footer(style="font-size: 90%",
-                           hr(),
-                           p(style="text-align: left; font-style: italic; line-height: 50%;",
-                             ifelse(params$lang=="FR",
-                                    "Indices harmonisés sauf pour les États-Unis et le Japon",
-                                    "Harmonised indices except for the United States and Japan")),
-                           p(style="text-align: left;",
-                             ifelse(params$lang=="FR",
-                                    "Sources : nationales, Eurostat",
-                                    "Sources: national data, Eurostat"),
-                           span(style="float:right;",
-                                paste0(ifelse(params$lang=="FR",
-                                              "Réalisé le ",
-                                              "Produced on "),
-                                       format(Sys.Date(),"%e %B %Y")))),
-                    p(),
-                    p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
-                      "Banque de France",
-                      span(style="float:right; font-style: italic;",
-                           HTML(ifelse(params$lang=="FR",
-                                       "Zone euro &bull; Principaux indicateurs économiques et financiers",
-                                       "The Euro Area &bull; Main economic and financial indicators")))),
-                    p(),
-                    p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
-))
+#generate footer:
+
+footer <- htmltools::withTags(
+  list(
+    p(style="text-align: left; font-style: italic; line-height: 50%;",
+      ifelse(params$lang=="FR",
+             "Indices harmonisés sauf pour les États-Unis et le Japon",
+             "Harmonised indices except for the United States and Japan")),
+    p(style="text-align: left;",
+      ifelse(params$lang=="FR",
+             "Sources : nationales, Eurostat",
+             "Sources: national data, Eurostat"),
+      span(style="float:right;",
+           paste0(ifelse(params$lang=="FR",
+                         "Réalisé le ",
+                         "Produced on "),
+                  format(Sys.Date(),"%e %B %Y"))))
+  )
+)
+
+footer <- setFooter(footer)
+
+#output footer:
+footer
 
 ```
 
