@@ -44,7 +44,7 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^grèce$","Greece",c)
     c <- sub("^irlande$","Ireland",c)
     c <- sub("^slovénie$","Slovenia",c)
-    c <- sub("^etats-unis$","United States",c)
+    c <- sub("^états-unis$","United States",c)
     c <- sub("^japon$","Japan",c)
     c <- sub("^chypre$","Cyprus",c)
     c <- sub("^estonie$","Estonia",c)
@@ -111,12 +111,15 @@ getCountryByName <- function(c) {
   if (!exists("ISO_3166_1")) data(package="ISOcodes",ISO_3166_1)
   
   c <- tolower(countrynameFR2EN(c,"EN"))
-  if (c=="euro area")
-    res <- "EA"
-  else if (c=="european union")
-    res <- "EU"
-  else
-    res <- ISO_3166_1[tolower(ISO_3166_1$Name)==c,]$Alpha_2
+  
+  res <- sapply(c,function(x){
+    if (x=="euro area")
+      "EA"
+    else if (x=="european union")
+      "EU"
+    else
+      ISO_3166_1[tolower(ISO_3166_1$Name)==x,]$Alpha_2
+  })  
   
   return(res) 
   
