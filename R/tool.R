@@ -31,17 +31,19 @@ setFooter <- function(o) {
   if (!require(htmltools)) install.packages("htmltools")
   
   res <- htmltools::withTags(footer(style="font-size: 90%",
-                                    hr(),
+                                    hr(class="pub"),
                                     o,
                                     p(),
-                                    p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
+                                    # p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
+                                    p(class="title pub", style="text-align: left; font-size: 100%",
                                       "Banque de France",
                                       span(style="float:right; font-style: italic;",
                                            HTML(ifelse(params$lang=="FR",
                                                        "Zone euro &bull; Principaux indicateurs économiques et financiers",
                                                        "The Euro Area &bull; Main economic and financial indicators")))),
                                     p(),
-                                    p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
+                                    # p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
+                                    p(class="pub", style="text-align: center; font-weight: bold;",params$numpage)
   ))
   
   return(res)

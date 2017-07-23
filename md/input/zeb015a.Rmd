@@ -1,10 +1,12 @@
 ---
 always_allow_html: yes
 output:
-  html_document: default
-params: 
+  html_document:
+    css: ../../css/ccze.css
+params:
+  data.directory: "../../data/input"
   lang: "FR"
-  numpage: 17
+  numpage: 15
 ---
 
 ```{r setup, include=F}
@@ -18,17 +20,16 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 <<tool>>
 <<data>>
 ```
-```{r include=T}
-includeCSS("../../css/ccze.css")
-```
+
 ```{r}
-data.collection <- getDataCollection("../../data/input/ze_bm_piemf")
+data.collection <- getDataCollection(paste0(params$data.directory,"/ze_piemf"))
 ```
 
-## `r ifelse(params$lang=="FR","Prix &agrave; la consommation : indices harmonis&eacute;s","Consumer prices: harmonised indices")`
-
-***
-<p class="unitlegend">*`r ifelse(params$lang=="FR","Variation en pourcentage","Percentage change")`*</p>
+```{r}
+htmltools::h3(class="pub",ifelse(params$lang=="FR","Prix à la consommation : indices nationaux","Consumer prices: national indices"))
+htmltools::hr(class="pub")
+htmltools::p(class="unitlegend",ifelse(params$lang=="FR","Variation en pourcentage","Percentage change"))
+```
 
 ```{r}
 
@@ -60,18 +61,18 @@ genDataTable <- function(data,met,sketch) {
                                    paste0("style.color.",countries.highlight.code,",",collapse=""),
                                    ")"))))
                 )) %>%
-    formatStyle(c(5,11), `box-shadow`='-2px 0 0 black')
+    formatStyle(c(5,11), `box-shadow`='-2px 0 0 MidnightBlue')
   
   return(res)
   
 }
 
 #get data & metadata
-data.y.0 <- getData(data.collection,"ZEB010AD2.TXT") #annual average
+data.y.0 <- getData(data.collection,"ZEB015AD2.TXT") #annual average
 meta <- data.y.0[[1]] #metadata
 data.y.0 <- data.y.0[[2]]
-data.m.yoy.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,1:33],6) #monthly change
-data.m.mc.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,c(1,34:65)],6) #year-on-year change
+data.m.yoy.0 <- tail(getData(data.collection,"ZEB015AD1.TXT")[[2]][,1:33],6) #monthly change
+data.m.mc.0 <- tail(getData(data.collection,"ZEB015AD1.TXT")[[2]][,c(1,34:65)],6) #year-on-year change
 
 #select series
 series <- c(1, #variable
@@ -130,7 +131,7 @@ met <- countrynameFR2EN(met)
 
 col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
 col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-style.sep <- "box-shadow:-2px 0 0 black;"
+style.sep <- "box-shadow:-2px 0 0 MidnightBlue;"
 
 getTH <- function(variable,liblevel) {
   
@@ -202,8 +203,8 @@ footer <- htmltools::withTags(
   list(
     p(style="text-align: left; font-style: italic; line-height: 50%;",
       ifelse(params$lang=="FR",
-             "Indices harmonisés sauf pour les États-Unis et le Japon",
-             "Harmonised indices except for the United States and Japan")),
+             "Indices nationaux sauf pour la Zone euro et l'Union européenne",
+             "Harmonised indices except for the euro area and European Union")),
     p(style="text-align: left;",
       ifelse(params$lang=="FR",
              "Sources : nationales, Eurostat",

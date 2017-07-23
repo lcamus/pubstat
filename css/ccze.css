@@ -46,10 +46,7 @@ table.dataTable.compact tbody td:nth-child(4) {
   padding-right:25px;
 }
 
-
-/*
-.display {
-  border-collapse:collapse;
+.pub {
+  color:MidnightBlue;
+  border-color:MidnightBlue;
 }
-*/
-
