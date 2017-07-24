@@ -3,7 +3,6 @@
 o <- Sys.setlocale("LC_TIME",
                    ifelse(params$lang=="FR","French_France.1252","English"))
 
-# suppressMessages(library(zoo))
 suppressMessages({
   if (!require("DT")) install.packages('DT')
   if (!require("htmltools")) install.packages('htmltools')
@@ -15,6 +14,6 @@ style.color.FR <- "dodgerblue"
 style.color.EA <- "black"
 style.color.EU <- "dimgray"
 style.color.US <- "navy"
-style.color.JP <- "deeppink"  
+style.color.JP <- "deeppink"
 
 ## ---- end
