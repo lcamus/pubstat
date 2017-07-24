@@ -191,6 +191,36 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
 
 }
 
+genDataTable <- function(data,met,sketch,countries.highlight) {
+  
+  countries.highlight.code <- getCountryByName(countries.highlight) 
+  decimal.sep <- ifelse(params$lang=="FR",",",".")
+  
+  res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+                       rownames=F, container=sketch,
+                       options = list(paging=F,searching=F,info=F,
+                                      language=list(decimal=decimal.sep),
+                                      columnDefs = list(list(className='dt-right',targets=1:ncol(data),
+                                                             defaultContent=ifelse(params$lang=="FR",
+                                                                                   "<i>nd</i>","<i>na</i>"))),
+                                      rowCallback=DT::JS(
+                                        highlightTableRowByCountry(country=countries.highlight.code,begin=0,end=ncol(data),width="1px")
+                                      )
+                       ),
+                       class="compact hover stripe",escape=F) %>%
+    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=1) %>%
+    formatStyle(1,target="row",
+                fontWeight=styleEqual(countrynameFR2EN(countries.highlight),rep("bold",length(countries.highlight))),
+                color=styleEqual(countrynameFR2EN(countries.highlight),
+                                 eval(parse(text=sub(",)",")",paste0(
+                                   "c(",paste0("style.color.",countries.highlight.code,",",collapse=""),")"
+                                 ))))
+                ))
+  
+  return(res)
+  
+}
+
 #' #' @param s string to convert to HTML-entities
 #' #' @return a string whose special characters are converted to HTML entities
 #' #' @export
