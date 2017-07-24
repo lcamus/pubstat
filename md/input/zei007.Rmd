@@ -85,6 +85,7 @@ met <- getCountryByCode(met)
 
 # col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
 # col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
+col <- zoo::as.yearmon(as.character(data),"%Y-%m")
 style.sep <- ""
 
 getTH <- function(variable,liblevel) {
@@ -115,12 +116,8 @@ getTH <- function(variable,liblevel) {
 sketch = htmltools::withTags(table(
   thead(
     tr(
-      th(colspan=1,rowspan=3),
-      th(colspan=3,rowspan=1,ifelse(params$lang=="FR","Moyenne annuelle","Annual average")),
-      th(colspan=6,rowspan=1,ifelse(params$lang=="FR","Variation mensuelle","Monthly variation"),
-         style=style.sep),
-      th(colspan=6,rowspan=1,ifelse(params$lang=="FR","Glissement annuel","Year-on-year"),
-         style=style.sep)
+      th(colspan=1,rowspan=2),
+      getTH(base::table(as.character(format(col,"%Y"))),"Y")
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),

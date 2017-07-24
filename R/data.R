@@ -44,16 +44,19 @@ getDataCollection <- function(path=params$data.directory,
       df_data$X1 <- format(openxlsx::convertToDate(df_data$X1,origin="1900-01-01"),"%Y-%m")
       df_data <- setNames(df_data,c("date",sub("EL","GR",sapply(strsplit(names(df_data[,-1]),"\\."),`[`,2))))
       df_data <- df_data[df_data$date>="1988-01",]
+      df_data[,-1] <- lapply(df_data[,-1],as.numeric)
 
       calc <- function(f,d) {
-        obs.dec <- which(lapply(strsplit(df_data$date,"-"),`[`,2)=="12")
-        last.obs <- tail(obs.dec) #to finish
-        if ((last.obs)==nrow(d)) last.obs <- last.obs-1
-        lapply(lapply(d[,-1],as.numeric),f,na.rm=T)
+        obs.dec <- which(lapply(strsplit(d$date,"-"),`[`,2)=="12")
+        last.obs <- ifelse(tail(obs.dec,1)==nrow(d),obs.dec[length(obs.dec)-1],tail(obs.dec,1))
+        # lapply(lapply(d[1:last.obs,-1],as.numeric),f,na.rm=T)
+        lapply(d[1:last.obs,-1],f,na.rm=T)
       }
       df_data.avg <- calc(mean,df_data)
-      df_data.sd <- calc(sd,df_data)
-      df_data <- (tail(df_data,nb.obs)-df_data.avg)/df_data.std
+      df_data.std <- calc(sd,df_data)
+      # df_data[seq(from=nrow(df_data),length.out=nb.obs,by=-1),-1] <- (tail(df_data[,-1],nb.obs)-df_data.avg)/df_data.std
+      df_data <- tail(df_data,nb.obs)
+      df_data[,-1] <- (tail(df_data[,-1],nb.obs)-df_data.avg)/df_data.std
 
       df_meta <- names(df_data)
 
