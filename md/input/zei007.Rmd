@@ -12,7 +12,7 @@ params:
   numpage: 13
 ---
 
-```{r setup, include=F}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 knitr::read_chunk("../../R/tool.R")
 knitr::read_chunk("../../R/data.R")
@@ -74,18 +74,14 @@ series <- c(1, #variable
 data <- t(data.0[,series])
 
 #set metadata:
-met <- as.character(meta[2,series])
-# met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
-# met <- countrynameFR2EN(met)
+met <- tail(meta[series],-1)
 met <- getCountryByCode(met)
 
 #generate datatable:
 
 #header:
 
-# col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
-# col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-col <- zoo::as.yearmon(as.character(data),"%Y-%m")
+col <- zoo::as.yearmon(data[1,],"%Y-%m")
 style.sep <- ""
 
 getTH <- function(variable,liblevel) {
@@ -120,13 +116,7 @@ sketch = htmltools::withTags(table(
       getTH(base::table(as.character(format(col,"%Y"))),"Y")
     ),
     tr(
-      lapply(as.character(data.y[1,]), th, rowspan=2),
-      getTH(base::table(as.character(format(col.m.mc,"%Y"))),"Y"),
-      getTH(base::table(as.character(format(col.m.yoy,"%Y"))),"Y")
-    ),
-    tr(
-      getTH(as.character(format(col.m.mc,"%b")),"M"),
-      getTH(as.character(format(col.m.yoy,"%b")),"M")
+      getTH(as.character(format(col,"%b")),"M")
     )
   )
 ))
@@ -136,7 +126,6 @@ rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 #end header
 
 #data
-data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
 t1 <- genDataTable(data,met,sketch,c("France","Zone euro","Union européenne"))
 
 #ouput the table
@@ -152,14 +141,10 @@ t1
 
 footer <- htmltools::withTags(
   list(
-    # p(style="text-align: left; font-style: italic; line-height: 50%;",
-    #   ifelse(params$lang=="FR",
-    #          "Indices nationaux sauf pour la Zone euro et l'Union européenne",
-    #          "Harmonised indices except for the euro area and European Union")),
     p(style="text-align: left;",
       ifelse(params$lang=="FR",
-             "Sources : Commission européenne",
-             "Sources: European Commission"),
+             "Source : Commission européenne",
+             "Source: European Commission"),
       span(style="float:right;",
            paste0(ifelse(params$lang=="FR",
                          "Réalisé le ",

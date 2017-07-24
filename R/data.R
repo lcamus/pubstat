@@ -7,7 +7,7 @@
 getDataCollection <- function(path=params$data.directory,
                               files=tolower(params$data.collection),
                               templates=tolower(params$data.template),
-                              params=tolower(params$data.params)) {
+                              parameters=params$data.params) {
 
   fixinput <- function(p) {
     if (is.null(p)) p <- rep("",length(files))
@@ -35,26 +35,28 @@ getDataCollection <- function(path=params$data.directory,
 
     else if (template=="bdf.manual.xlsx") {
 
-      if (!require(openxlsx)) install.packages("openxlsx")
+      suppressMessages(if (!require(openxlsx)) install.packages("openxlsx"))
 
       nb.obs <- 13
 
       df_data <- openxlsx::readWorkbook(f,sheet=param)
       df_data <- df_data[,c(1,seq(from=2,to=ncol(df_data),by=8))]
       df_data$X1 <- format(openxlsx::convertToDate(df_data$X1,origin="1900-01-01"),"%Y-%m")
-      df_data <- setNames(df_data,c("date",sub("EL","GR",sapply(strsplit(names(df_data[,-1]),"\\."),`[`,2))))
+      df_data <- setNames(df_data,c("date",
+                                    sub("UK","GB",
+                                        sub("EL","GR",
+                                            sapply(strsplit(names(df_data[,-1]),"\\."),`[`,2))
+                                    )))
       df_data <- df_data[df_data$date>="1988-01",]
       df_data[,-1] <- lapply(df_data[,-1],as.numeric)
 
       calc <- function(f,d) {
         obs.dec <- which(lapply(strsplit(d$date,"-"),`[`,2)=="12")
         last.obs <- ifelse(tail(obs.dec,1)==nrow(d),obs.dec[length(obs.dec)-1],tail(obs.dec,1))
-        # lapply(lapply(d[1:last.obs,-1],as.numeric),f,na.rm=T)
         lapply(d[1:last.obs,-1],f,na.rm=T)
       }
       df_data.avg <- calc(mean,df_data)
       df_data.std <- calc(sd,df_data)
-      # df_data[seq(from=nrow(df_data),length.out=nb.obs,by=-1),-1] <- (tail(df_data[,-1],nb.obs)-df_data.avg)/df_data.std
       df_data <- tail(df_data,nb.obs)
       df_data[,-1] <- (tail(df_data[,-1],nb.obs)-df_data.avg)/df_data.std
 
@@ -73,7 +75,7 @@ getDataCollection <- function(path=params$data.directory,
   }
 
   templates <- fixinput(templates)
-  params <- fixinput(params)
+  parameters <- fixinput(parameters)
 
   l.f <- list.files(path,full.names=T, recursive=F)
   l.data <- list()
@@ -81,7 +83,7 @@ getDataCollection <- function(path=params$data.directory,
     key <- tolower(tail(strsplit(f,"/")[[1]],1))
     if (key %in% files) {
       index <- which(files %in% key)
-      l.data[[key]] <- getDataResource(f,templates[index],params[index])
+      l.data[[key]] <- getDataResource(f,templates[index],parameters[index])
     }
     else
       next
