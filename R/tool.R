@@ -27,9 +27,9 @@ stringToHtmlEntities <- function(s) {
 }
 
 setFooter <- function(o) {
-  
+
   if (!require(htmltools)) install.packages("htmltools")
-  
+
   res <- htmltools::withTags(footer(style="font-size: 90%",
                                     hr(class="pub"),
                                     o,
@@ -45,16 +45,16 @@ setFooter <- function(o) {
                                     # p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
                                     p(class="pub", style="text-align: center; font-weight: bold;",params$numpage)
   ))
-  
+
   return(res)
-  
+
 }
 
 #' @param c vector of countries names in FR to translate to EN
 #' @return a vector whose names are translated from FR to EN
 #' @export
 countrynameFR2EN <- function(c,lang=params$lang) {
-  
+
   if (tolower(lang)=="en") {
     c <- tolower(c)
     c <- sub("^allemagne$","Germany",c)
@@ -126,16 +126,16 @@ countrynameFR2EN <- function(c,lang=params$lang) {
   c <- sub("^European Union$","European union",c)
 
   return(c)
-  
+
 }
 
 getCountryByName <- function(c) {
-  
+
   if (!require(ISOcodes)) install.packages("ISOcodes")
   if (!exists("ISO_3166_1")) data(package="ISOcodes",ISO_3166_1)
-  
+
   c <- tolower(countrynameFR2EN(c,"EN"))
-  
+
   res <- sapply(c,function(x){
     if (x=="euro area")
       "EA"
@@ -143,20 +143,20 @@ getCountryByName <- function(c) {
       "EU"
     else
       ISO_3166_1[tolower(ISO_3166_1$Name)==x,]$Alpha_2
-  })  
-  
-  return(res) 
-  
+  })
+
+  return(res)
+
 }
 
 getCountryByCode <- function(c,lang=params$lang) {
- 
+
   if (!require(ISOcodes)) install.packages("ISOcodes")
   if (!exists("ISO_3166_1")) data(package="ISOcodes",ISO_3166_1)
-  
+
   c <- tolower(c)
   lang <- tolower(lang)
-  
+
   res <- sapply(c,function(x){
     if (x=="ea")
       ifelse(lang=="fr","Zone euro","Euro area")
@@ -167,15 +167,15 @@ getCountryByCode <- function(c,lang=params$lang) {
         ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
         lang)
   })
-  
-  return(res) 
-   
+
+  return(res)
+
 }
 
 highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
-  
+
   if (missing(color)) color <- sapply(paste0("style.color.",toupper(country)),get)
-  
+
   country.lib <- getCountryByCode(country)
   js <- sapply(seq_along(country),function(x){
     stringr::str_interp('if (data[0]=="${country.lib[x]}") {
@@ -183,7 +183,7 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
       $("td",row).css("border-bottom","${width} solid ${color[x]}");
       $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");
-    }\n')    
+    }\n')
   })
   js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
 
@@ -192,11 +192,12 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
 }
 
 genDataTable <- function(data,met,sketch,countries.highlight) {
-  
-  countries.highlight.code <- getCountryByName(countries.highlight) 
+
+  countries.highlight.code <- getCountryByName(countries.highlight)
   decimal.sep <- ifelse(params$lang=="FR",",",".")
-  
-  res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+
+  # res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+  res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
                        rownames=F, container=sketch,
                        options = list(paging=F,searching=F,info=F,
                                       language=list(decimal=decimal.sep),
@@ -216,9 +217,36 @@ genDataTable <- function(data,met,sketch,countries.highlight) {
                                    "c(",paste0("style.color.",countries.highlight.code,",",collapse=""),")"
                                  ))))
                 ))
-  
+
   return(res)
-  
+
+}
+
+
+getTH <- function(variable,liblevel) {
+
+  style.fwn <- "font-weight:normal; "
+  style.fwb <- "font-weight:bold; text-align:left; border:none;"
+  t<-names(variable)
+
+  res <- htmltools::withTags(
+    if (liblevel=="Y") {
+      lapply(
+        seq_along(variable),
+        function(x){th(
+          names(variable)[[x]],colspan=variable[x],
+          style=paste0(style.fwb,ifelse(x==1,style.sep,""))
+        )})
+    } else { # "M"
+      list(
+        lapply(utils::head(variable,1),th,style=paste0(style.fwn,style.sep)),
+        lapply(tail(variable,length(variable)-1), th, style=style.fwn)
+      )
+    }
+  )
+  # browser()
+  return(res)
+
 }
 
 #' #' @param s string to convert to HTML-entities

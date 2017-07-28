@@ -5,8 +5,8 @@
 # @return a list compiling the data imported
 # @export
 getDataCollection <- function(path=params$data.directory,
-                              files=tolower(params$data.collection),
-                              templates=tolower(params$data.template),
+                              files=params$data.collection,
+                              templates=params$data.template,
                               parameters=params$data.params) {
 
   fixinput <- function(p) {
@@ -97,7 +97,6 @@ getDataCollection <- function(path=params$data.directory,
 # @return the data of a data resource
 # @export
 getData <- function(dc, dr) {
-
   return(dc[[dr]])
 
 }

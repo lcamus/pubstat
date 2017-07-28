@@ -2,7 +2,11 @@
 always_allow_html: yes
 output:
   html_document: default
-params: 
+params:
+  data.directory: "../../data/input/ze_bm_piemf"
+  data.collection: !r tolower(c("ZEB010AD2.TXT","ZEB010AD1.TXT"))
+  data.params: NULL
+  data.template: !r c("bdf.bsme2.req","bdf.bsme2.req")
   lang: "FR"
   numpage: 17
 ---
@@ -22,7 +26,8 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 includeCSS("../../css/ccze.css")
 ```
 ```{r}
-data.collection <- getDataCollection("../../data/input/ze_bm_piemf")
+# data.collection <- getDataCollection("../../data/input/ze_bm_piemf")
+data.collection <- getDataCollection(params$data.directory)
 ```
 
 ## `r ifelse(params$lang=="FR","Prix &agrave; la consommation : indices harmonis&eacute;s","Consumer prices: harmonised indices")`
@@ -67,11 +72,14 @@ genDataTable <- function(data,met,sketch) {
 }
 
 #get data & metadata
-data.y.0 <- getData(data.collection,"ZEB010AD2.TXT") #annual average
+# data.y.0 <- getData(data.collection,"ZEB010AD2.TXT") #annual average
+data.y.0 <- getData(data.collection,params$data.collection[1]) #annual average
 meta <- data.y.0[[1]] #metadata
 data.y.0 <- data.y.0[[2]]
-data.m.yoy.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,1:33],6) #monthly change
-data.m.mc.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,c(1,34:65)],6) #year-on-year change
+# data.m.yoy.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,1:33],6) #monthly change
+data.m.yoy.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,1:33],6) #monthly change
+# data.m.mc.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,c(1,34:65)],6) #year-on-year change
+data.m.mc.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,c(1,34:65)],6) #year-on-year change
 
 #select series
 series <- c(1, #variable
@@ -131,31 +139,6 @@ met <- countrynameFR2EN(met)
 col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
 col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
 style.sep <- "box-shadow:-2px 0 0 black;"
-
-getTH <- function(variable,liblevel) {
-  
-  style.fwn <- "font-weight:normal; "
-  style.fwb <- "font-weight:bold; text-align:left; border:none;"
-  
-  res <- htmltools::withTags(
-    if (liblevel=="Y") {
-      lapply(
-        seq_along(variable),
-        function(x){th(
-          names(variable)[[x]],colspan=variable[x],
-          style=paste0(style.fwb,ifelse(x==1,style.sep,""))
-        )}) 
-    } else { # "M"
-      list(
-        lapply(utils::head(variable,1),th,style=paste0(style.fwn,style.sep)),
-        lapply(tail(variable,length(variable)-1), th, style=style.fwn)
-      )
-    }
-  )
-  
-  return(res)
-  
-}
 
 sketch = htmltools::withTags(table(
   thead(
