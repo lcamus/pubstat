@@ -84,7 +84,7 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^roumanie$","Romania",c)
     c <- sub("^royaume-uni$","United Kingdom",c)
     c <- sub("^suède$","Sweden",c)
-    c <- sub("^république tchèque$","Czech Republic",c)
+    c <- sub("^tchéquie$","Czechia",c)
     c <- sub("^union européenne$","European union",c)
     c <- sub("^japon$","Japan",c)
   } else {
@@ -116,7 +116,7 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^romania$","Roumanie",c)
     c <- sub("^united kingdom$","Royaume-uni",c)
     c <- sub("^sweden$","Suède",c)
-    c <- sub("^czech republic$","République tchèque",c)
+    c <- sub("^czechia$","Tchéquie",c)
     c <- sub("^european union$","Union européenne",c)
   }
   c <- stringr::str_to_title(c)
@@ -191,7 +191,7 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
 
 }
 
-genDataTable <- function(data,met,sketch,countries.highlight) {
+genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1) {
 
   countries.highlight.code <- getCountryByName(countries.highlight)
   decimal.sep <- ifelse(params$lang=="FR",",",".")
@@ -209,7 +209,7 @@ genDataTable <- function(data,met,sketch,countries.highlight) {
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
-    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=1) %>%
+    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits) %>%
     formatStyle(1,target="row",
                 fontWeight=styleEqual(countrynameFR2EN(countries.highlight),rep("bold",length(countries.highlight))),
                 color=styleEqual(countrynameFR2EN(countries.highlight),
@@ -227,7 +227,6 @@ getTH <- function(variable,liblevel) {
 
   style.fwn <- "font-weight:normal; "
   style.fwb <- "font-weight:bold; text-align:left; border:none;"
-  t<-names(variable)
 
   res <- htmltools::withTags(
     if (liblevel=="Y") {
@@ -244,7 +243,7 @@ getTH <- function(variable,liblevel) {
       )
     }
   )
-  # browser()
+
   return(res)
 
 }

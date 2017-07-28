@@ -40,36 +40,36 @@ data.0 <- data.0[[2]] #data
 
 #select series
 series <- c(1, #variable
-            2, #France
-            3, #Germany
-            4, #Austria
-            5, #Belgium
-            6, #Cyprus
-            7, #Spain
-            8, #Estonia
-            9, #Finland
-            10, #Greece
-            11, #Ireland
-            12, #Italy
-            13, #Latvia
-            14, #Lithuania
-            15, #Luxembourg,
-            16, #Malta
-            17, #Netherlands
-            18, #Portugal
-            19, #Slovakia
-            20, #Slovenia
-            21, #Euro area
-            22, #Bulgaria
-            23, #Croatia
-            24, #Denmark
-            25, #Hungary
-            26, #Poland
-            27, #Romania
-            28, #United Kingdom
-            29, #Sweden
-            30, #Czech Republic
-            31) #European union
+            13, #France
+            8, #Germany
+            23, #Austria
+            4, #Belgium
+            16, #Cyprus
+            12, #Spain
+            9, #Estonia
+            29, #Finland
+            11, #Greece
+            10, #Ireland
+            15, #Italy
+            17, #Latvia
+            18, #Lithuania
+            19, #Luxembourg,
+            21, #Malta
+            22, #Netherlands
+            25, #Portugal
+            28, #Slovakia
+            27, #Slovenia
+            3, #Euro area
+            5, #Bulgaria
+            14, #Croatia
+            7, #Denmark
+            20, #Hungary
+            24, #Poland
+            26, #Romania
+            31, #United Kingdom
+            30, #Sweden
+            6, #Czech Republic
+            2) #European union
 
 data <- t(data.0[,series])
 
@@ -102,7 +102,7 @@ rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 #end header
 
 #data
-t1 <- genDataTable(as.data.frame(data),met,sketch,c("France","Zone euro","Union européenne"))
+t1 <- genDataTable(as.data.frame(data),met,sketch,c("France","Zone euro","Union européenne"),nbdigits=2)
 
 #ouput the table
 t1
