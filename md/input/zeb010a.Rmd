@@ -37,48 +37,11 @@ data.collection <- getDataCollection(params$data.directory)
 
 ```{r}
 
-genDataTable <- function(data,met,sketch) {
-  
-  countries.highlight <- c("France","Zone euro","Union européenne","États-Unis","Japon")
-  countries.highlight.code <- getCountryByName(countries.highlight) 
-  decimal.sep <- ifelse(params$lang=="FR",",",".")
-  
-  res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
-                       rownames=F, container=sketch,
-                       options = list(paging=F,searching=F,info=F,
-                                      language=list(decimal=decimal.sep),
-                                      columnDefs = list(list(className='dt-right',targets=1:ncol(data),
-                                                             defaultContent=ifelse(params$lang=="FR",
-                                                                                   "<i>nd</i>","<i>na</i>"))),
-                                      rowCallback=DT::JS(
-                                        highlightTableRowByCountry(country=countries.highlight.code,begin=0,end=ncol(data),width="1px")
-                                      )
-                       ),
-                       class="compact hover stripe",escape=F) %>%
-    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=1) %>%
-    formatStyle(1,target="row",
-                fontWeight=styleEqual(countrynameFR2EN(
-                  countries.highlight),rep("bold",5)),
-                color=styleEqual(countrynameFR2EN(countries.highlight),
-                                 eval(parse(text=sub(",)",")",paste0(
-                                   "c(",
-                                   paste0("style.color.",countries.highlight.code,",",collapse=""),
-                                   ")"))))
-                )) %>%
-    formatStyle(c(5,11), `box-shadow`='-2px 0 0 black')
-  
-  return(res)
-  
-}
-
 #get data & metadata
-# data.y.0 <- getData(data.collection,"ZEB010AD2.TXT") #annual average
 data.y.0 <- getData(data.collection,params$data.collection[1]) #annual average
 meta <- data.y.0[[1]] #metadata
 data.y.0 <- data.y.0[[2]]
-# data.m.yoy.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,1:33],6) #monthly change
 data.m.yoy.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,1:33],6) #monthly change
-# data.m.mc.0 <- tail(getData(data.collection,"ZEB010AD1.TXT")[[2]][,c(1,34:65)],6) #year-on-year change
 data.m.mc.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,c(1,34:65)],6) #year-on-year change
 
 #select series
@@ -168,7 +131,7 @@ rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 
 #data
 data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
-t1 <- genDataTable(data,met,sketch)
+t1 <- genDataTable(data,met[-1],sketch)
 
 #ouput the table
 t1
