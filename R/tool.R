@@ -193,7 +193,9 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
 
 genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1) {
 
-  countries.highlight.code <- getCountryByName(countries.highlight)
+  countries.highlight <- toupper(countries.highlight)
+  # countries.highlight.code <- getCountryByName(countries.highlight)
+  countries.highlight.name <- getCountryByCode(countries.highlight)
   decimal.sep <- ifelse(params$lang=="FR",",",".")
 
   # res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
@@ -205,16 +207,16 @@ genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1) {
                                                              defaultContent=ifelse(params$lang=="FR",
                                                                                    "<i>nd</i>","<i>na</i>"))),
                                       rowCallback=DT::JS(
-                                        highlightTableRowByCountry(country=countries.highlight.code,begin=0,end=ncol(data),width="1px")
+                                        highlightTableRowByCountry(country=countries.highlight,begin=0,end=ncol(data),width="1px")
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
     formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits) %>%
     formatStyle(1,target="row",
-                fontWeight=styleEqual(countrynameFR2EN(countries.highlight),rep("bold",length(countries.highlight))),
-                color=styleEqual(countrynameFR2EN(countries.highlight),
+                fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),
+                color=styleEqual(countrynameFR2EN(countries.highlight.name),
                                  eval(parse(text=sub(",)",")",paste0(
-                                   "c(",paste0("style.color.",countries.highlight.code,",",collapse=""),")"
+                                   "c(",paste0("style.color.",countries.highlight,",",collapse=""),")"
                                  ))))
                 ))
 

@@ -131,7 +131,7 @@ rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 
 #data
 data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
-t1 <- genDataTable(data,met[-1],sketch)
+t1 <- genDataTable(data,met[-1],sketch,c("FR","EA","EU","US","JP"))
 
 #ouput the table
 t1

@@ -102,7 +102,7 @@ rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 #end header
 
 #data
-t1 <- genDataTable(as.data.frame(data),met,sketch,c("France","Zone euro","Union européenne"),nbdigits=2)
+t1 <- genDataTable(as.data.frame(data),met,sketch,c("FR","EA","EU"),nbdigits=2)
 
 #ouput the table
 t1
