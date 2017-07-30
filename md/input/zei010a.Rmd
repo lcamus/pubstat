@@ -1,8 +1,13 @@
 ---
 always_allow_html: yes
 output:
-  html_document: default
-params: 
+  html_document:
+    css: ../../css/ccze.css
+params:
+  data.directory: "../../data/input/ze!nonquot"
+  data.collection: !r tolower(c("ZEI010AD1.TXT","ZEI010AD2.TXT"))
+  data.params: NULL
+  data.template: !r c("bdf.bsme2.req","bdf.bsme2.req")
   lang: "FR"
   numpage: 19
 ---
@@ -12,57 +17,60 @@ knitr::opts_chunk$set(echo = FALSE)
 knitr::read_chunk("../../R/tool.R")
 knitr::read_chunk("../../R/data.R")
 knitr::read_chunk("../../R/ccze_init_table.R")
-# knitr::read_chunk("../../R/ccze_footer.R")
 ```
 ```{r}
 <<init>>
 <<tool>>
 <<data>>
 ```
-```{r include=T}
-includeCSS("../../css/ccze.css")
-```
 ```{r}
-data.collection <- getDataCollection("../../data/input/ze!nonquot")
+htmltools::h3(class="pub",ifelse(params$lang=="FR","Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area"))
+htmltools::hr(class="pub")
+htmltools::p(class="unitlegend",ifelse(params$lang=="FR","variation en pourcentage","percentage change"))
 ```
-
-## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area")`
-
-***
-<p class="unitlegend">*`r ifelse(params$lang=="FR","Variation en pourcentage","Percentage change")`*</p>
-<p class="titlechart title">**`r ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost")`** *`r tags$sup("(a)(b)")`*</p>
 
 ```{r}
+htmltools::p(class="titlechart title",
+             ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost"),
+             tags$sup("(a)(b)")
+             )
+```
 
-genDataTable <- function(data,met,sketch) {
-  
-  res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
-                    rownames=F, container=sketch,
-                    options = list(paging=F,searching=F,info=F,
-                                   language=list(decimal=","),
-                                   columnDefs = list(list(className='dt-right',targets=1:16,
-                                                          defaultContent=ifelse(params$lang=="FR",
-                                                                                "<i>nd</i>","<i>na</i>"))),
-                                   rowCallback=DT::JS(
-                                     highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
-                                   )
-                    ),
-                    class="compact hover",escape=F) %>%
-  formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
-  formatStyle(1,target="row",
-              fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
-              color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
-                               c(style.color.FR,style.color.EA))) %>%
-  formatStyle(5, `box-shadow`='-2px 0 0 black')
+```{r}
 
-  return(res)
-  
-}
+# genDataTable <- function(data,met,sketch) {
+#   
+#   res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
+#                     rownames=F, container=sketch,
+#                     options = list(paging=F,searching=F,info=F,
+#                                    language=list(decimal=","),
+#                                    columnDefs = list(list(className='dt-right',targets=1:16,
+#                                                           defaultContent=ifelse(params$lang=="FR",
+#                                                                                 "<i>nd</i>","<i>na</i>"))),
+#                                    rowCallback=DT::JS(
+#                                      highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
+#                                    )
+#                     ),
+#                     class="compact hover",escape=F) %>%
+#   formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
+#   formatStyle(1,target="row",
+#               fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
+#               color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
+#                                c(style.color.FR,style.color.EA))) %>%
+#   formatStyle(5, `box-shadow`='-2px 0 0 black')
+# 
+#   return(res)
+#   
+# }
 
 #get data & metadata
-data.y.0 <- getData(data.collection,"ZEI010AD1.TXT")[[2]]
-data.q.0 <- tail(getData(data.collection,"ZEI010AD2.TXT")[[2]],13)
-meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
+data.collection <- getDataCollection(params$data.directory)
+# data.y.0 <- getData(data.collection,"ZEI010AD1.TXT")[[2]]
+data.y.0 <- getData(data.collection,params$data.collection[1])[[2]]
+# data.q.0 <- tail(getData(data.collection,"ZEI010AD2.TXT")[[2]],13)
+data.q.0 <- tail(getData(data.collection,params$data.collection[2])[[2]],13)
+# meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
+meta <- getData(data.collection,params$data.collection[1])[[1]]
 
 #select series
 series <- c(1, #variable
@@ -104,13 +112,12 @@ rm(c.fi)
 #header:
 
 col.q <- as.yearqtr(as.character(data.q[1,]),"%Y-%m")
-col.q.y <- as.character(format(col.q,"%Y"))
-col.q.q <- as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q")))
+# col.q.y <- as.character(format(col.q,"%Y"))
+# col.q.q <- as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q")))
+# t <- base::table(col.q.y)
+style.sep <- "box-shadow:-2px 0 0 black;"
 
-t <- base::table(col.q.y)
-sep.style <- "box-shadow:-2px 0 0 black;"
 sketch = htmltools::withTags(table(
-  # class = 'display',
   thead(
     tr(
       th(colspan=1,rowspan=3),
@@ -120,16 +127,20 @@ sketch = htmltools::withTags(table(
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
-      lapply(seq_along(t),function(x){th(
-        names(t)[[x]],colspan=t[x],
-        style=paste0("font-weight:bold; text-align:left; border:none;",ifelse(x==1,sep.style,""))
-      )})
+      # lapply(seq_along(t),function(x){th(
+      #   names(t)[[x]],colspan=t[x],
+      #   style=paste0("font-weight:bold; text-align:left; border:none;",ifelse(x==1,sep.style,""))
+      # )})
+      getTH(base::table(as.character(format(col.q,"%Y"))),"Y")
     ),
     tr(
-      lapply(utils::head(col.q.q,1), th,
-             style=paste0("font-weight:normal; ",sep.style)),
-      lapply(tail(col.q.q,length(col.q.q)-1), th, style="font-weight:normal; ")
+      getTH(as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q"))),"Q")
     )
+    # tr(
+    #   lapply(utils::head(col.q.q,1), th,
+    #          style=paste0("font-weight:normal; ",sep.style)),
+    #   lapply(tail(col.q.q,length(col.q.q)-1), th, style="font-weight:normal; ")
+    # )
   )
 ))
 rm(t,sep.style)
@@ -138,15 +149,19 @@ rm(t,sep.style)
 
 #data
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t1 <- genDataTable(data,met,sketch)
+t1 <- genDataTable(data,met,sketch,c("FR","EA"))
 
 #ouput the table
 t1
 
 ```
 
-<p>&nbsp;</p>
-<p class="titlechart">**`r ifelse(params$lang=="FR","Co&ucirc;t salarial horaire","Hourly wage cost")`** *`r tags$sup("(b)")`*</p>
+```{r}
+htmltools::p(class="titlechart title",
+             ifelse(params$lang=="FR","Co&ucirc;t salarial horaire","Hourly wage cost"),
+             tags$sup("(b)")
+             )
+```
 
 ```{r}
 
@@ -180,7 +195,7 @@ data.q <- t(data.q.0[,series])
 
 #data:
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t2 <- genDataTable(data,met,sketch)
+t2 <- genDataTable(data,met,sketch,c("FR","EA"))
 
 #ouput the table
 t2
@@ -190,40 +205,37 @@ t2
 
 ```{r}
 
-htmltools::withTags(footer(style="font-size: 90%",
-                           hr(),
-                           p(style="text-align: left; font-style: italic; line-height: 50%;",
-                             ifelse(params$lang=="FR",
-                                    "Basé sur la méthodologie NACE révision 2",
-                                    "Based on methodology NACE revision 2")),
-                           tags$ol(class="laparent",style="font-style: italic; padding-left: 3px;",
-                                   tags$li(HTML(ifelse(params$lang=="FR",
-                                                       "En plus des salaires bruts des employés, les co&ucirc;ts totaux de la main-d'&oelig;uvre incluent les coûts indirects tels que les cotisations sociales à la charge des employeurs et les imp&ocirc;ts liés à l'emploi",
-                                                       "In addition to employees' gross earnings, total labour costs include indirect costs such as employers' social contributions and taxes connected to the
+footer <- htmltools::withTags(
+  list(
+    p(style="text-align: left; font-style: italic; line-height: 50%;",
+      ifelse(params$lang=="FR",
+             "Basé sur la méthodologie NACE révision 2",
+             "Based on methodology NACE revision 2")),
+    tags$ol(class="laparent",style="font-style: italic; padding-left: 3px;",
+            tags$li(HTML(ifelse(params$lang=="FR",
+                                "En plus des salaires bruts des employés, les co&ucirc;ts totaux de la main-d'&oelig;uvre incluent les coûts indirects tels que les cotisations sociales à la charge des employeurs et les imp&ocirc;ts liés à l'emploi",
+                                "In addition to employees' gross earnings, total labour costs include indirect costs such as employers' social contributions and taxes connected to the
 employment"))),
 tags$li(HTML(ifelse(params$lang=="FR",
                     "Ensemble de l'économie excluant l'agriculture, la p&ecirc;che et le secteur public",
                     "Whole economy excluding agriculture, fishing and government sectors"))),
 tags$li(HTML(ifelse(params$lang=="FR",
                     "Données brutes","Unadjusted")))
-                           ),
+    ),
 p(style="text-align: left;",
   "Source Eurostat",
   span(style="float:right;",
        paste0(ifelse(params$lang=="FR",
                      "Réalisé le ",
                      "Produced on "),
-              format(Sys.Date(),"%e %B %Y")))),
-p(),
-p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
-  "Banque de France",
-  span(style="float:right; font-style: italic;",
-       HTML(ifelse(params$lang=="FR",
-                   "Zone euro &bull; Principaux indicateurs économiques et financiers",
-                   "The Euro Area &bull; Main economic and financial indicators")))),
-p(),
-p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
-))
+              format(Sys.Date(),"%e %B %Y"))))
+  )
+)
+
+footer <- setFooter(footer)
+
+#output footer:
+footer
 
 ```
 

@@ -229,6 +229,7 @@ getTH <- function(variable,liblevel) {
 
   style.fwn <- "font-weight:normal; "
   style.fwb <- "font-weight:bold; text-align:left; border:none;"
+  style.sep <- "box-shadow:-2px 0 0 black;"
 
   res <- htmltools::withTags(
     if (liblevel=="Y") {
@@ -238,7 +239,7 @@ getTH <- function(variable,liblevel) {
           names(variable)[[x]],colspan=variable[x],
           style=paste0(style.fwb,ifelse(x==1,style.sep,""))
         )})
-    } else { # "M"
+    } else { # "M" or "Q"
       list(
         lapply(utils::head(variable,1),th,style=paste0(style.fwn,style.sep)),
         lapply(tail(variable,length(variable)-1), th, style=style.fwn)

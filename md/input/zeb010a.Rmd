@@ -1,7 +1,8 @@
 ---
 always_allow_html: yes
 output:
-  html_document: default
+  html_document:
+    css: ../../css/ccze.css
 params:
   data.directory: "../../data/input/ze_bm_piemf"
   data.collection: !r tolower(c("ZEB010AD2.TXT","ZEB010AD1.TXT"))
@@ -22,13 +23,6 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 <<tool>>
 <<data>>
 ```
-```{r include=T}
-includeCSS("../../css/ccze.css")
-```
-```{r}
-# data.collection <- getDataCollection("../../data/input/ze_bm_piemf")
-data.collection <- getDataCollection(params$data.directory)
-```
 
 ## `r ifelse(params$lang=="FR","Prix &agrave; la consommation : indices harmonis&eacute;s","Consumer prices: harmonised indices")`
 
@@ -38,6 +32,7 @@ data.collection <- getDataCollection(params$data.directory)
 ```{r}
 
 #get data & metadata
+data.collection <- getDataCollection(params$data.directory)
 data.y.0 <- getData(data.collection,params$data.collection[1]) #annual average
 meta <- data.y.0[[1]] #metadata
 data.y.0 <- data.y.0[[2]]
