@@ -26,16 +26,28 @@ stringToHtmlEntities <- function(s) {
 
 }
 
-setFooter <- function(o) {
+setFooter <- function(o, source=c("","")) {
 
   if (!require(htmltools)) install.packages("htmltools")
+
+  source.fr <- source[1]
+  source.en <- source[2]
 
   res <- htmltools::withTags(footer(style="font-size: 90%",
                                     p(class="verticalspace"),
                                     hr(class="pub"),
                                     o,
                                     p(),
-                                    # p(class="title", style="text-align: left; color: MidnightBlue; font-size: 100%",
+                                    p(style="text-align: left;",
+                                      paste0("Source",ifelse(params$lang=="FR",
+                                                             paste0(" : ",source.fr),
+                                                             paste0(": ",source.en))),
+                                      span(style="float:right;",
+                                           paste0(ifelse(params$lang=="FR",
+                                                         "Réalisé le ",
+                                                         "Produced on "),
+                                                  format(Sys.Date(),"%e %B %Y")))),
+                                    p(),
                                     p(class="title pub", style="text-align: left; font-size: 100%",
                                       "Banque de France",
                                       span(style="float:right; font-style: italic;",
@@ -43,7 +55,6 @@ setFooter <- function(o) {
                                                        "Zone euro &bull; Principaux indicateurs économiques et financiers",
                                                        "The Euro Area &bull; Main economic and financial indicators")))),
                                     p(),
-                                    # p(style="text-align: center; font-weight: bold; color: MidnightBlue;",params$numpage)
                                     p(class="pub", style="text-align: center; font-weight: bold;",params$numpage)
   ))
 

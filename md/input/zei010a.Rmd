@@ -182,18 +182,18 @@ tags$li(HTML(ifelse(params$lang=="FR",
                     "Whole economy excluding agriculture, fishing and government sectors"))),
 tags$li(HTML(ifelse(params$lang=="FR",
                     "Données brutes","Unadjusted")))
-    ),
-p(style="text-align: left;",
-  "Source Eurostat",
-  span(style="float:right;",
-       paste0(ifelse(params$lang=="FR",
-                     "Réalisé le ",
-                     "Produced on "),
-              format(Sys.Date(),"%e %B %Y"))))
+    )
+# p(style="text-align: left;",
+#   "Source Eurostat",
+#   span(style="float:right;",
+#        paste0(ifelse(params$lang=="FR",
+#                      "Réalisé le ",
+#                      "Produced on "),
+#               format(Sys.Date(),"%e %B %Y"))))
   )
 )
 
-footer <- setFooter(footer)
+footer <- setFooter(footer,source=rep("Eurostat",2))
 
 #output footer:
 footer
