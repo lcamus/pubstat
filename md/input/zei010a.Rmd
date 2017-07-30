@@ -30,10 +30,12 @@ htmltools::p(class="unitlegend",ifelse(params$lang=="FR","variation en pourcenta
 ```
 
 ```{r}
-htmltools::p(class="titlechart title",
-             ifelse(params$lang=="FR","Coût total horaire de la main-d'ouvre","Hourly labour cost"),
-             tags$sup("(a)(b)")
-             )
+htmltools::withTags(
+  p(class="titlechart title",
+    HTML(ifelse(params$lang=="FR","Coût total horaire de la main-d'&oelig;uvre","Hourly labour cost")),
+    tags$sup("(a)(b)")
+  )
+)
 ```
 
 ```{r}
@@ -103,13 +105,12 @@ sketch = htmltools::withTags(table(
     )
   )
 ))
-# rm(t,sep.style)
 
 #end header
 
 #data
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t1 <- genDataTable(data,met[-1],sketch,c("FR","EA"))
+t1 <- genDataTable(data,met[-1],sketch,c("FR","EA"),sep.col=5)
 
 #ouput the table
 t1
@@ -156,7 +157,7 @@ data.q <- t(data.q.0[,series])
 
 #data:
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t2 <- genDataTable(data[,-1],met[-1],sketch,c("FR","EA"))
+t2 <- genDataTable(data[,-1],met[-1],sketch,c("FR","EA"),sep.col=5)
 
 #ouput the table
 t2
@@ -183,13 +184,6 @@ tags$li(HTML(ifelse(params$lang=="FR",
 tags$li(HTML(ifelse(params$lang=="FR",
                     "Données brutes","Unadjusted")))
     )
-# p(style="text-align: left;",
-#   "Source Eurostat",
-#   span(style="float:right;",
-#        paste0(ifelse(params$lang=="FR",
-#                      "Réalisé le ",
-#                      "Produced on "),
-#               format(Sys.Date(),"%e %B %Y"))))
   )
 )
 

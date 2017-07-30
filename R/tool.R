@@ -203,7 +203,7 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
 
 }
 
-genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1) {
+genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1,sep.col=NULL) {
 
   countries.highlight <- toupper(countries.highlight)
   # countries.highlight.code <- getCountryByName(countries.highlight)
@@ -231,6 +231,9 @@ genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1) {
                                    "c(",paste0("style.color.",countries.highlight,",",collapse=""),")"
                                  ))))
                 ))
+
+  for (i in length(sep.col))
+    res <- res %>% formatStyle(sep.col[i], `box-shadow`='-2px 0 0 black')
 
   return(res)
 
