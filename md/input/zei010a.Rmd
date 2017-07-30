@@ -31,37 +31,12 @@ htmltools::p(class="unitlegend",ifelse(params$lang=="FR","variation en pourcenta
 
 ```{r}
 htmltools::p(class="titlechart title",
-             ifelse(params$lang=="FR","Co&ucirc;t total horaire de la main-d'&oelig;uvre","Hourly labour cost"),
+             ifelse(params$lang=="FR","Coût total horaire de la main-d'ouvre","Hourly labour cost"),
              tags$sup("(a)(b)")
              )
 ```
 
 ```{r}
-
-# genDataTable <- function(data,met,sketch) {
-#   
-#   res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
-#                     rownames=F, container=sketch,
-#                     options = list(paging=F,searching=F,info=F,
-#                                    language=list(decimal=","),
-#                                    columnDefs = list(list(className='dt-right',targets=1:16,
-#                                                           defaultContent=ifelse(params$lang=="FR",
-#                                                                                 "<i>nd</i>","<i>na</i>"))),
-#                                    rowCallback=DT::JS(
-#                                      highlightTableRowByCountry(country=c("fr","ea"),begin=0,end=16,width="1px")
-#                                    )
-#                     ),
-#                     class="compact hover",escape=F) %>%
-#   formatCurrency(columns=c(2:17),currency="",dec.mark=",",digits=1) %>%
-#   formatStyle(1,target="row",
-#               fontWeight=styleEqual(countrynameFR2EN(c("France","Zone euro")),rep("bold",2)),
-#               color=styleEqual(countrynameFR2EN(c("France","Zone euro")),
-#                                c(style.color.FR,style.color.EA))) %>%
-#   formatStyle(5, `box-shadow`='-2px 0 0 black')
-# 
-#   return(res)
-#   
-# }
 
 #get data & metadata
 data.collection <- getDataCollection(params$data.directory)
@@ -115,7 +90,7 @@ col.q <- as.yearqtr(as.character(data.q[1,]),"%Y-%m")
 # col.q.y <- as.character(format(col.q,"%Y"))
 # col.q.q <- as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q")))
 # t <- base::table(col.q.y)
-style.sep <- "box-shadow:-2px 0 0 black;"
+sep.style <- "box-shadow:-2px 0 0 black;"
 
 sketch = htmltools::withTags(table(
   thead(
@@ -157,8 +132,9 @@ t1
 ```
 
 ```{r}
+htmltools::p()
 htmltools::p(class="titlechart title",
-             ifelse(params$lang=="FR","Co&ucirc;t salarial horaire","Hourly wage cost"),
+             ifelse(params$lang=="FR","Coût salarial horaire","Hourly wage cost"),
              tags$sup("(b)")
              )
 ```
