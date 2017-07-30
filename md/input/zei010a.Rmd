@@ -40,11 +40,8 @@ htmltools::p(class="titlechart title",
 
 #get data & metadata
 data.collection <- getDataCollection(params$data.directory)
-# data.y.0 <- getData(data.collection,"ZEI010AD1.TXT")[[2]]
 data.y.0 <- getData(data.collection,params$data.collection[1])[[2]]
-# data.q.0 <- tail(getData(data.collection,"ZEI010AD2.TXT")[[2]],13)
 data.q.0 <- tail(getData(data.collection,params$data.collection[2])[[2]],13)
-# meta <- getData(data.collection,"ZEI010AD1.TXT")[[1]]
 meta <- getData(data.collection,params$data.collection[1])[[1]]
 
 #select series
@@ -87,9 +84,6 @@ rm(c.fi)
 #header:
 
 col.q <- as.yearqtr(as.character(data.q[1,]),"%Y-%m")
-# col.q.y <- as.character(format(col.q,"%Y"))
-# col.q.q <- as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q")))
-# t <- base::table(col.q.y)
 sep.style <- "box-shadow:-2px 0 0 black;"
 
 sketch = htmltools::withTags(table(
@@ -102,29 +96,20 @@ sketch = htmltools::withTags(table(
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
-      # lapply(seq_along(t),function(x){th(
-      #   names(t)[[x]],colspan=t[x],
-      #   style=paste0("font-weight:bold; text-align:left; border:none;",ifelse(x==1,sep.style,""))
-      # )})
       getTH(base::table(as.character(format(col.q,"%Y"))),"Y")
     ),
     tr(
       getTH(as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q"))),"Q")
     )
-    # tr(
-    #   lapply(utils::head(col.q.q,1), th,
-    #          style=paste0("font-weight:normal; ",sep.style)),
-    #   lapply(tail(col.q.q,length(col.q.q)-1), th, style="font-weight:normal; ")
-    # )
   )
 ))
-rm(t,sep.style)
+# rm(t,sep.style)
 
 #end header
 
 #data
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t1 <- genDataTable(data,met,sketch,c("FR","EA"))
+t1 <- genDataTable(data,met[-1],sketch,c("FR","EA"))
 
 #ouput the table
 t1
@@ -132,7 +117,7 @@ t1
 ```
 
 ```{r}
-htmltools::p()
+htmltools::p(class="verticalspace")
 htmltools::p(class="titlechart title",
              ifelse(params$lang=="FR","Coût salarial horaire","Hourly wage cost"),
              tags$sup("(b)")
@@ -171,7 +156,7 @@ data.q <- t(data.q.0[,series])
 
 #data:
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t2 <- genDataTable(data,met,sketch,c("FR","EA"))
+t2 <- genDataTable(data[,-1],met[-1],sketch,c("FR","EA"))
 
 #ouput the table
 t2

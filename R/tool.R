@@ -31,6 +31,7 @@ setFooter <- function(o) {
   if (!require(htmltools)) install.packages("htmltools")
 
   res <- htmltools::withTags(footer(style="font-size: 90%",
+                                    p(class="verticalspace"),
                                     hr(class="pub"),
                                     o,
                                     p(),

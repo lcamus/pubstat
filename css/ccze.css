@@ -50,3 +50,7 @@ table.dataTable.compact tbody td:nth-child(4) {
   color:MidnightBlue;
   border-color:MidnightBlue;
 }
+
+.verticalspace {
+  margin-bottom: 1cm;
+}
