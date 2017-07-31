@@ -71,8 +71,6 @@ met <- as.character(lapply(met,function(x){
 met <- paste0(toupper(substr(met, 1, 1)),
                      substr(met, 2, nchar(met)))
 
-# met <- getCountryByCode(met)
-
 #generate datatable:
 
 #header:
