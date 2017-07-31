@@ -26,6 +26,26 @@ stringToHtmlEntities <- function(s) {
 
 }
 
+setHeader <- function(title, legend=c("","")) {
+
+  if (!require(htmltools)) install.packages("htmltools")
+
+  title.fr <- title[1]
+  title.en <- title[2]
+
+  legend.fr <- legend[1]
+  legend.en <- legend[2]
+
+  res <- htmltools::withTags(header(
+    h3(class="pub",ifelse(params$lang=="FR",title.fr,title.en)),
+    hr(class="pub"),
+    p(class="unitlegend",ifelse(params$lang=="FR",legend.fr,legend.en))
+  ))
+
+  return(res)
+
+}
+
 setFooter <- function(o, source=c("","")) {
 
   if (!require(htmltools)) install.packages("htmltools")

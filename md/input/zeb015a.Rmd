@@ -26,9 +26,11 @@ data.collection <- getDataCollection(paste0(params$data.directory,"/ze_piemf"))
 ```
 
 ```{r}
-htmltools::h3(class="pub",ifelse(params$lang=="FR","Prix à la consommation : indices nationaux","Consumer prices: national indices"))
-htmltools::hr(class="pub")
-htmltools::p(class="unitlegend",ifelse(params$lang=="FR","Variation en pourcentage","Percentage change"))
+# htmltools::h3(class="pub",ifelse(params$lang=="FR","Prix à la consommation : indices nationaux","Consumer prices: national indices"))
+# htmltools::hr(class="pub")
+# htmltools::p(class="unitlegend",ifelse(params$lang=="FR","Variation en pourcentage","Percentage change"))
+setHeader(title=c("Prix à la consommation : indices nationaux","Consumer prices: national indices"),
+                    legend=c("variation en pourcentage","percentage change"))
 ```
 
 ```{r}

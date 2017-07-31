@@ -25,9 +25,8 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 ```
 
 ```{r}
-htmltools::h3(class="pub",ifelse(params$lang=="FR","Prix à la consommation : indices harmonisés","Consumer prices: harmonised indices"))
-htmltools::hr(class="pub")
-htmltools::p(class="unitlegend",ifelse(params$lang=="FR","variation en pourcentage","percentage change"))
+setHeader(title=c("Prix à la consommation : indices harmonisés","Consumer prices: harmonised indices"),
+                    legend=c("variation en pourcentage","percentage change"))
 ```
 
 ```{r}
@@ -135,8 +134,6 @@ t1 <- genDataTable(data,met[-1],sketch,
 t1
 
 ```
-
-<p>&nbsp;</p>
 
 ```{r}
 

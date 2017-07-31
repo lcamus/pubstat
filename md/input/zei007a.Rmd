@@ -25,9 +25,8 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 ```
 
 ```{r}
-htmltools::h3(class="pub",ifelse(params$lang=="FR","Activité : indicateur de confiance dans l'industrie","Activity: industrial confidence indicator"))
-htmltools::hr(class="pub")
-htmltools::p(class="unitlegend",ifelse(params$lang=="FR","solde des opinions","balance of opinions"))
+setHeader(title=c("Activité : indicateur de confiance dans l'industrie","Activity: industrial confidence indicator"),
+                    legend=c("solde des opinions","balance of opinions"))
 ```
 
 ```{r}

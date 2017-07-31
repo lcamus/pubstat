@@ -24,9 +24,8 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 <<data>>
 ```
 ```{r}
-htmltools::h3(class="pub",ifelse(params$lang=="FR","Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area"))
-htmltools::hr(class="pub")
-htmltools::p(class="unitlegend",ifelse(params$lang=="FR","variation en pourcentage","percentage change"))
+setHeader(title=c("Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area"),
+                    legend=c("variation en pourcentage","percentage change"))
 ```
 
 ```{r}
