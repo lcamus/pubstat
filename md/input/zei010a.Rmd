@@ -85,7 +85,6 @@ rm(c.fi)
 #header:
 
 col.q <- as.yearqtr(as.character(data.q[1,]),"%Y-%m")
-# sep.style <- "box-shadow:-2px 0 0 black;"
 
 sketch = htmltools::withTags(table(
   thead(

@@ -34,8 +34,7 @@ style.color.EA <- "black"
 style.color.EU <- "dimgray"
 style.color.US <- "navy"
 style.color.JP <- "deeppink"
-
-# sep.style <- "box-shadow:-2px 0 0 black;"
+style.color.GB <- "darkorchid"
 
 css.path <- "../../css/ccze.css"
 sep.style <- getStyle(css.path)

@@ -33,7 +33,7 @@ setHeader(title=c("Activité : indicateur de confiance dans l'industrie","Activit
 
 #get data & metadata
 data.collection <- getDataCollection()
-data.0 <- getData(data.collection,"industry_total_sa_nace2.xlsx")
+data.0 <- getData(data.collection,params$data.collection[1])
 meta <- data.0[[1]] #metadata
 data.0 <- data.0[[2]] #data
 
@@ -81,8 +81,7 @@ met <- getCountryByCode(met)
 #header:
 
 cols <- zoo::as.yearmon(as.character(data[1,]),"%Y-%m")
-t<-as.character(data[1,])
-# style.sep <- ""
+# t<-as.character(data[1,])
 
 sketch = htmltools::withTags(table(
   thead(
@@ -95,8 +94,6 @@ sketch = htmltools::withTags(table(
     )
   )
 ))
-
-# rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 
 #end header
 
@@ -117,15 +114,6 @@ t1
 
 footer <- htmltools::withTags(
   list(
-    # p(style="text-align: left;",
-    #   ifelse(params$lang=="FR",
-    #          "Source : Commission européenne",
-    #          "Source: European Commission"),
-    #   span(style="float:right;",
-    #        paste0(ifelse(params$lang=="FR",
-    #                      "Réalisé le ",
-    #                      "Produced on "),
-    #               format(Sys.Date(),"%e %B %Y"))))
   )
 )
 

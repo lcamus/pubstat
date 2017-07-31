@@ -1,0 +1,103 @@
+---
+always_allow_html: yes
+output:
+  html_document:
+    css: ../../css/ccze.css
+params:
+  data.directory: "../../data/input/ze_piemf"
+  data.collection: !r tolower(c("ZEA010BD1.TXT"))
+  data.params: NULL
+  data.template: !r c("bdf.bsme2.req")
+  lang: "FR"
+  numpage: 23
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::read_chunk("../../R/tool.R")
+knitr::read_chunk("../../R/data.R")
+knitr::read_chunk("../../R/ccze_init_table.R")
+```
+```{r}
+<<init>>
+<<tool>>
+<<data>>
+```
+
+```{r}
+setHeader(title=c("Agrégats de monnaie","Monetary aggregates"),
+                    legend=c("données cvs, glissement annuel en pourcentage","seasonally adjusted data, 12-month % change"))
+```
+
+```{r}
+
+#get data & metadata
+data.collection <- getDataCollection()
+data.0 <- getData(data.collection,params$data.collection[1])
+# browser()
+meta <- data.0[[1]] #metadata
+data.0 <- tail(data.0[[2]],13) #data
+
+#select series
+series <- c(1, #variable
+            2, #Euro area / M1
+            3, #Euro area / M3
+            5, #UK / Currency in circulation
+            6, #UK / M4
+            7, #US/ M1
+            8, #US / M2
+            9, #Japan / M1
+            10) #Japan / M3
+
+data <- t(data.0[,series])
+
+#set metadata:
+met <- as.character(meta[2,series])
+# met <- getCountryByCode(met)
+
+#generate datatable:
+
+#header:
+
+cols <- zoo::as.yearmon(as.character(data[1,]),"%Y-%m")
+
+sketch = htmltools::withTags(table(
+  thead(
+    tr(
+      th(colspan=1,rowspan=2),
+      getTH(base::table(as.character(format(cols,"%Y"))),"Y")
+    ),
+    tr(
+      getTH(as.character(format(cols,"%b")),"M")
+    )
+  )
+))
+
+#end header
+
+#data
+t1 <- genDataTable(data,met[-1],sketch,
+                   countries.highlight=c("EA","GB","US","JP"),nbdigits=1)
+
+#ouput the table
+t1
+
+```
+
+```{r}
+
+#generate footer:
+
+footer <- htmltools::withTags(
+  list(
+  )
+)
+
+footer <- setFooter(footer,source=c("Commission européenne","European Commission"))
+
+#output footer:
+footer
+
+```
+
+
