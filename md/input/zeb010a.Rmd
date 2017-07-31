@@ -24,10 +24,11 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 <<data>>
 ```
 
-## `r ifelse(params$lang=="FR","Prix &agrave; la consommation : indices harmonis&eacute;s","Consumer prices: harmonised indices")`
-
-***
-<p class="unitlegend">*`r ifelse(params$lang=="FR","Variation en pourcentage","Percentage change")`*</p>
+```{r}
+htmltools::h3(class="pub",ifelse(params$lang=="FR","Prix à la consommation : indices harmonisés","Consumer prices: harmonised indices"))
+htmltools::hr(class="pub")
+htmltools::p(class="unitlegend",ifelse(params$lang=="FR","variation en pourcentage","percentage change"))
+```
 
 ```{r}
 
@@ -110,12 +111,12 @@ sketch = htmltools::withTags(table(
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
-      getTH(base::table(as.character(format(col.m.mc,"%Y"))),"Y"),
-      getTH(base::table(as.character(format(col.m.yoy,"%Y"))),"Y")
+      getTH(base::table(as.character(format(col.m.mc,"%Y"))),"Y",sep.style),
+      getTH(base::table(as.character(format(col.m.yoy,"%Y"))),"Y",sep.style)
     ),
     tr(
-      getTH(as.character(format(col.m.mc,"%b")),"M"),
-      getTH(as.character(format(col.m.yoy,"%b")),"M")
+      getTH(as.character(format(col.m.mc,"%b")),"M",sep.style),
+      getTH(as.character(format(col.m.yoy,"%b")),"M",sep.style)
     )
   )
 ))
@@ -126,7 +127,9 @@ rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 
 #data
 data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
-t1 <- genDataTable(data,met[-1],sketch,c("FR","EA","EU","US","JP"))
+t1 <- genDataTable(data,met[-1],sketch,
+                   countries.highlight=c("FR","EA","EU","US","JP"),
+                   sep.col=c(5,11),sep.style=sep.style)
 
 #ouput the table
 t1
@@ -144,20 +147,11 @@ footer <- htmltools::withTags(
     p(style="text-align: left; font-style: italic; line-height: 50%;",
       ifelse(params$lang=="FR",
              "Indices harmonisés sauf pour les États-Unis et le Japon",
-             "Harmonised indices except for the United States and Japan")),
-    p(style="text-align: left;",
-      ifelse(params$lang=="FR",
-             "Sources : nationales, Eurostat",
-             "Sources: national data, Eurostat"),
-      span(style="float:right;",
-           paste0(ifelse(params$lang=="FR",
-                         "Réalisé le ",
-                         "Produced on "),
-                  format(Sys.Date(),"%e %B %Y"))))
+             "Harmonised indices except for the United States and Japan"))
   )
 )
 
-footer <- setFooter(footer)
+footer <- setFooter(footer,source=c("nationales, Eurostat","national data, Eurostat"))
 
 #output footer:
 footer

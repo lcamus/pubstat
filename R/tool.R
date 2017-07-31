@@ -62,9 +62,6 @@ setFooter <- function(o, source=c("","")) {
 
 }
 
-#' @param c vector of countries names in FR to translate to EN
-#' @return a vector whose names are translated from FR to EN
-#' @export
 countrynameFR2EN <- function(c,lang=params$lang) {
 
   if (tolower(lang)=="en") {
@@ -203,14 +200,17 @@ highlightTableRowByCountry <- function(country,color,width="1px",begin,end) {
 
 }
 
-genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1,sep.col=NULL) {
+genDataTable <- function(data,met,sketch,
+                         countries.highlight,nbdigits=1,sep.col=NULL,
+                         sep.style="box-shadow:-2px 0 0 black;") {
 
   countries.highlight <- toupper(countries.highlight)
-  # countries.highlight.code <- getCountryByName(countries.highlight)
   countries.highlight.name <- getCountryByCode(countries.highlight)
   decimal.sep <- ifelse(params$lang=="FR",",",".")
+  sep.style <- sub(
+    ";$","",
+    strsplit(sep.style,":")[[1]][2])
 
-  # res <- DT::datatable(cbind(country=met[-1],sapply(data[-1,],as.numeric)),
   res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
                        rownames=F, container=sketch,
                        options = list(paging=F,searching=F,info=F,
@@ -232,19 +232,20 @@ genDataTable <- function(data,met,sketch,countries.highlight,nbdigits=1,sep.col=
                                  ))))
                 ))
 
-  for (i in length(sep.col))
-    res <- res %>% formatStyle(sep.col[i], `box-shadow`='-2px 0 0 black')
+  # for (i in length(sep.col))
+    # res <- res %>% formatStyle(sep.col[i], `box-shadow`='-2px 0 0 black')
+  res <- res %>% formatStyle(sep.col, `box-shadow`=sep.style)
 
   return(res)
 
 }
 
 
-getTH <- function(variable,liblevel) {
+getTH <- function(variable,liblevel,sep.style="") {
 
   style.fwn <- "font-weight:normal; "
   style.fwb <- "font-weight:bold; text-align:left; border:none;"
-  style.sep <- "box-shadow:-2px 0 0 black;"
+  # style.sep <- "box-shadow:-2px 0 0 black;"
 
   res <- htmltools::withTags(
     if (liblevel=="Y") {
@@ -252,11 +253,11 @@ getTH <- function(variable,liblevel) {
         seq_along(variable),
         function(x){th(
           names(variable)[[x]],colspan=variable[x],
-          style=paste0(style.fwb,ifelse(x==1,style.sep,""))
+          style=paste0(style.fwb,ifelse(x==1,sep.style,""))
         )})
     } else { # "M" or "Q"
       list(
-        lapply(utils::head(variable,1),th,style=paste0(style.fwn,style.sep)),
+        lapply(utils::head(variable,1),th,style=paste0(style.fwn,sep.style)),
         lapply(tail(variable,length(variable)-1), th, style=style.fwn)
       )
     }
@@ -266,9 +267,10 @@ getTH <- function(variable,liblevel) {
 
 }
 
-#' #' @param s string to convert to HTML-entities
-#' #' @return a string whose special characters are converted to HTML entities
-#' #' @export
+
+
+
+
 #' convertToPDF <- function (f.in, f.out, p) {
 #'   print(getwd())
 #'   system(paste0("cmd /c phantomjs ",

@@ -54,3 +54,5 @@ table.dataTable.compact tbody td:nth-child(4) {
 .verticalspace {
   margin-bottom: 1cm;
 }
+
+.tableverticalseparator { box-shadow:-2px 0 0 black; }

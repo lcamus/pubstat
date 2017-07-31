@@ -86,7 +86,7 @@ rm(c.fi)
 #header:
 
 col.q <- as.yearqtr(as.character(data.q[1,]),"%Y-%m")
-sep.style <- "box-shadow:-2px 0 0 black;"
+# sep.style <- "box-shadow:-2px 0 0 black;"
 
 sketch = htmltools::withTags(table(
   thead(
@@ -98,10 +98,10 @@ sketch = htmltools::withTags(table(
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
-      getTH(base::table(as.character(format(col.q,"%Y"))),"Y")
+      getTH(base::table(as.character(format(col.q,"%Y"))),"Y",sep.style)
     ),
     tr(
-      getTH(as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q"))),"Q")
+      getTH(as.character(format(col.q,ifelse(params$lang=="FR","T%q","Q%q"))),"Q",sep.style)
     )
   )
 ))
@@ -110,7 +110,7 @@ sketch = htmltools::withTags(table(
 
 #data
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t1 <- genDataTable(data,met[-1],sketch,c("FR","EA"),sep.col=5)
+t1 <- genDataTable(data,met[-1],sketch,c("FR","EA"),sep.col=5,sep.style=sep.style)
 
 #ouput the table
 t1
@@ -157,7 +157,7 @@ data.q <- t(data.q.0[,series])
 
 #data:
 data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
-t2 <- genDataTable(data[,-1],met[-1],sketch,c("FR","EA"),sep.col=5)
+t2 <- genDataTable(data[,-1],met[-1],sketch,c("FR","EA"),sep.col=5,sep.style=sep.style)
 
 #ouput the table
 t2

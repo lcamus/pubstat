@@ -83,7 +83,7 @@ met <- getCountryByCode(met)
 
 cols <- zoo::as.yearmon(as.character(data[1,]),"%Y-%m")
 t<-as.character(data[1,])
-style.sep <- ""
+# style.sep <- ""
 
 sketch = htmltools::withTags(table(
   thead(
@@ -97,12 +97,13 @@ sketch = htmltools::withTags(table(
   )
 ))
 
-rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
+# rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 
 #end header
 
 #data
-t1 <- genDataTable(as.data.frame(data),met,sketch,c("FR","EA","EU"),nbdigits=2)
+t1 <- genDataTable(as.data.frame(data),met,sketch,
+                   countries.highlight=c("FR","EA","EU"),nbdigits=2)
 
 #ouput the table
 t1
@@ -117,19 +118,19 @@ t1
 
 footer <- htmltools::withTags(
   list(
-    p(style="text-align: left;",
-      ifelse(params$lang=="FR",
-             "Source : Commission européenne",
-             "Source: European Commission"),
-      span(style="float:right;",
-           paste0(ifelse(params$lang=="FR",
-                         "Réalisé le ",
-                         "Produced on "),
-                  format(Sys.Date(),"%e %B %Y"))))
+    # p(style="text-align: left;",
+    #   ifelse(params$lang=="FR",
+    #          "Source : Commission européenne",
+    #          "Source: European Commission"),
+    #   span(style="float:right;",
+    #        paste0(ifelse(params$lang=="FR",
+    #                      "Réalisé le ",
+    #                      "Produced on "),
+    #               format(Sys.Date(),"%e %B %Y"))))
   )
 )
 
-footer <- setFooter(footer)
+footer <- setFooter(footer,source=c("Commission européenne","European Commission"))
 
 #output footer:
 footer
