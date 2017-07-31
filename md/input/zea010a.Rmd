@@ -61,6 +61,7 @@ met.countries <- as.character(lapply(met,function(x){
     x,
     regexpr(pattern="^[A-Z]{2}|.+(?=:)",text=x,ignore.case=F,perl=T))
 }))
+met.countries <- unique(met.countries[-1])
 
 #series
 met <- as.character(lapply(met,function(x){
@@ -94,7 +95,14 @@ sketch = htmltools::withTags(table(
 #end header
 
 #data
-t1 <- genDataTable(as.data.frame(data),met[-1],sketch,
+data <- as.data.frame(data,stringsAsFactors=F)
+data <- rbind(data[1,],
+              c(rep("-",ncol(data))),
+              data[2:nrow(data),],
+              stringsAsFactors=F)
+met <- met[-1]
+met <- c(met.countries[1],met)
+t1 <- genDataTable(data,met,sketch,
                    countries.highlight=c("EA","GB","US","JP"),nbdigits=1)
 
 #ouput the table
