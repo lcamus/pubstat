@@ -34,7 +34,6 @@ setHeader(title=c("Agrégats de monnaie","Monetary aggregates"),
 #get data & metadata
 data.collection <- getDataCollection()
 data.0 <- getData(data.collection,params$data.collection[1])
-# browser()
 meta <- data.0[[1]] #metadata
 data.0 <- tail(data.0[[2]],13) #data
 
