@@ -52,7 +52,25 @@ series <- c(1, #variable
 data <- t(data.0[,series])
 
 #set metadata:
+
 met <- as.character(meta[2,series])
+
+#countries
+met.countries <- as.character(lapply(met,function(x){
+  regmatches(
+    x,
+    regexpr(pattern="^[A-Z]{2}|.+(?=:)",text=x,ignore.case=F,perl=T))
+}))
+
+#series
+met <- as.character(lapply(met,function(x){
+  regmatches(
+    x,
+    regexpr(pattern="(M\\d)|((billet|currency).*$)",text=x,ignore.case=T))
+}))
+met <- paste0(toupper(substr(met, 1, 1)),
+                     substr(met, 2, nchar(met)))
+
 # met <- getCountryByCode(met)
 
 #generate datatable:
@@ -76,7 +94,7 @@ sketch = htmltools::withTags(table(
 #end header
 
 #data
-t1 <- genDataTable(data,met[-1],sketch,
+t1 <- genDataTable(as.data.frame(data),met[-1],sketch,
                    countries.highlight=c("EA","GB","US","JP"),nbdigits=1)
 
 #ouput the table
