@@ -105,9 +105,12 @@ data <- rbind(data[1,],
               spacer,
               data[8:nrow(data),],
               stringsAsFactors=F)
+# test <- rbind(data[1,],
+#               spacer,
+#               lapply(seq(2,8,2),function(x){list(data[x:(x+1),],spacer)}),
+#               stringsAsFactors=F)
 met <- met[-1]
 res <- c()
-# met <- c(met.countries[1],met[1:2],met.countries[2],met[3:4],met.countries[3],met[5:6],met.countries[4],met[7:8])
 for (i in 1:4)
   res <- c(res,met.countries[i],met[(2*i-1):(2*i)])
 met <- res
