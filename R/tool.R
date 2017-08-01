@@ -201,7 +201,7 @@ getCountryByCode <- function(c,lang=params$lang) {
 
 }
 
-customTable <- function(country,color,width="1px",begin,end) {
+customTable <- function(country,color,width="1px",begin,end,subrow=F) {
 
   if (missing(color)) color <- sapply(paste0("style.color.",toupper(country)),get)
 
@@ -213,7 +213,7 @@ customTable <- function(country,color,width="1px",begin,end) {
       $("td",row).css("border-bottom","${width} solid ${color[x]}");
       $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");',
-      '$("td:gt(${begin})",row).html(" ");',
+      ifelse(subrow,'$("td:gt(${begin})",row).html(" ");',''),
       '}\n'
     ))
   })
@@ -225,7 +225,7 @@ customTable <- function(country,color,width="1px",begin,end) {
 
 genDataTable <- function(data,met,sketch,
                          countries.highlight,nbdigits=1,sep.col=NULL,
-                         sep.style="box-shadow:-2px 0 0 black;") {
+                         sep.style="box-shadow:-2px 0 0 black;",subrow=F) {
 
   countries.highlight <- toupper(countries.highlight)
   countries.highlight.name <- getCountryByCode(countries.highlight)
@@ -242,7 +242,7 @@ genDataTable <- function(data,met,sketch,
                                                              defaultContent=ifelse(params$lang=="FR",
                                                                                    "<i>nd</i>","<i>na</i>"))),
                                       rowCallback=DT::JS(
-                                        customTable(country=countries.highlight,begin=0,end=ncol(data),width="1px")
+                                        customTable(country=countries.highlight,begin=0,end=ncol(data),width="1px",subrow=subrow)
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
