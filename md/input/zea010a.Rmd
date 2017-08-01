@@ -101,10 +101,16 @@ data <- rbind(data[1,],
               spacer,
               data[4:5,],
               spacer,
-              data[6:nrow(data),],
+              data[6:7,],
+              spacer,
+              data[8:nrow(data),],
               stringsAsFactors=F)
 met <- met[-1]
-met <- c(met.countries[1],met[1:2],met.countries[2],met[3:4],met.countries[3],met[4:5],met.countries[4],met[5:6])
+res <- c()
+# met <- c(met.countries[1],met[1:2],met.countries[2],met[3:4],met.countries[3],met[5:6],met.countries[4],met[7:8])
+for (i in 1:4)
+  res <- c(res,met.countries[i],met[(2*i-1):(2*i)])
+met <- res
 t1 <- genDataTable(data,met,sketch,
                    countries.highlight=c("EA","GB","US","JP"),nbdigits=1,subrow=T)
 
