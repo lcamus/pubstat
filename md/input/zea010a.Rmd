@@ -95,20 +95,21 @@ sketch = htmltools::withTags(table(
 #data
 data <- as.data.frame(data,stringsAsFactors=F)
 spacer <- c(rep("",ncol(data)))
-data <- rbind(data[1,],
-              spacer,
-              data[2:3,],
-              spacer,
-              data[4:5,],
-              spacer,
-              data[6:7,],
-              spacer,
-              data[8:nrow(data),],
-              stringsAsFactors=F)
-# test <- rbind(data[1,],
+# data <- rbind(data[1,],
 #               spacer,
-#               lapply(seq(2,8,2),function(x){list(data[x:(x+1),],spacer)}),
+#               data[2:3,],
+#               spacer,
+#               data[4:5,],
+#               spacer,
+#               data[6:7,],
+#               spacer,
+#               data[8:nrow(data),],
 #               stringsAsFactors=F)
+test <- lapply(
+  sapply(seq(2,8,2),function(x){list(spacer,data[x:(x+1),])}),
+  function(x) x)
+test <- append(test,list(data[1,]),0)
+
 met <- met[-1]
 res <- c()
 for (i in 1:4)
