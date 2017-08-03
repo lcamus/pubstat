@@ -203,27 +203,31 @@ getCountryByCode <- function(c,lang=params$lang) {
 }
 
 customTable <- function(country.name,country.code,color,width="1px",begin,end,subrow=F) {
-
-  if (missing(color)) color <- sapply(paste0("style.color.",toupper(country.code)),get)
-  if (missing(country.name)) country.name <- getCountryByCode(country.code)
-
-  # country.lib <- getCountryByCode(country)
-  js <- sapply(seq_along(country.code),function(x){
-    stringr::str_interp(paste0(
-      # 'if ((((new RegExp("^[^<]+")).exec(data[0])).toString()).trim()=="${country.lib[x]}") {
-      'if (data[0]=="${country.name[x]}") {
+  
+  if (is.null(country.code))
+    js <- NULL
+  else {
+    
+    if (missing(color)) color <- sapply(paste0("style.color.",toupper(country.code)),get)
+    if (missing(country.name)) country.name <- getCountryByCode(country.code)
+    
+    js <- sapply(seq_along(country.code),function(x){
+      stringr::str_interp(paste0(
+        'if (data[0]=="${country.name[x]}") {
       $("td",row).css("border-top","${width} solid ${color[x]}");
       $("td",row).css("border-bottom","${width} solid ${color[x]}");
       $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");',
-      ifelse(subrow,'$("td:gt(${begin})",row).html(" ");',''),
-      ifelse(subrow,'$("td:eq(${begin})",row).css("font-weight","bold");',''),
-      ifelse(subrow,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
-      '}\n'
-    ))
-  })
-  js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
-
+        ifelse(subrow,'$("td:gt(${begin})",row).html(" ");',''),
+        ifelse(subrow,'$("td:eq(${begin})",row).css("font-weight","bold");',''),
+        ifelse(subrow,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
+        '}\n'
+      ))
+    })
+    js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
+    
+  }
+  
   return(js)
 
 }
@@ -233,17 +237,14 @@ genDataTable <- function(data,met,sketch,
                          nbdigits=1,sep.col=NULL,
                          sep.style="box-shadow:-2px 0 0 black;",subrow=F) {
 
-  countries.highlight <- toupper(countries.highlight)
-  
-  # if (any(grepl("<",countries.highlight)))
-    # countries.highlight.name <- countries.highlight
-  # else {
-  #   countries.highlight <- toupper(countries.highlight)
-  #   countries.highlight.name <- getCountryByCode(countries.highlight)
-  # }
-  
-  if (missing(countries.highlight.name))
-    countries.highlight.name <- getCountryByCode(countries.highlight)
+  if (missing(countries.highlight)) {
+    countries.highlight <- c()
+    countries.highlight.name <- c()
+  } else {
+    countries.highlight <- toupper(countries.highlight)
+    if (missing(countries.highlight.name))
+      countries.highlight.name <- getCountryByCode(countries.highlight)
+  }
   
   decimal.sep <- ifelse(params$lang=="FR",",",".")
   sep.style <- sub(
@@ -265,7 +266,7 @@ genDataTable <- function(data,met,sketch,
                        class="compact hover stripe",escape=F) %>%
     formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits)
   
-  if (!subrow) 
+  if (!subrow & !is.null(countries.highlight)) 
     res <- res %>%
     formatStyle(1,target="row",
                 fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),

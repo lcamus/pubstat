@@ -1,0 +1,116 @@
+---
+always_allow_html: yes
+output:
+  html_document:
+    css: ../../css/ccze.css
+params:
+  data.directory: "../../data/input/ze_piemf"
+  data.collection: !r tolower(c("ZEA012AD1.TXT"))
+  data.params: NULL
+  data.template: !r c("bdf.bsme2.req")
+  lang: "FR"
+  numpage: 25
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::read_chunk("../../R/tool.R")
+knitr::read_chunk("../../R/data.R")
+knitr::read_chunk("../../R/ccze_init_table.R")
+```
+```{r}
+<<init>>
+<<tool>>
+<<data>>
+```
+
+```{r}
+setHeader(title=c("Agrégats monétaires - Zone euro","Monetary aggregates - Euro area"),
+          legend=c("Données corrigées des effets saisonniers et de calendrier","Data adjusted for seasonal and working-day variations"))
+```
+
+```{r}
+
+#get data & metadata
+data.collection <- getDataCollection()
+data.0 <- getData(data.collection,params$data.collection[1])
+meta <- data.0[[1]] #metadata
+data.0 <- tail(data.0[[2]],13) #data
+
+#select series
+series <- c(1, #variable
+            2, #M1
+            3, #M2-M1
+            4, #M2
+            5, #M3-M2
+            6, #M3
+            7) #M3 (moyenne mobile centrée sur 3 mois)
+
+data <- t(data.0[,series])
+
+#set metadata:
+
+met <- as.character(meta[2,series])
+met <- as.character(lapply(met,function(x){
+  regmatches(
+    x,
+    regexpr(pattern="M[1-3](-M[1,2])?",text=x,ignore.case=F,perl=T))
+}))
+
+met[7] <- ifelse(params$lang=="FR","M3 (moyenne mobile centrée sur 3 mois)","M3 (3-month centred moving average)")
+
+#generate datatable:
+
+#header:
+
+cols <- zoo::as.yearmon(as.character(data[1,]),"%Y-%m")
+
+sketch = htmltools::withTags(table(
+  thead(
+    tr(
+      th(colspan=1,rowspan=2),
+      getTH(base::table(as.character(format(cols,"%Y"))),"Y")
+    ),
+    tr(
+      getTH(as.character(format(cols,"%b")),"M")
+    )
+  )
+))
+
+#end header
+
+#data
+data <- as.data.frame(data,stringsAsFactors=F)
+t1 <- genDataTable(data,met[-1],sketch)
+                   # ,
+                   # countries.highlight=c("EA","GB","US","JP"),nbdigits=1,subrow=T)
+                   # countries.highlight=c("EA","GB","US","JP"), countries.highlight.name=met[c(1,4,7,10)],nbdigits=1,subrow=T)
+
+#ouput the table
+t1
+
+```
+
+```{r}
+
+#generate footer:
+
+footer <- htmltools::withTags(
+  list(tags$ol(class="laparent",style="font-style: italic; padding-left: 3px;",
+            tags$li(HTML(ifelse(params$lang=="FR",
+                                "Calculé à partir des flux mensuels corrigés des variations ne résultant pas de transactions effectives (reclassements, changements de périmètre du
+secteur des IFM, passages en pertes, fluctuations de taux de change et autres effets de valorisation)",
+                                "Growth rates have been calculated on flow data, adjusted for reclassifications, changes in the scope of the MFI sector, write-offs, exchange rate
+variations, other revaluations and other changes which do not arise from transactions")))
+    )
+  )
+)
+
+footer <- setFooter(footer,source=c("Banque Centrale Européenne","European Central Bank"))
+
+#output footer:
+footer
+
+```
+
+
