@@ -114,6 +114,7 @@ countrynameFR2EN <- function(c,lang=params$lang) {
     c <- sub("^royaume-uni$","United Kingdom",c)
     c <- sub("^suède$","Sweden",c)
     c <- sub("^tchéquie$","Czechia",c)
+    c <- sub("^république tchèque$","Czechia",c)
     c <- sub("^union européenne$","European union",c)
     c <- sub("^japon$","Japan",c)
   } else {

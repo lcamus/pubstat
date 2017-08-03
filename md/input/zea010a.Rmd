@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("ZEA010BD1.TXT"))
   data.params: NULL
   data.template: !r c("bdf.bsme2.req")
-  lang: "FR"
+  lang: "EN"
   numpage: 23
 ---
 
@@ -53,6 +53,7 @@ data <- t(data.0[,series])
 #set metadata:
 
 met <- as.character(meta[2,series])
+if (params$lang=="EN") met <- sub("(?<=^GB )billets.*$","Currency in circulation",met,perl=T,ignore.case=T)
 
 #countries
 met.countries <- as.character(lapply(met,function(x){
@@ -61,7 +62,7 @@ met.countries <- as.character(lapply(met,function(x){
     regexpr(pattern="^[A-Z]{2}|.+(?=:)",text=x,ignore.case=F,perl=T))
 }))
 met.countries <- unique(met.countries[-1])
-met.countries <- c(met.countries[1],getCountryByCode(met.countries[-1]))
+met.countries <- c(countrynameFR2EN(met.countries[1]),getCountryByCode(met.countries[-1]))
 
 #series
 met <- as.character(lapply(met,function(x){

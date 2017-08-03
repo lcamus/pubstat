@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("industry_total_sa_nace2.xlsx"))
   data.params: !r c("INDUSTRY MONTHLY")
   data.template: !r c("bdf.manual.xlsx")
-  lang: "FR"
+  lang: "EN"
   numpage: 13
 ---
 
@@ -81,7 +81,6 @@ met <- getCountryByCode(met)
 #header:
 
 cols <- zoo::as.yearmon(as.character(data[1,]),"%Y-%m")
-# t<-as.character(data[1,])
 
 sketch = htmltools::withTags(table(
   thead(
