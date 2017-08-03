@@ -16,6 +16,15 @@ body {
   font-family: "Century Gothic", Verdana, sans-serif;
 }
 
+header .title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
+header hr {
+  color:pink;
+}
+
 .titlechart {
   background-color:peachpuff; padding-left:10px; padding-top:5px; padding-bottom:5px;
 }
@@ -53,6 +62,10 @@ table.dataTable.compact tbody td:nth-child(4) {
 
 .verticalspace {
   margin-bottom: 1cm;
+}
+
+.verticalbigspace {
+  margin-bottom: 2cm;
 }
 
 .tableverticalseparator { box-shadow:-2px 0 0 midnightblue; }

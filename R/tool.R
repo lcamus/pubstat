@@ -26,18 +26,43 @@ stringToHtmlEntities <- function(s) {
 
 }
 
-setHeader <- function(title, legend=c("","")) {
+setLegend <- function(legend=c("",""),suptext=NULL) {
+  
+  if (!require(htmltools)) install.packages("htmltools")
+  
+  legend.fr <- legend[1]
+  legend.en <- legend[2]
+  
+  suptext
+  
+  res <- htmltools::withTags(
+    p(class="unitlegend",
+      HTML(ifelse(params$lang=="FR",legend.fr,legend.en)),
+      if(!is.null(suptext))
+        sup(suptext)
+    )
+  )
+  
+  return(res)
+  
+}
+
+setHeader <- function(title, subtitle=c("",""), legend=c("","")) {
 
   if (!require(htmltools)) install.packages("htmltools")
 
   title.fr <- title[1]
   title.en <- title[2]
+  
+  subtitle.fr <- subtitle[1]
+  subtitle.en <- subtitle[2]
 
   legend.fr <- legend[1]
   legend.en <- legend[2]
 
   res <- htmltools::withTags(header(
-    h3(class="pub",ifelse(params$lang=="FR",title.fr,title.en)),
+    h3(class="pub title",ifelse(params$lang=="FR",title.fr,title.en)),
+    h4(class="pub subtitle",ifelse(params$lang=="FR",subtitle.fr,subtitle.en)),
     hr(class="pub"),
     p(class="unitlegend",ifelse(params$lang=="FR",legend.fr,legend.en))
   ))
@@ -235,7 +260,8 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,su
 genDataTable <- function(data,met,sketch,
                          countries.highlight.name,countries.highlight,
                          nbdigits=1,sep.col=NULL,
-                         sep.style="box-shadow:-2px 0 0 black;",subrow=F) {
+                         sep.style="box-shadow:-2px 0 0 black;",subrow=F,
+                         width=NULL) {
 
   if (missing(countries.highlight)) {
     countries.highlight <- c()
@@ -250,14 +276,24 @@ genDataTable <- function(data,met,sketch,
   sep.style <- sub(
     ";$","",
     strsplit(sep.style,":")[[1]][2])
+
+  columnDefs <- list(list(className='dt-right',targets=1:ncol(data),
+                         defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>"))
+                     # ,
+                     # list(width='200px',targets=0)
+                     )
   
+  if (!is.null(width))
+    columnDefs[[2]] <- width
+    
   res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
                        rownames=F, container=sketch,
                        options = list(paging=F,searching=F,info=F,
                                       language=list(decimal=decimal.sep),
-                                      columnDefs = list(list(className='dt-right',targets=1:ncol(data),
-                                                             defaultContent=ifelse(params$lang=="FR",
-                                                                                   "<i>nd</i>","<i>na</i>"))),
+                                      # columnDefs = list(list(className='dt-right',targets=1:ncol(data),
+                                      #                        defaultContent=ifelse(params$lang=="FR",
+                                      #                                              "<i>nd</i>","<i>na</i>"))),
+                                      columnDefs = columnDefs,
                                       rowCallback=DT::JS(
                                         customTable(country.name=countries.highlight.name,country.code=countries.highlight,
                                                     begin=0,end=ncol(data),width="1px",subrow=subrow)

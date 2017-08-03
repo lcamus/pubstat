@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("ZEA012AD1.TXT"))
   data.params: NULL
   data.template: !r c("bdf.bsme2.req")
-  lang: "FR"
+  lang: "EN"
   numpage: 25
 ---
 
@@ -26,7 +26,7 @@ knitr::read_chunk("../../R/ccze_init_table.R")
 
 ```{r}
 setHeader(title=c("Agrégats monétaires - Zone euro","Monetary aggregates - Euro area"),
-          legend=c("Données corrigées des effets saisonniers et de calendrier","Data adjusted for seasonal and working-day variations"))
+          subtitle=c("Données corrigées des effets saisonniers et de calendrier","Data adjusted for seasonal and working-day variations"))
 ```
 
 ```{r}
@@ -36,6 +36,8 @@ data.collection <- getDataCollection()
 data.0 <- getData(data.collection,params$data.collection[1])
 meta <- data.0[[1]] #metadata
 data.0 <- tail(data.0[[2]],13) #data
+
+#first table:
 
 #select series
 series <- c(1, #variable
@@ -81,13 +83,42 @@ sketch = htmltools::withTags(table(
 
 #data
 data <- as.data.frame(data,stringsAsFactors=F)
-t1 <- genDataTable(data,met[-1],sketch)
-                   # ,
-                   # countries.highlight=c("EA","GB","US","JP"),nbdigits=1,subrow=T)
-                   # countries.highlight=c("EA","GB","US","JP"), countries.highlight.name=met[c(1,4,7,10)],nbdigits=1,subrow=T)
+t1 <- genDataTable(data,met[-1],sketch,width=list(width='150px',targets=0))
 
-#ouput the table
+#ouput the first table (including legend)
+setLegend(c("taux de croissance annuel en pourcentage","annual growth rate"),suptext="(a)")
 t1
+htmltools::div(class="verticalbigspace")
+```
+
+```{r}
+#second table:
+
+#select series
+series <- c(1, #variable
+            8, #M1
+            9, #M2-M1
+            10, #M2
+            11, #M3-M2
+            12) #M3
+
+data <- t(data.0[,series])
+
+#set metadata:
+met <- met[-7]
+
+#generate datatable:
+
+#header:
+#(same as first table)
+
+#data
+data <- as.data.frame(data,stringsAsFactors=F)
+t2 <- genDataTable(data,met[-1],sketch,width=list(width='150px',targets=0))
+
+#ouput the second table (including legend)
+setLegend(c("taux de croissance mensuel en pourcentage","monthly growth rate"),suptext="(a)")
+t2
 
 ```
 
