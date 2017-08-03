@@ -201,19 +201,23 @@ getCountryByCode <- function(c,lang=params$lang) {
 
 }
 
-customTable <- function(country,color,width="1px",begin,end,subrow=F) {
+customTable <- function(country.name,country.code,color,width="1px",begin,end,subrow=F) {
 
-  if (missing(color)) color <- sapply(paste0("style.color.",toupper(country)),get)
+  if (missing(color)) color <- sapply(paste0("style.color.",toupper(country.code)),get)
+  if (missing(country.name)) country.name <- getCountryByCode(country.code)
 
-  country.lib <- getCountryByCode(country)
-  js <- sapply(seq_along(country),function(x){
+  # country.lib <- getCountryByCode(country)
+  js <- sapply(seq_along(country.code),function(x){
     stringr::str_interp(paste0(
-      'if (data[0]=="${country.lib[x]}") {
+      # 'if ((((new RegExp("^[^<]+")).exec(data[0])).toString()).trim()=="${country.lib[x]}") {
+      'if (data[0]=="${country.name[x]}") {
       $("td",row).css("border-top","${width} solid ${color[x]}");
       $("td",row).css("border-bottom","${width} solid ${color[x]}");
       $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");',
       ifelse(subrow,'$("td:gt(${begin})",row).html(" ");',''),
+      ifelse(subrow,'$("td:eq(${begin})",row).css("font-weight","bold");',''),
+      ifelse(subrow,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
       '}\n'
     ))
   })
@@ -224,16 +228,27 @@ customTable <- function(country,color,width="1px",begin,end,subrow=F) {
 }
 
 genDataTable <- function(data,met,sketch,
-                         countries.highlight,nbdigits=1,sep.col=NULL,
+                         countries.highlight.name,countries.highlight,
+                         nbdigits=1,sep.col=NULL,
                          sep.style="box-shadow:-2px 0 0 black;",subrow=F) {
 
   countries.highlight <- toupper(countries.highlight)
-  countries.highlight.name <- getCountryByCode(countries.highlight)
+  
+  # if (any(grepl("<",countries.highlight)))
+    # countries.highlight.name <- countries.highlight
+  # else {
+  #   countries.highlight <- toupper(countries.highlight)
+  #   countries.highlight.name <- getCountryByCode(countries.highlight)
+  # }
+  
+  if (missing(countries.highlight.name))
+    countries.highlight.name <- getCountryByCode(countries.highlight)
+  
   decimal.sep <- ifelse(params$lang=="FR",",",".")
   sep.style <- sub(
     ";$","",
     strsplit(sep.style,":")[[1]][2])
-
+  
   res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
                        rownames=F, container=sketch,
                        options = list(paging=F,searching=F,info=F,
@@ -242,11 +257,15 @@ genDataTable <- function(data,met,sketch,
                                                              defaultContent=ifelse(params$lang=="FR",
                                                                                    "<i>nd</i>","<i>na</i>"))),
                                       rowCallback=DT::JS(
-                                        customTable(country=countries.highlight,begin=0,end=ncol(data),width="1px",subrow=subrow)
+                                        customTable(country.name=countries.highlight.name,country.code=countries.highlight,
+                                                    begin=0,end=ncol(data),width="1px",subrow=subrow)
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
-    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits) %>%
+    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits)
+  
+  if (!subrow) 
+    res <- res %>%
     formatStyle(1,target="row",
                 fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),
                 color=styleEqual(countrynameFR2EN(countries.highlight.name),
@@ -255,8 +274,6 @@ genDataTable <- function(data,met,sketch,
                                  ))))
                 ))
 
-  # for (i in length(sep.col))
-    # res <- res %>% formatStyle(sep.col[i], `box-shadow`='-2px 0 0 black')
   res <- res %>% formatStyle(sep.col, `box-shadow`=sep.style)
 
   return(res)
@@ -268,7 +285,6 @@ getTH <- function(variable,liblevel,sep.style="") {
 
   style.fwn <- "font-weight:normal; "
   style.fwb <- "font-weight:bold; text-align:left; border:none;"
-  # style.sep <- "box-shadow:-2px 0 0 black;"
 
   res <- htmltools::withTags(
     if (liblevel=="Y") {

@@ -71,6 +71,7 @@ met <- as.character(lapply(met,function(x){
 }))
 met <- paste0(toupper(substr(met, 1, 1)),
                      substr(met, 2, nchar(met)))
+met <- paste0("&emsp;",met)
 
 #generate datatable:
 
@@ -103,12 +104,17 @@ data <- data.frame()
 for (i in 1:length(data.tmp)) data <- rbind(data,data.tmp[[i]])
 
 met <- met[-1]
-res <- c()
+met.tmp <- c()
 for (i in 1:4)
-  res <- c(res,met.countries[i],met[(2*i-1):(2*i)])
-met <- res
+  met.tmp <- c(met.tmp,met.countries[i],met[(2*i-1):(2*i)])
+met <- met.tmp
+c.ea <- getCountryByCode("ea",params$lang)
+met <- sub(c.ea,paste0(c.ea," <sup><i>(a)</i></sup>"),met,ignore.case=T)
+rm(c.ea)
+
 t1 <- genDataTable(data,met,sketch,
-                   countries.highlight=c("EA","GB","US","JP"),nbdigits=1,subrow=T)
+                   # countries.highlight=c("EA","GB","US","JP"),nbdigits=1,subrow=T)
+                   countries.highlight=c("EA","GB","US","JP"), countries.highlight.name=met[c(1,4,7,10)],nbdigits=1,subrow=T)
 
 #ouput the table
 t1
@@ -120,11 +126,15 @@ t1
 #generate footer:
 
 footer <- htmltools::withTags(
-  list(
+  list(tags$ol(class="laparent",style="font-style: italic; padding-left: 3px;",
+            tags$li(HTML(ifelse(params$lang=="FR",
+                                "Taux de croissance annuel calculé à partir des flux mensuels corrigés des effets saisonniers et de calendrier et des variations ne résultant pas de transactions effectives (reclassements, changements de périmètre du secteur des IFM (institutions financières monétaires), passages en pertes, fluctuations de taux de change et autres effets de valorisation).",
+                                "Growth rates have been calculated from monthly differences in levels adjusted for seasonal and working-day variations and changes which do not arise from transactions (reclassifications, changes in the scope of the MFI sector, write-offs, exchange rate variations and other valuation effects)")))
+    )
   )
 )
 
-footer <- setFooter(footer,source=c("Commission européenne","European Commission"))
+footer <- setFooter(footer,source=c("Banques centrales nationales, Banque centrale européenne, Thomson-Reuters (Datastream)","National central banks, European Central Bank, Thomson-Reuters (Datastream)"))
 
 #output footer:
 footer
