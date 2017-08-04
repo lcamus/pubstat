@@ -27,14 +27,14 @@ stringToHtmlEntities <- function(s) {
 }
 
 setLegend <- function(legend=c("",""),suptext=NULL) {
-  
+
   if (!require(htmltools)) install.packages("htmltools")
-  
+
   legend.fr <- legend[1]
   legend.en <- legend[2]
-  
+
   suptext
-  
+
   res <- htmltools::withTags(
     p(class="unitlegend",
       HTML(ifelse(params$lang=="FR",legend.fr,legend.en)),
@@ -42,9 +42,9 @@ setLegend <- function(legend=c("",""),suptext=NULL) {
         sup(suptext)
     )
   )
-  
+
   return(res)
-  
+
 }
 
 setHeader <- function(title, subtitle=c("",""), legend=c("","")) {
@@ -53,7 +53,7 @@ setHeader <- function(title, subtitle=c("",""), legend=c("","")) {
 
   title.fr <- title[1]
   title.en <- title[2]
-  
+
   subtitle.fr <- subtitle[1]
   subtitle.en <- subtitle[2]
 
@@ -228,14 +228,14 @@ getCountryByCode <- function(c,lang=params$lang) {
 }
 
 customTable <- function(country.name,country.code,color,width="1px",begin,end,subrow=F) {
-  
+
   if (is.null(country.code))
     js <- NULL
   else {
-    
+
     if (missing(color)) color <- sapply(paste0("style.color.",toupper(country.code)),get)
     if (missing(country.name)) country.name <- getCountryByCode(country.code)
-    
+
     js <- sapply(seq_along(country.code),function(x){
       stringr::str_interp(paste0(
         'if (data[0]=="${country.name[x]}") {
@@ -250,9 +250,9 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,su
       ))
     })
     js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
-    
+
   }
-  
+
   return(js)
 
 }
@@ -271,28 +271,22 @@ genDataTable <- function(data,met,sketch,
     if (missing(countries.highlight.name))
       countries.highlight.name <- getCountryByCode(countries.highlight)
   }
-  
+
   decimal.sep <- ifelse(params$lang=="FR",",",".")
   sep.style <- sub(
     ";$","",
     strsplit(sep.style,":")[[1]][2])
 
   columnDefs <- list(list(className='dt-right',targets=1:ncol(data),
-                         defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>"))
-                     # ,
-                     # list(width='200px',targets=0)
-                     )
-  
+                         defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>")))
+
   if (!is.null(width))
     columnDefs[[2]] <- width
-    
+
   res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
                        rownames=F, container=sketch,
                        options = list(paging=F,searching=F,info=F,
                                       language=list(decimal=decimal.sep),
-                                      # columnDefs = list(list(className='dt-right',targets=1:ncol(data),
-                                      #                        defaultContent=ifelse(params$lang=="FR",
-                                      #                                              "<i>nd</i>","<i>na</i>"))),
                                       columnDefs = columnDefs,
                                       rowCallback=DT::JS(
                                         customTable(country.name=countries.highlight.name,country.code=countries.highlight,
@@ -301,8 +295,8 @@ genDataTable <- function(data,met,sketch,
                        ),
                        class="compact hover stripe",escape=F) %>%
     formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits)
-  
-  if (!subrow & !is.null(countries.highlight)) 
+
+  if (!subrow & !is.null(countries.highlight))
     res <- res %>%
     formatStyle(1,target="row",
                 fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),
