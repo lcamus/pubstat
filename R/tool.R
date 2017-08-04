@@ -227,7 +227,8 @@ getCountryByCode <- function(c,lang=params$lang) {
 
 }
 
-customTable <- function(country.name,country.code,color,width="1px",begin,end,subrow=F) {
+customTable <- function(country.name,country.code,color,width="1px",begin,end,
+                        subrow=F,countries.name.forced=F) {
 
   if (is.null(country.code))
     js <- NULL
@@ -244,8 +245,10 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,su
       $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");',
         ifelse(subrow,'$("td:gt(${begin})",row).html(" ");',''),
-        ifelse(subrow,'$("td:eq(${begin})",row).css("font-weight","bold");',''),
-        ifelse(subrow,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
+        # ifelse(subrow | countries.name.forced,'$("td:eq(${begin})",row).css("font-weight","bold");',''),
+        # ifelse(subrow | countries.name.forced,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
+        ifelse(subrow | countries.name.forced,'$("td",row).css("font-weight","bold");',''),
+        ifelse(subrow | countries.name.forced,'$("td",row).css("color","${color[x]}");',''),
         '}\n'
       ))
     })
@@ -260,9 +263,9 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,su
 genDataTable <- function(data,met,sketch,
                          countries.highlight.name,countries.highlight,
                          nbdigits=1,sep.col=NULL,
-                         sep.style="box-shadow:-2px 0 0 black;",subrow=F,
-                         width=NULL) {
-
+                         sep.style="box-shadow:-2px 0 0 black;",subrow=F,width=NULL,
+                         countries.name.forced=!missing(countries.highlight.name)) {
+  
   if (missing(countries.highlight)) {
     countries.highlight <- c()
     countries.highlight.name <- c()
@@ -290,13 +293,14 @@ genDataTable <- function(data,met,sketch,
                                       columnDefs = columnDefs,
                                       rowCallback=DT::JS(
                                         customTable(country.name=countries.highlight.name,country.code=countries.highlight,
-                                                    begin=0,end=ncol(data),width="1px",subrow=subrow)
+                                                    begin=0,end=ncol(data),width="1px",
+                                                    subrow=subrow,countries.name.forced=countries.name.forced)
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
     formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits)
 
-  if (!subrow & !is.null(countries.highlight))
+  if (!subrow & !is.null(countries.highlight) & !countries.name.forced)
     res <- res %>%
     formatStyle(1,target="row",
                 fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),
