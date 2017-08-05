@@ -1,8 +1,5 @@
 ## ---- tool
 
-#' @param s string to convert to HTML-entities
-#' @return a string whose special characters are converted to HTML entities
-#' @export
 stringToHtmlEntities <- function(s) {
 
   f_he.src <- "../../data/html-entities.xlsx"
@@ -64,7 +61,8 @@ setHeader <- function(title, subtitle=c("",""), legend=c("","")) {
     h3(class="pub title",ifelse(params$lang=="FR",title.fr,title.en)),
     h4(class="pub subtitle",ifelse(params$lang=="FR",subtitle.fr,subtitle.en)),
     hr(class="pub"),
-    p(class="unitlegend",ifelse(params$lang=="FR",legend.fr,legend.en))
+    p(class="unitlegend",ifelse(params$lang=="FR",legend.fr,legend.en)),
+    p(class="verticalspace")
   ))
 
   return(res)
@@ -229,20 +227,15 @@ getCountryByCode <- function(c,lang=params$lang) {
 
 customTable <- function(country.name,country.code,color,width="1px",begin,end,
                         subrow=F,countries.name.forced=F,sep.forced=NULL) {
-
+  
+  if (!require(stringr)) install.packages("stringr")
+  
   if (is.null(country.code))
     js <- NULL
   else {
 
     if (missing(color)) color <- sapply(paste0("style.color.",toupper(country.code)),get)
     if (missing(country.name)) country.name <- getCountryByCode(country.code)
-    
-    if (!is.null(sep.forced)) {
-      sep.forced.css <- strsplit(sep.forced$css,":")[[1]]
-      sep.forced.css.property <- sep.forced.css[1]
-      sep.forced.css.value <- sep.forced.css[2]
-      rm(sep.forced.css)
-    }
 
     js <- sapply(seq_along(country.code),function(x){
       stringr::str_interp(paste0(
@@ -252,17 +245,22 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
       $("td:eq(${begin})",row).css("border-left","${width} solid ${color[x]}");
       $("td:eq(${end})",row).css("border-right","${width} solid ${color[x]}");',
         ifelse(subrow,'$("td:gt(${begin})",row).html(" ");',''),
-        # ifelse(subrow | countries.name.forced,'$("td:eq(${begin})",row).css("font-weight","bold");',''),
-        # ifelse(subrow | countries.name.forced,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
         ifelse(subrow | countries.name.forced,'$("td",row).css("font-weight","bold");',''),
         ifelse(subrow | countries.name.forced,'$("td",row).css("color","${color[x]}");',''),
-        ifelse(!is.null(sep.forced),
-               'if (data[0]=="${sep.forced$country.lib}") {
-                 $("td:eq(${sep.forced$sep.col})",row).css("${sep.forced.css.property}","${sep.forced.css.value}");
-               }',''),
         '}\n'
       ))
     })
+    
+    if (!is.null(sep.forced))
+      js <- c(js,
+              sapply(sep.forced$country.lib,function(x){
+                stringr::str_interp(paste0(
+                  'if (data[0]=="${x}") {
+                         $("td:eq(${sep.forced$col})",row).css("${sep.forced$css.property}","${sep.forced$css.value}");
+                  }\n'
+                  ))
+  }))
+    
     js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
 
   }
@@ -277,6 +275,8 @@ genDataTable <- function(data,met,sketch,
                          sep.style="box-shadow:-2px 0 0 black;",subrow=F,width=NULL,
                          countries.name.forced=!missing(countries.highlight.name)) {
   
+  if (!require(stringr)) install.packages("stringr")
+  
   if (missing(countries.highlight)) {
     countries.highlight <- c()
     countries.highlight.name <- c()
@@ -287,9 +287,11 @@ genDataTable <- function(data,met,sketch,
   }
 
   decimal.sep <- ifelse(params$lang=="FR",",",".")
-  sep.style <- sub(
-    ";$","",
-    strsplit(sep.style,":")[[1]][2])
+
+  sep.style <- sub(";$","",sep.style)
+  sep.style <- strsplit(sep.style,":")[[1]]
+  sep.style.cssproperty <- sep.style[1]
+  sep.style.cssvalue <- sep.style[2]
 
   columnDefs <- list(list(className='dt-right',targets=1:ncol(data),
                          defaultContent=ifelse(params$lang=="FR","<i>nd</i>","<i>na</i>")))
@@ -304,9 +306,10 @@ genDataTable <- function(data,met,sketch,
     if (nrow(df) != 0) {
       df <- setNames(df,c("row","col"))  
       sep.forced <- list(
-        country.lib=rownames(table(df[df$col %in% (sep.col-1):sep.col,])),
+        country.lib=met[as.numeric(rownames(table(df[df$col %in% (sep.col-1):sep.col,])))-1],
         col=sep.col-1,
-        css=sep.style
+        css.property=sep.style.cssproperty,
+        css.value=sep.style.cssvalue
       )
       rm(df)
     }
@@ -320,7 +323,7 @@ genDataTable <- function(data,met,sketch,
                                       rowCallback=DT::JS(
                                         customTable(country.name=countries.highlight.name,country.code=countries.highlight,
                                                     begin=0,end=ncol(data),width="1px",
-                                                    subrow=subrow,countries.name.forced=countries.name.forced,sep.forced)
+                                                    subrow=subrow,countries.name.forced=countries.name.forced,sep.forced=sep.forced)
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
@@ -336,7 +339,7 @@ genDataTable <- function(data,met,sketch,
                                  ))))
                 ))
 
-  res <- res %>% formatStyle(sep.col, `box-shadow`=sep.style)
+  res <- res %>% formatStyle(sep.col, `box-shadow`=sep.style.cssvalue)
 
   return(res)
 

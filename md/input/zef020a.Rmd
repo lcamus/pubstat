@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("ZEF020AD2.TXT","ZEF020AD1.TXT"))
   data.params: NULL
   data.template: !r rep("bdf.bsme2.req",2)
-  lang: "FR"
+  lang: "EN"
   numpage: 7
 ---
 
