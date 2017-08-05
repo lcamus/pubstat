@@ -228,7 +228,7 @@ getCountryByCode <- function(c,lang=params$lang) {
 }
 
 customTable <- function(country.name,country.code,color,width="1px",begin,end,
-                        subrow=F,countries.name.forced=F) {
+                        subrow=F,countries.name.forced=F,sep.forced=NULL) {
 
   if (is.null(country.code))
     js <- NULL
@@ -236,6 +236,13 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
 
     if (missing(color)) color <- sapply(paste0("style.color.",toupper(country.code)),get)
     if (missing(country.name)) country.name <- getCountryByCode(country.code)
+    
+    if (!is.null(sep.forced)) {
+      sep.forced.css <- strsplit(sep.forced$css,":")[[1]]
+      sep.forced.css.property <- sep.forced.css[1]
+      sep.forced.css.value <- sep.forced.css[2]
+      rm(sep.forced.css)
+    }
 
     js <- sapply(seq_along(country.code),function(x){
       stringr::str_interp(paste0(
@@ -249,6 +256,10 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
         # ifelse(subrow | countries.name.forced,'$("td:eq(${begin})",row).css("color","${color[x]}");',''),
         ifelse(subrow | countries.name.forced,'$("td",row).css("font-weight","bold");',''),
         ifelse(subrow | countries.name.forced,'$("td",row).css("color","${color[x]}");',''),
+        ifelse(!is.null(sep.forced),
+               'if (data[0]=="${sep.forced$country.lib}") {
+                 $("td:eq(${sep.forced$sep.col})",row).css("${sep.forced.css.property}","${sep.forced.css.value}");
+               }',''),
         '}\n'
       ))
     })
@@ -285,6 +296,21 @@ genDataTable <- function(data,met,sketch,
 
   if (!is.null(width))
     columnDefs[[2]] <- width
+  
+  #get around seeming issue when formatStyle applied to two consecutive cells with defaultContent (na values):
+  sep.forced <- NULL
+  if (!is.null(sep.col)) {
+    df <- as.data.frame(which(is.na(data),arr.ind=T,useNames=F))
+    if (nrow(df) != 0) {
+      df <- setNames(df,c("row","col"))  
+      sep.forced <- list(
+        country.lib=rownames(table(df[df$col %in% (sep.col-1):sep.col,])),
+        col=sep.col-1,
+        css=sep.style
+      )
+      rm(df)
+    }
+  }
 
   res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
                        rownames=F, container=sketch,
@@ -294,7 +320,7 @@ genDataTable <- function(data,met,sketch,
                                       rowCallback=DT::JS(
                                         customTable(country.name=countries.highlight.name,country.code=countries.highlight,
                                                     begin=0,end=ncol(data),width="1px",
-                                                    subrow=subrow,countries.name.forced=countries.name.forced)
+                                                    subrow=subrow,countries.name.forced=countries.name.forced,sep.forced)
                                       )
                        ),
                        class="compact hover stripe",escape=F) %>%
