@@ -1,9 +1,5 @@
 ## ---- data
 
-# @param path path directory containing the data files to import
-# @param template template name of data file to process
-# @return a list compiling the data imported
-# @export
 getDataCollection <- function(path=params$data.directory,
                               files=params$data.collection,
                               templates=params$data.template,
@@ -92,10 +88,6 @@ getDataCollection <- function(path=params$data.directory,
 
 }
 
-# @param dc data collection
-# @param dr a data resource which belongs to the data collection
-# @return the data of a data resource
-# @export
 getData <- function(dc, dr) {
   return(dc[[dr]])
 

@@ -96,7 +96,7 @@ met <- countrynameFR2EN(met)
 
 col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
 col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-style.sep <- "box-shadow:-2px 0 0 black;"
+# style.sep <- "box-shadow:-2px 0 0 black;"
 
 sketch = htmltools::withTags(table(
   thead(
@@ -120,7 +120,7 @@ sketch = htmltools::withTags(table(
   )
 ))
 
-rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
+# rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
 
 #end header
 
