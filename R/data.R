@@ -5,6 +5,15 @@ getDataCollection <- function(path=params$data.directory,
                               templates=params$data.template,
                               parameters=params$data.params) {
 
+  browser()
+  args <- as.list(environment())
+  for (i in seq_along(args)) {
+    t <- paste0('sub("^!r","",args[[',i,']])')
+    t <- eval(parse(text=t))
+    assign(names(args)[i], eval(parse(text=t)))
+    # assign(names(args)[i], eval(parse(text=names(args)[i])))
+  }
+  
   fixinput <- function(p) {
     if (is.null(p)) p <- rep("",length(files))
     if (length(p)<length(files)) p <- c(p,rep("",length(files)-length(p)))
@@ -98,6 +107,8 @@ getDataCollection <- function(path=params$data.directory,
         
       }
       
+      print(f)
+      browser()
       url <- setUrl(wsEntryPoint=wsEntryPoint,
                     flowRef=f$DATASET,
                     key=f[-which(c("DATASET","dimensions") %in% names(f))], #only SDMX dimensions
@@ -124,7 +135,7 @@ getDataCollection <- function(path=params$data.directory,
     return(l)
 
   }
-
+  
   templates <- fixinput(templates)
   parameters <- fixinput(parameters)
 

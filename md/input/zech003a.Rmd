@@ -5,7 +5,7 @@ output:
     css: ../../css/ccze.css
 params:
   data.directory: 'https://sdw-wsrest.ecb.europa.eu/service/'
-  data.collection: |
+  data.collection: >
     !r append(
       rep(list(
         list(
@@ -26,7 +26,7 @@ params:
         )
       ) 
     )
-  data.params: |
+  data.params: >
     !r list(
       list(startPeriod=1999,endPeriod=1999),
       list(lastNObservations=2),
@@ -57,6 +57,7 @@ setHeader(title=c("Les marchés de change de l'euro contre devises","The euro exc
 ```{r}
 
 #get data & metadata
+t <- rmarkdown::metadata
 data.collection <- getDataCollection()
 data.y99.0 <- getData(data.collection,1) #year 1999
 meta <- data.y99.0[[1]] #metadata

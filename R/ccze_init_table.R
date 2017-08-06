@@ -39,3 +39,10 @@ style.color.GB <- "darkorchid"
 css.path <- "../../css/ccze.css"
 sep.style <- getStyle(css.path)
 
+# lapply(which(grepl("^!r",params)),function(x){params[[x]] <- sub("^!r","",params[[x]])})
+
+#   if 
+#   eval(parse(text=sub("^!r","",t$params$data.collection)))
+# }
+
+
