@@ -104,8 +104,16 @@ getDataCollection <- function(path=params$data.directory,
                     parameters=param,
                     dim=f$dimensions)
       
-      res <- httr::GET(url,httr::accept("text/csv"))
-      res <- readr::read_csv(httr::content(res,"text"))
+      response <- httr::GET(url,httr::accept("text/csv"))
+      response <- readr::read_csv(httr::content(response,"text"))
+      
+      df_data <- response[,1:8]
+      df_data$date <- df_data$TIME_PERIOD
+      df_data$TIME_PERIOD <- NULL
+      
+      df_meta <- response[,c("TITLE","TITLE_COMPL")]
+      
+      l <- list(df_meta,df_data)
       
     }
 
@@ -123,7 +131,6 @@ getDataCollection <- function(path=params$data.directory,
   l.data <- list()
   if (unique(templates) %in% c("bdf.bsme2.req","bdf.manual.xlsx")) {
     l.f <- list.files(path,full.names=T, recursive=F)
-    # l.data <- list()
     for (f in l.f) {
       key <- tolower(tail(strsplit(f,"/")[[1]],1))
       if (key %in% files) {

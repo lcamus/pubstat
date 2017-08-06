@@ -4,32 +4,34 @@ output:
   html_document:
     css: ../../css/ccze.css
 params:
-  data.directory: "https://sdw-wsrest.ecb.europa.eu/service/"
-  data.collection: !r append(
-    rep(list(
+  data.directory: 'https://sdw-wsrest.ecb.europa.eu/service/'
+  data.collection: |
+    !r append(
+      rep(list(
+        list(
+          dimensions=c("FREQ","CURRENCY","CURRENCY_DENOM","EXR_TYPE","EXR_SUFFIX"),
+          DATASET="EXR",
+          CURRENCY=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
+          FREQ="A",
+          EXR_SUFFIX=c("E","A"))
+        ),
+      2),
       list(
-        dimensions=c("FREQ","CURRENCY","CURRENCY_DENOM","EXR_TYPE","EXR_SUFFIX"),
-        DATASET="EXR",
-        CURRENCY=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
-        FREQ="A",
-        EXR_SUFFIX=c("E","A"))
-      ),
-    2),
-    list(
-      list(
-        dimensions="FREQ.CURRENCY.CURRENCY_DENOM.EXR_TYPE.EXR_SUFFIX"
-        DATASET="EXR",
-        CURRENCY_DENOM=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
-        FREQ="M",
-        EXR_SUFFIX=c("E","A")
-      )
-    ) 
-  )
-  data.params: !r list(
-    list(startPeriod=1999,endPeriod=1999),
-    list(lastNObservations=2),
-    list(lastNObservations=6)
-  )  
+        list(
+          dimensions="FREQ.CURRENCY.CURRENCY_DENOM.EXR_TYPE.EXR_SUFFIX",
+          DATASET="EXR",
+          CURRENCY_DENOM=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
+          FREQ="M",
+          EXR_SUFFIX=c("E","A")
+        )
+      ) 
+    )
+  data.params: |
+    !r list(
+      list(startPeriod=1999,endPeriod=1999),
+      list(lastNObservations=2),
+      list(lastNObservations=6)
+    )  
   data.template: !r c("ecb.sdw.ws")
   lang: "FR"
   numpage: 27
@@ -56,9 +58,12 @@ setHeader(title=c("Les marchés de change de l'euro contre devises","The euro exc
 
 #get data & metadata
 data.collection <- getDataCollection()
-data.y.0 <- getData(data.collection,params$data.collection) #annual average
-meta <- data.y.0[[1]] #metadata
-data.y.0 <- data.y.0[[2]]
+data.y99.0 <- getData(data.collection,1) #year 1999
+meta <- data.y99.0[[1]] #metadata
+data.y99.0 <- data.y99.0[[2]]
+
+comment <- function() {
+
 data.m.yoy.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,1:33],6) #monthly change
 data.m.mc.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,c(1,34:65)],6) #year-on-year change
 
@@ -75,7 +80,6 @@ data.m.mc.0 <- tail(getData(data.collection,params$data.collection[2])[[2]][,c(1
 #                 "BGN", #Bulgarian Lev
 #                 "PLN") #Polish Zloty
 
-data.y <- get
 
 # 
 # if (all(is.na(tail(data.y.0[,tail(series,length(series)-1)],1)))) { #if last obs is NA then shift one previous
@@ -133,6 +137,8 @@ t1 <- genDataTable(data,met[-1],sketch,
 
 #ouput the table
 t1
+
+}
 
 ```
 
