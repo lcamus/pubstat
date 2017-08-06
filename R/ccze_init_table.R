@@ -19,8 +19,10 @@ getStyle <- function(css.file) {
 
 }
 
-o <- Sys.setlocale("LC_TIME",
-                   ifelse(params$lang=="FR","French_France.1252","English"))
+# o <- Sys.setlocale("LC_TIME",
+#                    ifelse(params$lang=="FR","French_France.1252","English"))
+
+Sys.setlocale("LC_TIME",ifelse(params$lang=="FR","French_France.1252","English"))
 
 suppressPackageStartupMessages({
   if (!require("DT")) install.packages('DT')
@@ -38,11 +40,3 @@ style.color.GB <- "darkorchid"
 
 css.path <- "../../css/ccze.css"
 sep.style <- getStyle(css.path)
-
-# lapply(which(grepl("^!r",params)),function(x){params[[x]] <- sub("^!r","",params[[x]])})
-
-#   if 
-#   eval(parse(text=sub("^!r","",t$params$data.collection)))
-# }
-
-
