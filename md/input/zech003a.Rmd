@@ -7,14 +7,18 @@ params:
   data.directory: "https://sdw-wsrest.ecb.europa.eu/service/"
   data.collection: !r append(
     rep(list(
-      list(DATASET="EXR",
-        CURRENCY_DENOM=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
-        FREQ="Y",
+      list(
+        dimensions=c("FREQ","CURRENCY","CURRENCY_DENOM","EXR_TYPE","EXR_SUFFIX"),
+        DATASET="EXR",
+        CURRENCY=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
+        FREQ="A",
         EXR_SUFFIX=c("E","A"))
       ),
     2),
     list(
-      list(DATASET="EXR",
+      list(
+        dimensions="FREQ.CURRENCY.CURRENCY_DENOM.EXR_TYPE.EXR_SUFFIX"
+        DATASET="EXR",
         CURRENCY_DENOM=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
         FREQ="M",
         EXR_SUFFIX=c("E","A")
