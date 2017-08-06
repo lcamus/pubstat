@@ -5,13 +5,13 @@ getDataCollection <- function(path=params$data.directory,
                               templates=params$data.template,
                               parameters=params$data.params) {
 
-  browser()
+  #set input YAML parameters to R objects
   args <- as.list(environment())
   for (i in seq_along(args)) {
-    t <- paste0('sub("^!r","",args[[',i,']])')
-    t <- eval(parse(text=t))
-    assign(names(args)[i], eval(parse(text=t)))
-    # assign(names(args)[i], eval(parse(text=names(args)[i])))
+    # t <- eval(parse(text=paste0('sub("^!r","",args[[',i,']])')))
+    try(assign(names(args)[i],
+               eval(parse(text=eval(parse(text=paste0('sub("^!r","",args[[',i,']])')))))),
+        silent=T)
   }
   
   fixinput <- function(p) {
@@ -73,8 +73,10 @@ getDataCollection <- function(path=params$data.directory,
     
     else if (template=="ecb.sdw.ws") {
       
-      if (!require(httr)) install.packages("httr")
-      if (!require(readr)) install.packages("readr")
+      suppressMessages({
+        if (!require(httr)) install.packages("httr")
+        if (!require(readr)) install.packages("readr")
+      })
       
       setUrl <- function(protocol="http",wsEntryPoint,resource="data",flowRef,key,parameters,dim) {
         
@@ -107,8 +109,6 @@ getDataCollection <- function(path=params$data.directory,
         
       }
       
-      print(f)
-      browser()
       url <- setUrl(wsEntryPoint=wsEntryPoint,
                     flowRef=f$DATASET,
                     key=f[-which(c("DATASET","dimensions") %in% names(f))], #only SDMX dimensions
@@ -116,7 +116,7 @@ getDataCollection <- function(path=params$data.directory,
                     dim=f$dimensions)
       
       response <- httr::GET(url,httr::accept("text/csv"))
-      response <- readr::read_csv(httr::content(response,"text"))
+      response <- readr::read_csv(httr::content(response,"text",encoding="UTF-8"))
       
       df_data <- response[,1:8]
       df_data$date <- df_data$TIME_PERIOD
@@ -140,7 +140,7 @@ getDataCollection <- function(path=params$data.directory,
   parameters <- fixinput(parameters)
 
   l.data <- list()
-  if (unique(templates) %in% c("bdf.bsme2.req","bdf.manual.xlsx")) {
+  if (any(unique(templates) %in% c("bdf.bsme2.req","bdf.manual.xlsx"))) {
     l.f <- list.files(path,full.names=T, recursive=F)
     for (f in l.f) {
       key <- tolower(tail(strsplit(f,"/")[[1]],1))

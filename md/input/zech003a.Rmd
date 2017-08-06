@@ -57,7 +57,7 @@ setHeader(title=c("Les marchés de change de l'euro contre devises","The euro exc
 ```{r}
 
 #get data & metadata
-t <- rmarkdown::metadata
+# t <- rmarkdown::metadata
 data.collection <- getDataCollection()
 data.y99.0 <- getData(data.collection,1) #year 1999
 meta <- data.y99.0[[1]] #metadata
