@@ -13,7 +13,7 @@ getDataCollection <- function(path=params$data.directory,
                eval(parse(text=eval(parse(text=paste0('sub("^!r","",args[[',i,']])')))))),
         silent=T)
   }
-  
+
   fixinput <- function(p) {
     if (is.null(p)) p <- rep("",length(files))
     if (length(p)<length(files)) p <- c(p,rep("",length(files)-length(p)))
@@ -70,16 +70,16 @@ getDataCollection <- function(path=params$data.directory,
       l <- list(df_meta,df_data)
 
     }
-    
+
     else if (template=="ecb.sdw.ws") {
-      
+
       suppressMessages({
         if (!require(httr)) install.packages("httr")
         if (!require(readr)) install.packages("readr")
       })
-      
+
       setUrl <- function(protocol="http",wsEntryPoint,resource="data",flowRef,key,parameters,dim) {
-        
+
         #get protocol from wsEntryPoint if supplied and override protocol dedicated field value
         protocol.wsEntrypoint <- regmatches(wsEntryPoint,regexec("^.+(?=://)",wsEntryPoint,perl=T))[[1]]
         if (length(protocol.wsEntrypoint)>0) {
@@ -88,44 +88,45 @@ getDataCollection <- function(path=params$data.directory,
           rm(protocol.wsEntrypoint)
           wsEntryPoint <- sub("/$","",wsEntryPoint)
         }
-        
+
         #set SDMX key dimensions
         key.sdmx <- ""
         for (i in dim) {
           if (i %in% names(key)) {
-            key.sdmx <- paste0(key.sdmx,paste0(key[[i]],collapse="+"),".") 
+            key.sdmx <- paste0(key.sdmx,paste0(key[[i]],collapse="+"),".")
           }
           else
             key.sdmx <- paste0(key.sdmx,".")
         }
         key <- sub("\\.$","",key.sdmx)
         rm(key.sdmx)
-        
+
         #set SDMX parameters
         parameters <- paste0(lapply(seq_along(parameters),function(x){paste0(names(parameters)[x],"=",parameters[[x]])}),collapse="&")
-        
+
         res <- paste0(protocol,"://",paste(wsEntryPoint,resource,flowRef,key,sep="/"),"?",parameters)
         return(res)
-        
+
       }
-      
+
       url <- setUrl(wsEntryPoint=wsEntryPoint,
                     flowRef=f$DATASET,
                     key=f[-which(c("DATASET","dimensions") %in% names(f))], #only SDMX dimensions
                     parameters=param,
                     dim=f$dimensions)
-      
+
       response <- httr::GET(url,httr::accept("text/csv"))
+      #http://sdw-wsrest.ecb.int/service/data/EXR/A.BGN.EUR.SP00.?startPeriod=1999&endPeriod=1999
       response <- readr::read_csv(httr::content(response,"text",encoding="UTF-8"))
-      
+
       df_data <- response[,1:8]
       df_data$date <- df_data$TIME_PERIOD
       df_data$TIME_PERIOD <- NULL
-      
+
       df_meta <- response[,c("TITLE","TITLE_COMPL")]
-      
+
       l <- list(df_meta,df_data)
-      
+
     }
 
     else
@@ -135,7 +136,7 @@ getDataCollection <- function(path=params$data.directory,
     return(l)
 
   }
-  
+
   templates <- fixinput(templates)
   parameters <- fixinput(parameters)
 
@@ -154,7 +155,7 @@ getDataCollection <- function(path=params$data.directory,
   } else # ecb.sdw.ws
     for (f in seq_along(files))
       l.data[[f]] <- getDataResource(files[[f]],templates[f],parameters[[f]],wsEntryPoint=params$data.directory)
-  
+
   return(l.data)
 
 }
