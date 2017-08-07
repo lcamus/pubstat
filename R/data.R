@@ -8,7 +8,6 @@ getDataCollection <- function(path=params$data.directory,
   #set input YAML parameters to R objects
   args <- as.list(environment())
   for (i in seq_along(args)) {
-    # t <- eval(parse(text=paste0('sub("^!r","",args[[',i,']])')))
     try(assign(names(args)[i],
                eval(parse(text=eval(parse(text=paste0('sub("^!r","",args[[',i,']])')))))),
         silent=T)
@@ -73,7 +72,7 @@ getDataCollection <- function(path=params$data.directory,
 
     else if (template=="ecb.sdw.ws") {
 
-      suppressMessages({
+      suppressPackageStartupMessages({
         if (!require(httr)) install.packages("httr")
         if (!require(readr)) install.packages("readr")
       })
@@ -115,11 +114,26 @@ getDataCollection <- function(path=params$data.directory,
                     parameters=param,
                     dim=f$dimensions)
 
-      response <- httr::GET(url,httr::accept("text/csv"))
       #http://sdw-wsrest.ecb.int/service/data/EXR/A.BGN.EUR.SP00.?startPeriod=1999&endPeriod=1999
-      response <- readr::read_csv(httr::content(response,"text",encoding="UTF-8"))
-
-      df_data <- response[,1:8]
+      
+      #get the metadata first to fix issue when requesting data and no observation
+      url <- paste0(url,"&detail=nodata")
+      response.meta <- httr::GET(url,httr::accept("text/csv"))
+      response.meta <- readr::read_csv(httr::content(response.meta,"text",encoding="UTF-8"))
+      
+      #once the series records collected then get data
+      url <- sub("&detail=nodata","&detail=dataonly",url)
+      response.data <- httr::GET(url,httr::accept("text/csv"))
+      response.data <- readr::read_csv(httr::content(response.data,"text",encoding="UTF-8"))
+      
+      #finally merge the two responses in a single data frame
+      response <- merge(response.meta,response.data,by="KEY",all.x=T)
+      response[,eval(parse(text=paste0('c("',paste0(names(response)[grep("\\.y$",names(response))],collapse='","'),'")')))] <- NULL
+      response <- setNames(response,sub("\\.x$","",names(response)))
+      rm(response.meta,response.data)
+      
+      #get the results
+      df_data <- response[,c(names(response)[1:8],"OBS_VALUE")]
       df_data$date <- df_data$TIME_PERIOD
       df_data$TIME_PERIOD <- NULL
 

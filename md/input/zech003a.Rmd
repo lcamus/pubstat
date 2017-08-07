@@ -62,7 +62,6 @@ data.collection <- getDataCollection()
 data.y99.0 <- getData(data.collection,1) #year 1999
 meta <- data.y99.0[[1]] #metadata
 data.y99.0 <- data.y99.0[[2]]
-browser()
 
 series <- c("USD", #Dollar US
             "JPY", #Yen JP
@@ -86,6 +85,7 @@ rm(series.tmp)
 series.col <- "OBS_VALUE"
 
 # data.y99 <- data.frame()
+
 data.y99 <- lapply(series,function(ts){
   with(data.y99.0,
        eval(parse(text=series.col))[eval(parse(text=names(ts[1])))==ts[[1]] &
