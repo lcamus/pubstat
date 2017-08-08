@@ -63,24 +63,18 @@ data.y99.0 <- getData(data.collection,1) #year 1999
 meta <- data.y99.0[[1]] #metadata
 data.y99.0 <- data.y99.0[[2]]
 
-series <- c("USD", #Dollar US
-            "JPY", #Yen JP
-            "GBP", #Pound Sterling
-            "CHF", #Swiss Franc
-            "DKK", #Danish Krone
-            "SEK", #Swedish Krona
-            "CZK", #Czech Koruna
-            "HUF", #Hungarian Forint
-            "RON", #Romanian Leu
-            "BGN", #Bulgarian Lev
-            "PLN") #Polish Zloty
+x <- params$data.collection
+series <- eval(parse(text=regmatches(x,regexec("(?<=CURRENCY=).+(?=,)",x,perl=T))[[1]]))
+rm(x)
 
 series.tmp <- c()
 for (cur in series)
   series.tmp <- append(series.tmp,c(list(list(CURRENCY=cur,EXR_SUFFIX="E")),
                                     list(list(CURRENCY=cur,EXR_SUFFIX="A"))))
 series <- series.tmp
-rm(series.tmp)
+rm(series.tmp,cur)
+
+# data.y99.0[with(data.y99.0, order(match(data.y99.0$CURRENCY,series), EXR_SUFFIX)),]
 
 series.col <- "OBS_VALUE"
 

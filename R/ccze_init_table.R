@@ -22,7 +22,8 @@ getStyle <- function(css.file) {
 # o <- Sys.setlocale("LC_TIME",
 #                    ifelse(params$lang=="FR","French_France.1252","English"))
 
-Sys.setlocale("LC_TIME",ifelse(params$lang=="FR","French_France.1252","English"))
+suppressMessages(
+  Sys.setlocale("LC_TIME",ifelse(params$lang=="FR","French_France.1252","English")))
 
 suppressPackageStartupMessages({
   if (!require("DT")) install.packages('DT')
