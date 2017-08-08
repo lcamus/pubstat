@@ -56,17 +56,28 @@ setHeader(title=c("Les marchés de change de l'euro contre devises","The euro exc
 
 ```{r}
 
-#get data & metadata
+#get data & metadata:
+
 # t <- rmarkdown::metadata
 data.collection <- getDataCollection()
-data.y99.0 <- getData(data.collection,1) #year 1999
-meta <- data.y99.0[[1]] #metadata
+
+#year 1999 time series:
+data.y99.0 <- getData(data.collection,1)
+# meta <- data.y99.0[[1]] #metadata
 data.y99.0 <- data.y99.0[[2]]
 
+#yearly time series:
+data.y.0 <- getData(data.collection,2)
+data.y.0 <- data.y.0[[2]]
+
+#monthly time series:
+data.m.0 <- getData(data.collection,3)
+data.m.0 <- data.y.0[[2]]
+
+#generate selector for the time series:
 x <- params$data.collection
 series <- eval(parse(text=regmatches(x,regexec("(?<=CURRENCY=).+(?=,)",x,perl=T))[[1]]))
 rm(x)
-
 series.tmp <- c()
 for (cur in series)
   series.tmp <- append(series.tmp,c(list(list(CURRENCY=cur,EXR_SUFFIX="E")),
@@ -74,17 +85,23 @@ for (cur in series)
 series <- series.tmp
 rm(series.tmp,cur)
 
-# data.y99.0[with(data.y99.0, order(match(data.y99.0$CURRENCY,series), EXR_SUFFIX)),]
-
+#filter and sort data by currency
 series.col <- "OBS_VALUE"
+data.y99 <- data.y99.0[with(data.y99.0, order(match(data.y99.0$CURRENCY,series), EXR_SUFFIX)),]
+data.y99 <- data.y99[,c(series.col)]
+
+#set series title
+meta <- rep(ifelse(params$lang=="FR",c("Fin de période","Moyenne sur la période"),c("End of period","Period average")),length(data.y99)/2)
+
+browser()
+
 
 # data.y99 <- data.frame()
-
-data.y99 <- lapply(series,function(ts){
-  with(data.y99.0,
-       eval(parse(text=series.col))[eval(parse(text=names(ts[1])))==ts[[1]] &
-                                      eval(parse(text=names(ts[2])))==ts[[2]]])
-})
+# data.y99 <- lapply(series,function(ts){
+#   with(data.y99.0,
+#        eval(parse(text=series.col))[eval(parse(text=names(ts[1])))==ts[[1]] &
+#                                       eval(parse(text=names(ts[2])))==ts[[2]]])
+# })
 
 
 comment <- function() {
