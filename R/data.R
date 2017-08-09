@@ -15,7 +15,7 @@ getDataCollection <- function(path=params$data.directory,
 
   fixinput <- function(p) {
     if (is.null(p)) p <- rep("",length(files))
-    if (length(p)<length(files)) p <- c(p,rep("",length(files)-length(p)))
+    if (length(p)<length(files)) p <- c(p,rep(p,length(files)-length(p)))
     return(p)
   }
 
@@ -115,30 +115,31 @@ getDataCollection <- function(path=params$data.directory,
                     dim=f$dimensions)
 
       #http://sdw-wsrest.ecb.int/service/data/EXR/A.BGN.EUR.SP00.?startPeriod=1999&endPeriod=1999
-      
+
       #get the metadata first to fix issue when requesting data and no observation
       url <- paste0(url,"&detail=nodata")
       response.meta <- httr::GET(url,httr::accept("text/csv"))
       response.meta <- readr::read_csv(httr::content(response.meta,"text",encoding="UTF-8"))
-      
+
       #once the series records collected then get data
       url <- sub("&detail=nodata","&detail=dataonly",url)
       response.data <- httr::GET(url,httr::accept("text/csv"))
       response.data <- readr::read_csv(httr::content(response.data,"text",encoding="UTF-8"))
-      
+
       #finally merge the two responses in a single data frame
       response <- merge(response.meta,response.data,by="KEY",all.x=T)
       response[,eval(parse(text=paste0('c("',paste0(names(response)[grep("\\.y$",names(response))],collapse='","'),'")')))] <- NULL
       response <- setNames(response,sub("\\.x$","",names(response)))
       rm(response.meta,response.data)
-      
+
       #get the results
-      df_data <- response[,c(names(response)[1:8],"OBS_VALUE")]
+      df_data <- response[,c(names(response)[1:8],"OBS_VALUE","TIME_PERIOD")]
       df_data$date <- df_data$TIME_PERIOD
       df_data$TIME_PERIOD <- NULL
 
       df_meta <- response[,c("TITLE","TITLE_COMPL")]
 
+      f <- sub("&detail=.+$","",url) #ID in data collection
       l <- list(df_meta,df_data)
 
     }

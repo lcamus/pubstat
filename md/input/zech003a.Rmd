@@ -18,7 +18,7 @@ params:
       2),
       list(
         list(
-          dimensions="FREQ.CURRENCY.CURRENCY_DENOM.EXR_TYPE.EXR_SUFFIX",
+          dimensions=c("FREQ","CURRENCY","CURRENCY_DENOM","EXR_TYPE","EXR_SUFFIX"),
           DATASET="EXR",
           CURRENCY=c("USD","JPY","GBP","CHF","DKK","SEK","CZK","HUF","RON","BGN","PLN"),
           FREQ="M",
@@ -72,7 +72,9 @@ data.y.0 <- data.y.0[[2]]
 
 #monthly time series:
 data.m.0 <- getData(data.collection,3)
-data.m.0 <- data.y.0[[2]]
+data.m.0 <- data.m.0[[2]]
+
+browser()
 
 #generate selector for the time series:
 x <- params$data.collection
@@ -89,12 +91,11 @@ rm(series.tmp,cur)
 series.col <- "OBS_VALUE"
 data.y99 <- data.y99.0[with(data.y99.0, order(match(data.y99.0$CURRENCY,series), EXR_SUFFIX)),]
 data.y99 <- data.y99[,c(series.col)]
+data.y <- data.y.0[with(data.y.0, order(match(data.y.0$CURRENCY,series), EXR_SUFFIX)),]
+data.y <- data.y[,c("date",series.col)]
 
 #set series title
 meta <- rep(ifelse(params$lang=="FR",c("Fin de période","Moyenne sur la période"),c("End of period","Period average")),length(data.y99)/2)
-
-browser()
-
 
 # data.y99 <- data.frame()
 # data.y99 <- lapply(series,function(ts){
