@@ -74,7 +74,7 @@ data.y.0 <- data.y.0[[2]]
 data.m.0 <- getData(data.collection,3)
 data.m.0 <- data.m.0[[2]]
 
-browser()
+# browser()
 
 #generate selector for the time series:
 x <- params$data.collection
@@ -87,23 +87,27 @@ for (cur in series)
 series <- series.tmp
 rm(series.tmp,cur)
 
-#filter and sort data by currency
-series.col <- "OBS_VALUE"
-data.y99 <- data.y99.0[with(data.y99.0, order(match(data.y99.0$CURRENCY,series), EXR_SUFFIX)),]
-data.y99 <- data.y99[,c(series.col)]
-data.y <- data.y.0[with(data.y.0, order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
-data.y <- data.y[,c("date",series.col)]
-# data.y.0[with(data.y.0, order(match(CURRENCY,lapply(series,`[[`,1)),EXR_SUFFIX,date)),]
+#filter and sort data by currency:
+
+setData <- function(ts) {
+  res <- ts[with(ts,order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
+  res <- matrix(res$OBS_VALUE,ncol=grep("E",ts$EXR_SUFFIX)[1]-1,byrow=T)
+  return(res)
+}
+
+# data.y99 <- data.y99.0[with(data.y99.0, order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
+# data.y99 <- matrix(data.y99[,c(series.col)],ncol=1,byrow=T)
+# 
+# data.y <- data.y.0[with(data.y.0, order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
+# data.y <- matrix(data.y[,c(series.col)],ncol=2,byrow=T)
+# 
+# data.m <- data.m.0[with(data.m.0, order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
+# data.m <- matrix(data.m[,c(series.col)],ncol=6,byrow=T)
+
+stop()
 
 #set series title
 meta <- rep(ifelse(params$lang=="FR",c("Fin de période","Moyenne sur la période"),c("End of period","Period average")),length(data.y99)/2)
-
-# data.y99 <- data.frame()
-# data.y99 <- lapply(series,function(ts){
-#   with(data.y99.0,
-#        eval(parse(text=series.col))[eval(parse(text=names(ts[1])))==ts[[1]] &
-#                                       eval(parse(text=names(ts[2])))==ts[[2]]])
-# })
 
 
 comment <- function() {
