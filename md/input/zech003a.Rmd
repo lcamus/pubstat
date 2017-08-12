@@ -74,8 +74,6 @@ data.y.0 <- data.y.0[[2]]
 data.m.0 <- getData(data.collection,3)
 data.m.0 <- data.m.0[[2]]
 
-# browser()
-
 #generate selector for the time series:
 x <- params$data.collection
 series <- eval(parse(text=regmatches(x,regexec("(?<=CURRENCY=).+(?=,)",x,perl=T))[[1]]))
@@ -95,6 +93,11 @@ setData <- function(ts) {
   return(res)
 }
 
+lapply(c("data.y99","data.y","data.m"),function(x){
+  eval(parse(text=paste0(x," <- setData(",paste0(x,".0"),")")),envir=parent.frame(2))
+  })
+setData <- NULL
+
 # data.y99 <- data.y99.0[with(data.y99.0, order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
 # data.y99 <- matrix(data.y99[,c(series.col)],ncol=1,byrow=T)
 # 
@@ -104,10 +107,15 @@ setData <- function(ts) {
 # data.m <- data.m.0[with(data.m.0, order(match(CURRENCY,lapply(series,`[[`,1)),rev(EXR_SUFFIX),date)),]
 # data.m <- matrix(data.m[,c(series.col)],ncol=6,byrow=T)
 
-stop()
+# browser()
 
 #set series title
-meta <- rep(ifelse(params$lang=="FR",c("Fin de période","Moyenne sur la période"),c("End of period","Period average")),length(data.y99)/2)
+# meta <- ifelse(params$lang=="FR",c("Fin de période","Moyenne sur la période"),c("End of period","Period average"))
+meta <- unlist(rep(
+  ifelse(params$lang=="FR",list(c("Fin de période","Moyenne sur la période")),list(c("End of period","Period average"))),
+  length(data.y99)/2))
+
+stop()
 
 
 comment <- function() {
