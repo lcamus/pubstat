@@ -147,7 +147,10 @@ browser()
 
 #data
 data <- as.data.frame(cbind(data.y99,data.y,data.m), stringsAsFactors=F)
-t1 <- genDataTable(data,meta,#sketch,
+# t1 <- genDataTable(data,meta,sketch,
+#                    countries.highlight=c("USD","JPY","GBP","CHF"),
+#                    sep.col=c(3,5),sep.style=sep.style)
+t1 <- genDataTable(data,meta,sketch=null,
                    countries.highlight=c("USD","JPY","GBP","CHF"),
                    sep.col=c(3,5),sep.style=sep.style)
 
