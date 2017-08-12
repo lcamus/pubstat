@@ -36,5 +36,10 @@ style.color.US <- "navy"
 style.color.JP <- "deeppink"
 style.color.GB <- "darkorchid"
 
+style.color.USD <- style.color.US
+style.color.JPY <- style.color.JP
+style.color.GBP <- style.color.GB
+style.color.CHF <- "red"
+
 css.path <- "../../css/ccze.css"
 sep.style <- getStyle(css.path)
