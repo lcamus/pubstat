@@ -215,6 +215,14 @@ getCountryByCode <- function(c,lang=params$lang) {
       ifelse(lang=="fr","Zone euro","Euro area")
     else if (x=="eu")
       ifelse(lang=="fr","Union européenne","European union")
+    else if (x=="usd")
+      "Dollar"
+    else if (x=="jpy")
+      "Yen"
+    else if (x=="gbp")
+      ifelse(lang=="fr","Livre sterling","Pound Sterling")
+    else if (x=="chf")
+      ifelse(lang=="fr","Franc suisse","Swiss Franc")
     else
       countrynameFR2EN(
         ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
@@ -304,9 +312,10 @@ genDataTable <- function(data,met,sketch,
   if (!is.null(sep.col)) {
     df <- as.data.frame(which(is.na(data),arr.ind=T,useNames=F))
     if (nrow(df) != 0) {
-      df <- setNames(df,c("row","col"))  
+      df <- setNames(df,c("row","col"))
       sep.forced <- list(
-        country.lib=met[as.numeric(rownames(table(df[df$col %in% (sep.col-1):sep.col,])))-1],
+        # country.lib=met[as.numeric(rownames(table(df[df$col %in% (sep.col-1):sep.col,])))-1],
+        country.lib=met[as.numeric(rownames(table(df[df$col %in% c(sep.col-1,sep.col),])))-1],
         col=sep.col-1,
         css.property=sep.style.cssproperty,
         css.value=sep.style.cssvalue
@@ -314,34 +323,35 @@ genDataTable <- function(data,met,sketch,
       rm(df)
     }
   }
+# browser()
+  # res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
+res <- DT::datatable(cbind(country=met,sapply(data,as.numeric)),
+                     rownames=F, container=sketch,
+                     options = list(paging=F,searching=F,info=F,
+                                    language=list(decimal=decimal.sep),
+                                    columnDefs = columnDefs,
+                                    rowCallback=DT::JS(
+                                      customTable(country.name=countries.highlight.name,country.code=countries.highlight,
+                                                  begin=0,end=ncol(data),width="1px",
+                                                  subrow=subrow,countries.name.forced=countries.name.forced,sep.forced=sep.forced)
+                                    )
+                     ),
+                     class="compact hover stripe",escape=F) %>%
+  formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits)
 
-  res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
-                       rownames=F, container=sketch,
-                       options = list(paging=F,searching=F,info=F,
-                                      language=list(decimal=decimal.sep),
-                                      columnDefs = columnDefs,
-                                      rowCallback=DT::JS(
-                                        customTable(country.name=countries.highlight.name,country.code=countries.highlight,
-                                                    begin=0,end=ncol(data),width="1px",
-                                                    subrow=subrow,countries.name.forced=countries.name.forced,sep.forced=sep.forced)
-                                      )
-                       ),
-                       class="compact hover stripe",escape=F) %>%
-    formatCurrency(columns=c(1:ncol(data)+1),currency="",dec.mark=decimal.sep,digits=nbdigits)
+if (!subrow & !is.null(countries.highlight) & !countries.name.forced)
+  res <- res %>%
+  formatStyle(1,target="row",
+              fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),
+              color=styleEqual(countrynameFR2EN(countries.highlight.name),
+                               eval(parse(text=sub(",)",")",paste0(
+                                 "c(",paste0("style.color.",countries.highlight,",",collapse=""),")"
+                               ))))
+              ))
 
-  if (!subrow & !is.null(countries.highlight) & !countries.name.forced)
-    res <- res %>%
-    formatStyle(1,target="row",
-                fontWeight=styleEqual(countrynameFR2EN(countries.highlight.name),rep("bold",length(countries.highlight.name))),
-                color=styleEqual(countrynameFR2EN(countries.highlight.name),
-                                 eval(parse(text=sub(",)",")",paste0(
-                                   "c(",paste0("style.color.",countries.highlight,",",collapse=""),")"
-                                 ))))
-                ))
+res <- res %>% formatStyle(sep.col, `box-shadow`=sep.style.cssvalue)
 
-  res <- res %>% formatStyle(sep.col, `box-shadow`=sep.style.cssvalue)
-
-  return(res)
+return(res)
 
 }
 
