@@ -116,20 +116,24 @@ meta <- unlist(rep(
 
 # col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
 # col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-#unique(data.y99.0[!is.na(data.y99.0$date),]$date)
+# col.y99 <- unique(data.y99.0[!is.na(data.y99.0$date),]$date)
+list2env(setNames(lapply(list(data.y99.0,data.y.0),function(x){sort(unique(x[!is.na(x$date),]$date))}),
+                  c("col.y99","col.y")),
+         envir=parent.frame())
+
+col.m <- sort(unique(zoo::as.yearmon(as.character(data.m.0$date),"%Y-%m")))
 # 
 sketch = htmltools::withTags(table(
   thead(
     tr(
       th(colspan=1,rowspan=2),
-      th(colspan=1,rowspan=1,ifelse(params$lang=="FR","année","year")),
-      th(colspan=2,rowspan=1,ifelse(params$lang=="FR","année","year"),style=style.sep),
-      getTH(base::table(as.character(format(col.m.yoy,"%Y"))),"Y",sep.style)
-      # th(colspan=6,rowspan=1,ifelse(params$lang=="FR","mensuel","monthly"),
-      #    style=style.sep)
+      th(colspan=ncol(data.y99),rowspan=1,ifelse(params$lang=="FR","année","year")),
+      th(colspan=ncol(data.y),rowspan=1,ifelse(params$lang=="FR","année","year"),style=style.sep),
+      getTH(base::table(col.m),"Y",sep.style)
+      # th(colspan=ncol(data.m)-1,rowspan=1)
     ),
     tr(
-      lapply(as.character(data.y[1,]), th, rowspan=2),
+      # lapply(as.character(data.y[1,]), th, rowspan=2),
       getTH(base::table(as.character(format(col.m.mc,"%Y"))),"Y",sep.style),
       getTH(base::table(as.character(format(col.m.yoy,"%Y"))),"Y",sep.style)
     ),
