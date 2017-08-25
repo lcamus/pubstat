@@ -63,7 +63,8 @@ role.obsvalue <- "OBS_VALUE"
 
 #get data & metadata:
 
-data.collection <- getDataCollection()
+if (!exists("data.collection"))
+  data.collection <- getDataCollection()
 
 #year 1999 time series:
 data.y99.0 <- getData(data.collection,1)
@@ -80,13 +81,10 @@ data.m.0 <- data.m.0[[2]]
 
 #generate selector for the time series:
 x <- params$data.collection
-# series <- eval(parse(text=regmatches(x,regexec("(?<=CURRENCY=).+(?=,)",x,perl=T))[[1]]))
 series <- eval(parse(text=regmatches(x,regexec(paste0("(?<=",role.currency,"=).+(?=,)"),x,perl=T))[[1]]))
 rm(x)
 series.tmp <- c()
 for (cur in series)
-  # series.tmp <- append(series.tmp,c(list(list(CURRENCY=cur,EXR_SUFFIX="E")),
-  #                                   list(list(CURRENCY=cur,EXR_SUFFIX="A"))))
   series.tmp <- append(series.tmp,c(list(list(role.currency=cur,role.obsmethod="E")),
                                     list(list(role.currency=cur,role.obsmethod="A"))))
 series <- series.tmp
@@ -128,19 +126,21 @@ sketch = htmltools::withTags(table(
     tr(
       th(colspan=1,rowspan=2),
       th(colspan=ncol(data.y99),rowspan=1,ifelse(params$lang=="FR","année","year")),
-      th(colspan=ncol(data.y),rowspan=1,ifelse(params$lang=="FR","année","year"),style=style.sep),
-      getTH(base::table(col.m),"Y",sep.style)
+      th(colspan=ncol(data.y),rowspan=1,ifelse(params$lang=="FR","année","year"),style=sep.style),
+      getTH(base::table(format(col.m,"%Y")),"Y",sep.style)
       # th(colspan=ncol(data.m)-1,rowspan=1)
     ),
     tr(
       # lapply(as.character(data.y[1,]), th, rowspan=2),
-      getTH(base::table(as.character(format(col.m.mc,"%Y"))),"Y",sep.style),
-      getTH(base::table(as.character(format(col.m.yoy,"%Y"))),"Y",sep.style)
-    ),
-    tr(
-      getTH(as.character(format(col.m.mc,"%b")),"M",sep.style),
-      getTH(as.character(format(col.m.yoy,"%b")),"M",sep.style)
+      getTH(base::table(col.y99),"Y",sep.style),
+      getTH(base::table(col.y),"Y",sep.style),
+      getTH(as.character(format(col.m,"%b")),"M",sep.style)
     )
+    # ,
+    # tr(
+    #   getTH(as.character(format(col.m.mc,"%b")),"M",sep.style),
+    #   getTH(as.character(format(col.m.yoy,"%b")),"M",sep.style)
+    # )
   )
 ))
 
