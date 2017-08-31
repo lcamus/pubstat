@@ -137,7 +137,7 @@ getDataCollection <- function(path=params$data.directory,
       df_data$date <- df_data$TIME_PERIOD
       df_data$TIME_PERIOD <- NULL
 
-      df_meta <- response[,c("TITLE","TITLE_COMPL")]
+      df_meta <- response[,c("KEY","TITLE","TITLE_COMPL")]
 
       f <- sub("&detail=.+$","",url) #ID in data collection
       l <- list(df_meta,df_data)

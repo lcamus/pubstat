@@ -94,10 +94,13 @@ rm(series.tmp,cur)
 
 setData <- function(ts) {
   res <- ts[order(match(ts[,c(role.currency)],lapply(series,`[[`,1)),rev(ts[,c(role.obsmethod)]),ts$date),]
+  rn <- rownames(res)
+  print(class(res))
   res <- matrix(res[,c(role.obsvalue)],ncol=grep("E",ts[,c(role.obsmethod)])[1]-1,byrow=T)
+  # rownames(res) <- rn
   return(res)
 }
-print("hello")
+
 invisible(lapply(c("data.y99","data.y","data.m"),function(x){
   eval(parse(text=paste0(x," <- setData(",paste0(x,".0"),")")),envir=parent.frame(2))
   }))

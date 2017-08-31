@@ -323,8 +323,7 @@ genDataTable <- function(data,met,sketch,
       rm(df)
     }
   }
-# browser()
-  # res <- DT::datatable(cbind(country=met,sapply(data[-1,],as.numeric)),
+
 res <- DT::datatable(cbind(country=met,sapply(data,as.numeric)),
                      rownames=F, container=sketch,
                      options = list(paging=F,searching=F,info=F,
