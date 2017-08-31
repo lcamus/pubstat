@@ -356,10 +356,16 @@ return(res)
 }
 
 
-getTH <- function(variable,liblevel,sep.style="") {
+getTH <- function(variable,liblevel,sep.style="", base.style) {
 
   style.fwn <- "font-weight:normal; "
   style.fwb <- "font-weight:bold; text-align:left; border:none;"
+  
+  if (missing(base.style))
+    if (liblevel=="Y")
+      base.style <- style.fwb
+    else
+      base.style <- style.fwn
 
   res <- htmltools::withTags(
     if (liblevel=="Y") {
@@ -367,12 +373,12 @@ getTH <- function(variable,liblevel,sep.style="") {
         seq_along(variable),
         function(x){th(
           names(variable)[[x]],colspan=variable[x],
-          style=paste0(style.fwb,ifelse(x==1,sep.style,""))
+          style=paste0(base.style,ifelse(x==1,sep.style,""))
         )})
     } else { # "M" or "Q"
       list(
-        lapply(utils::head(variable,1),th,style=paste0(style.fwn,sep.style)),
-        lapply(tail(variable,length(variable)-1), th, style=style.fwn)
+        lapply(utils::head(variable,1),th,style=paste0(base.style,sep.style)),
+        lapply(tail(variable,length(variable)-1), th, style=base.style)
       )
     }
   )

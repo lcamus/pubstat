@@ -68,7 +68,7 @@ if (!exists("data.collection"))
 
 #year 1999 time series:
 data.y99.0 <- getData(data.collection,1)
-# meta <- data.y99.0[[1]] #metadata
+meta.currencies <- data.y99.0[[1]] #metadata
 data.y99.0 <- data.y99.0[[2]]
 
 #yearly time series:
@@ -97,10 +97,10 @@ setData <- function(ts) {
   res <- matrix(res[,c(role.obsvalue)],ncol=grep("E",ts[,c(role.obsmethod)])[1]-1,byrow=T)
   return(res)
 }
-
-lapply(c("data.y99","data.y","data.m"),function(x){
+print("hello")
+invisible(lapply(c("data.y99","data.y","data.m"),function(x){
   eval(parse(text=paste0(x," <- setData(",paste0(x,".0"),")")),envir=parent.frame(2))
-  })
+  }))
 setData <- NULL
 
 #set series title
@@ -111,36 +111,24 @@ meta <- unlist(rep(
 #generate datatable:
 
 #header:
-
-# col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
-# col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-# col.y99 <- unique(data.y99.0[!is.na(data.y99.0$date),]$date)
-list2env(setNames(lapply(list(data.y99.0,data.y.0),function(x){sort(unique(x[!is.na(x$date),]$date))}),
+invisible(list2env(setNames(lapply(list(data.y99.0,data.y.0),function(x){sort(unique(x[!is.na(x$date),]$date))}),
                   c("col.y99","col.y")),
-         envir=parent.frame())
-
+         envir=baseenv()))
 col.m <- sort(unique(zoo::as.yearmon(as.character(data.m.0$date),"%Y-%m")))
 # 
 sketch = htmltools::withTags(table(
   thead(
     tr(
       th(colspan=1,rowspan=2),
-      th(colspan=ncol(data.y99),rowspan=1,ifelse(params$lang=="FR","année","year")),
-      th(colspan=ncol(data.y),rowspan=1,ifelse(params$lang=="FR","année","year"),style=sep.style),
+      th(colspan=ncol(data.y99),rowspan=1,ifelse(params$lang=="FR","année","year"),style="border:none;"),
+      th(colspan=ncol(data.y),rowspan=1,ifelse(params$lang=="FR","année","year"),style=paste0("border:none;",sep.style)),
       getTH(base::table(format(col.m,"%Y")),"Y",sep.style)
-      # th(colspan=ncol(data.m)-1,rowspan=1)
     ),
     tr(
-      # lapply(as.character(data.y[1,]), th, rowspan=2),
-      getTH(base::table(col.y99),"Y",sep.style),
-      getTH(base::table(col.y),"Y",sep.style),
+      getTH(base::table(col.y99),"Y","","font-weight:bold;"),
+      getTH(base::table(col.y),"Y",sep.style,"font-weight:bold;"),
       getTH(as.character(format(col.m,"%b")),"M",sep.style)
     )
-    # ,
-    # tr(
-    #   getTH(as.character(format(col.m.mc,"%b")),"M",sep.style),
-    #   getTH(as.character(format(col.m.yoy,"%b")),"M",sep.style)
-    # )
   )
 ))
 
@@ -150,10 +138,7 @@ sketch = htmltools::withTags(table(
 
 #data
 data <- as.data.frame(cbind(data.y99,data.y,data.m), stringsAsFactors=F)
-# t1 <- genDataTable(data,meta,sketch,
-#                    countries.highlight=c("USD","JPY","GBP","CHF"),
-#                    sep.col=c(3,5),sep.style=sep.style)
-t1 <- genDataTable(data,meta,#sketch=NULL,
+t1 <- genDataTable(data,meta,sketch,
                    countries.highlight=c("USD","JPY","GBP","CHF"),
                    sep.col=c(3,5),sep.style=sep.style)
 
