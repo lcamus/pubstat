@@ -97,7 +97,8 @@ setData <- function(ts) {
   rn <- rownames(res)
   print(class(res))
   res <- matrix(res[,c(role.obsvalue)],ncol=grep("E",ts[,c(role.obsmethod)])[1]-1,byrow=T)
-  # rownames(res) <- rn
+  if (ncol(res)==1) #data.y99
+    rownames(res) <- rn
   return(res)
 }
 
@@ -110,6 +111,9 @@ setData <- NULL
 meta <- unlist(rep(
   ifelse(params$lang=="FR",list(c("Fin de période","Moyenne sur la période")),list(c("End of period","Period average"))),
   length(data.y99)/2))
+
+#set currencies titles order
+meta.currencies <- meta.currencies[rownames(data.y99),]$TITLE
 
 #generate datatable:
 
@@ -137,10 +141,11 @@ sketch = htmltools::withTags(table(
 
 #end header
 
-# browser()
-
 #data
 data <- as.data.frame(cbind(data.y99,data.y,data.m), stringsAsFactors=F)
+
+#insert currencies titles in data table
+#...
 t1 <- genDataTable(data,meta,sketch,
                    countries.highlight=c("USD","JPY","GBP","CHF"),
                    sep.col=c(3,5),sep.style=sep.style)
