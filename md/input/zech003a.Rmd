@@ -113,7 +113,7 @@ meta <- unlist(rep(
   length(data.y99)/2))
 
 #set currencies titles order
-meta.currencies <- meta.currencies[rownames(data.y99),]$TITLE
+meta.currencies <- unique(eta.currencies[rownames(data.y99),]$TITLE)
 
 #generate datatable:
 
@@ -144,8 +144,16 @@ sketch = htmltools::withTags(table(
 #data
 data <- as.data.frame(cbind(data.y99,data.y,data.m), stringsAsFactors=F)
 
-#insert currencies titles in data table
-#...
+#insert currencies titles in data
+index <- c()
+for (i in 1:length(meta.currencies))
+  index <- c(index,i,i*2+10,i*2+11)
+  #View(rbind(t(as.data.frame(lapply(meta.currencies,function(x){c(x,rep(" ",ncol(data)-1))}),stringsAsFactors=F)),data))
+data <- rbind(
+  as.data.frame(matrix(rep(NA,ncol(data)*length(meta.currencies)),ncol=ncol(data),nrow=length(meta.currencies)),stringsAsFactors=F),
+  data)
+
+#finally generate the data table
 t1 <- genDataTable(data,meta,sketch,
                    countries.highlight=c("USD","JPY","GBP","CHF"),
                    sep.col=c(3,5),sep.style=sep.style)
