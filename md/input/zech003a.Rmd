@@ -151,7 +151,7 @@ index <- c()
 for (i in 1:length(meta.currencies))
   index <- c(index,i,i*2+10,i*2+11)
 data <- rbind(
-  as.data.frame(matrix(rep(NA,ncol(data)*length(meta.currencies)),ncol=ncol(data),nrow=length(meta.currencies)),stringsAsFactors=F),
+  as.data.frame(matrix(rep("",ncol(data)*length(meta.currencies)),ncol=ncol(data),nrow=length(meta.currencies)),stringsAsFactors=F),
   data)
 data <- data[index,]
 meta <- c(meta.currencies,meta)[index]
