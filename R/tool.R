@@ -105,6 +105,25 @@ setFooter <- function(o, source=c("","")) {
 
 }
 
+currencynameEN2FR <- function(c) {
+
+  c <- tolower(c)
+  c <- sub("^us dollar$","Dollar",c)
+  c <- sub("^japanese yen$","Yen",c)
+  c <- sub("^uk pound sterling$","Livre sterling",c)
+  c <- sub("^swiss franc$","Franc suisse",c)
+  c <- sub("^danish krone$","Couronne danoise",c)
+  c <- sub("^swedish krona$","Couronne suédoise",c)
+  c <- sub("^czech koruna$","Couronne tchèque",c)
+  c <- sub("^hungarian forint$","Forint hongrois",c)
+  c <- sub("^romanian leu$","Leu roumain",c)
+  c <- sub("^bulgarian lev$","Lev bulgare",c)
+  c <- sub("^polish zloty$","Zloty polonais",c)
+
+  return(c)
+
+}
+
 countrynameFR2EN <- function(c,lang=params$lang) {
 
   if (tolower(lang)=="en") {
@@ -235,9 +254,9 @@ getCountryByCode <- function(c,lang=params$lang) {
 
 customTable <- function(country.name,country.code,color,width="1px",begin,end,
                         subrow=F,countries.name.forced=F,sep.forced=NULL) {
-  
+
   if (!require(stringr)) install.packages("stringr")
-  
+
   if (is.null(country.code))
     js <- NULL
   else {
@@ -258,7 +277,7 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
         '}\n'
       ))
     })
-    
+
     if (!is.null(sep.forced))
       js <- c(js,
               sapply(sep.forced$country.lib,function(x){
@@ -268,7 +287,7 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
                   }\n'
                   ))
   }))
-    
+
     js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
 
   }
@@ -282,9 +301,9 @@ genDataTable <- function(data,met,sketch,
                          nbdigits=1,sep.col=NULL,
                          sep.style="box-shadow:-2px 0 0 black;",subrow=F,width=NULL,
                          countries.name.forced=!missing(countries.highlight.name)) {
-  
+
   if (!require(stringr)) install.packages("stringr")
-  
+
   if (missing(countries.highlight)) {
     countries.highlight <- c()
     countries.highlight.name <- c()
@@ -306,7 +325,7 @@ genDataTable <- function(data,met,sketch,
 
   if (!is.null(width))
     columnDefs[[2]] <- width
-  
+
   #get around seeming issue when formatStyle applied to two consecutive cells with defaultContent (na values):
   sep.forced <- NULL
   if (!is.null(sep.col)) {
@@ -359,7 +378,7 @@ getTH <- function(variable,liblevel,sep.style="", base.style) {
 
   style.fwn <- "font-weight:normal; "
   style.fwb <- "font-weight:bold; text-align:left; border:none;"
-  
+
   if (missing(base.style))
     if (liblevel=="Y")
       base.style <- style.fwb

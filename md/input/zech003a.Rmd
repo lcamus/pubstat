@@ -95,7 +95,6 @@ rm(series.tmp,cur)
 setData <- function(ts) {
   res <- ts[order(match(ts[,c(role.currency)],lapply(series,`[[`,1)),rev(ts[,c(role.obsmethod)]),ts$date),]
   rn <- rownames(res)
-  print(class(res))
   res <- matrix(res[,c(role.obsvalue)],ncol=grep("E",ts[,c(role.obsmethod)])[1]-1,byrow=T)
   if (ncol(res)==1) #data.y99
     rownames(res) <- rn
@@ -113,7 +112,10 @@ meta <- unlist(rep(
   length(data.y99)/2))
 
 #set currencies titles order
-meta.currencies <- unique(eta.currencies[rownames(data.y99),]$TITLE)
+meta.currencies <- unique(meta.currencies[rownames(data.y99),]$TITLE)
+meta.currencies <- sub("/Euro","",meta.currencies,ignore.case=T)
+if (params$lang=="FR")
+  meta.currencies <- as.character(lapply(meta.currencies,function(x){currencynameEN2FR(x)}))
 
 #generate datatable:
 
@@ -148,14 +150,15 @@ data <- as.data.frame(cbind(data.y99,data.y,data.m), stringsAsFactors=F)
 index <- c()
 for (i in 1:length(meta.currencies))
   index <- c(index,i,i*2+10,i*2+11)
-  #View(rbind(t(as.data.frame(lapply(meta.currencies,function(x){c(x,rep(" ",ncol(data)-1))}),stringsAsFactors=F)),data))
 data <- rbind(
   as.data.frame(matrix(rep(NA,ncol(data)*length(meta.currencies)),ncol=ncol(data),nrow=length(meta.currencies)),stringsAsFactors=F),
   data)
+data <- data[index,]
+meta <- c(meta.currencies,meta)[index]
 
 #finally generate the data table
 t1 <- genDataTable(data,meta,sketch,
-                   countries.highlight=c("USD","JPY","GBP","CHF"),
+                   # countries.highlight=c("USD","JPY","GBP","CHF"),
                    sep.col=c(3,5),sep.style=sep.style)
 
 #ouput the table
