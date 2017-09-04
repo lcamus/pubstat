@@ -242,6 +242,12 @@ getCountryByCode <- function(c,lang=params$lang) {
       ifelse(lang=="fr","Livre sterling","Pound Sterling")
     else if (x=="chf")
       ifelse(lang=="fr","Franc suisse","Swiss Franc")
+    else if (x=="dkk")
+      ifelse(lang=="fr","Couronne danoise","Danish Krone")
+    else if (x=="sek")
+      ifelse(lang=="fr","Couronne suédoise","Swedish Krona")
+    else if (x=="czk")
+      ifelse(lang=="fr","Couronne tchèque","Czech Koruna")
     else
       countrynameFR2EN(
         ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
@@ -333,7 +339,6 @@ genDataTable <- function(data,met,sketch,
     if (nrow(df) != 0) {
       df <- setNames(df,c("row","col"))
       sep.forced <- list(
-        # country.lib=met[as.numeric(rownames(table(df[df$col %in% (sep.col-1):sep.col,])))-1],
         country.lib=met[as.numeric(rownames(table(df[df$col %in% c(sep.col-1,sep.col),])))-1],
         col=sep.col-1,
         css.property=sep.style.cssproperty,

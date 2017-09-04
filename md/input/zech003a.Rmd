@@ -158,7 +158,7 @@ meta <- c(meta.currencies,meta)[index]
 
 #finally generate the data table
 t1 <- genDataTable(data,meta,sketch,
-                   # countries.highlight=c("USD","JPY","GBP","CHF"),
+                   countries.highlight=c("USD","JPY","GBP","CHF","DKK","SEK","CZK"),
                    sep.col=c(3,5),sep.style=sep.style)
 
 #ouput the table
