@@ -248,6 +248,14 @@ getCountryByCode <- function(c,lang=params$lang) {
       ifelse(lang=="fr","Couronne suédoise","Swedish Krona")
     else if (x=="czk")
       ifelse(lang=="fr","Couronne tchèque","Czech Koruna")
+    else if (x=="huf")
+      ifelse(lang=="fr","Forint hongrois","Hungarian Forint")
+    else if (x=="ron")
+      ifelse(lang=="fr","Leu roumain","Romanian Leu")
+    else if (x=="bgn")
+      ifelse(lang=="fr","Lev bulgare","Bulgarian Lev")
+    else if (x=="pln")
+      ifelse(lang=="fr","Zloty polonais","Polish Zloty")
     else
       countrynameFR2EN(
         ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
@@ -284,15 +292,18 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
       ))
     })
 
-    if (!is.null(sep.forced))
+    if (!is.null(sep.forced)) {
       js <- c(js,
-              sapply(sep.forced$country.lib,function(x){
+              # sapply(sep.forced$country.lib,function(x){
+              sapply(unique(sep.forced$country.lib),function(x){
                 stringr::str_interp(paste0(
                   'if (data[0]=="${x}") {
                          $("td:eq(${sep.forced$col})",row).css("${sep.forced$css.property}","${sep.forced$css.value}");
                   }\n'
                   ))
-  }))
+              }))
+      print(js)
+      }
 
     js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
 
@@ -335,7 +346,7 @@ genDataTable <- function(data,met,sketch,
   #get around seeming issue when formatStyle applied to two consecutive cells with defaultContent (na values):
   sep.forced <- NULL
   if (!is.null(sep.col)) {
-    df <- as.data.frame(which(is.na(data),arr.ind=T,useNames=F))
+    df <- as.data.frame(which(is.na(data) | data=="",arr.ind=T,useNames=F))
     if (nrow(df) != 0) {
       df <- setNames(df,c("row","col"))
       sep.forced <- list(
@@ -344,6 +355,9 @@ genDataTable <- function(data,met,sketch,
         css.property=sep.style.cssproperty,
         css.value=sep.style.cssvalue
       )
+      # print(df[df$col %in% c(sep.col-1,sep.col),])
+      # print(df$col)
+      print(sep.forced)
       rm(df)
     }
   }

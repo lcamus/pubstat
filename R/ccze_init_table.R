@@ -44,6 +44,10 @@ style.color.CHF <- "red"
 style.color.DKK <- "black"
 style.color.SEK <- "black"
 style.color.CZK <- "black"
+style.color.HUF <- "black"
+style.color.RON <- "black"
+style.color.BGN <- "black"
+style.color.PLN <- "black"
 
 css.path <- "../../css/ccze.css"
 sep.style <- getStyle(css.path)
