@@ -352,8 +352,6 @@ genDataTable <- function(data,met,sketch,
     df <- as.data.frame(which(is.na(data) | data=="",arr.ind=T,useNames=F))
     if (nrow(df) != 0) {
       df <- setNames(df,c("row","col"))
-      print(class(met))
-      print(met)
       v.sf <- df$col %in% c(sep.col-1,sep.col)
       sep.forced <- ifelse(any(v.sf),
                            list(

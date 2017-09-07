@@ -87,9 +87,14 @@ data.m.yoy <- t(data.m.yoy.0[,series])
 
 #set metadata:
 met <- as.character(meta[2,series])
-met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
+# met <- trimws(unlist(lapply(strsplit(met,":"),"[[",1)))
 met <- sub(" \\w+$","",met,perl=T)
 met <- countrynameFR2EN(met)
+c.eu.us.jp <- getCountryByCode(c("eu","us","jp"),params$lang)
+c.li <- c("a","b","b")
+# met <- sub(c.eu,paste0(c.eu," <sup><i>(a)</i></sup>"),met,ignore.case=T)
+met <- sapply(seq_along(c.li),function(x){sub(c.eu.us.jp[x],paste0(c.eu.us.jp[x]," <sup><i>(",c.li[x],")</i></sup>"),met,ignore.case=T)})
+rm(c.eu.us.jp,c.li)
 
 #generate datatable:
 
@@ -124,8 +129,9 @@ sketch = htmltools::withTags(table(
 
 #data
 data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
-t1 <- genDataTable(data,met[-1],sketch,
+t1 <- genDataTable(data[-1,],met[-1],sketch,
                    countries.highlight=c("FR","EA","EU","US","JP"),
+                   countries.highlight.name=met[c(2,21,31:33)],
                    sep.col=c(5,11),sep.style=sep.style)
 
 #ouput the table
