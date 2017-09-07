@@ -235,27 +235,27 @@ getCountryByCode <- function(c,lang=params$lang) {
     else if (x=="eu")
       ifelse(lang=="fr","Union européenne","European union")
     else if (x=="usd")
-      "Dollar"
+      ifelse(lang=="fr","Dollar US","US dollar")
     else if (x=="jpy")
-      "Yen"
+      ifelse(lang=="fr","Yen japonais","Japanese yen")
     else if (x=="gbp")
-      ifelse(lang=="fr","Livre sterling","Pound Sterling")
+      ifelse(lang=="fr","Livre sterling","UK pound sterling")
     else if (x=="chf")
-      ifelse(lang=="fr","Franc suisse","Swiss Franc")
+      ifelse(lang=="fr","Franc suisse","Swiss franc")
     else if (x=="dkk")
-      ifelse(lang=="fr","Couronne danoise","Danish Krone")
+      ifelse(lang=="fr","Couronne danoise","Danish krone")
     else if (x=="sek")
-      ifelse(lang=="fr","Couronne suédoise","Swedish Krona")
+      ifelse(lang=="fr","Couronne suédoise","Swedish krona")
     else if (x=="czk")
-      ifelse(lang=="fr","Couronne tchèque","Czech Koruna")
+      ifelse(lang=="fr","Couronne tchèque","Czech koruna")
     else if (x=="huf")
-      ifelse(lang=="fr","Forint hongrois","Hungarian Forint")
+      ifelse(lang=="fr","Forint hongrois","Hungarian forint")
     else if (x=="ron")
-      ifelse(lang=="fr","Leu roumain","Romanian Leu")
+      ifelse(lang=="fr","Leu roumain","Romanian leu")
     else if (x=="bgn")
-      ifelse(lang=="fr","Lev bulgare","Bulgarian Lev")
+      ifelse(lang=="fr","Lev bulgare","Bulgarian lev")
     else if (x=="pln")
-      ifelse(lang=="fr","Zloty polonais","Polish Zloty")
+      ifelse(lang=="fr","Zloty polonais","Polish zloty")
     else
       countrynameFR2EN(
         ISO_3166_1[tolower(ISO_3166_1$Alpha_2)==x,]$Name,
@@ -306,12 +306,9 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
               }\n'
                   ))
               }))
-      # print(class(js))
-      # print(length(js))
       }
 
     js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
-    print(js)
 
   }
 
@@ -356,14 +353,12 @@ genDataTable <- function(data,met,sketch,
     if (nrow(df) != 0) {
       df <- setNames(df,c("row","col"))
       sep.forced <- list(
-        country.lib=met[as.numeric(rownames(table(df[df$col %in% c(sep.col-1,sep.col),])))-1],
+        # country.lib=met[as.numeric(rownames(table(df[df$col %in% c(sep.col-1,sep.col),])))-1],
+        country.lib=met[as.numeric(names(table(df[df$col %in% c(sep.col-1,sep.col),])[,1]))],
         col=sep.col-1,
         css.property=sep.style.cssproperty,
         css.value=sep.style.cssvalue
       )
-      # print(df[df$col %in% c(sep.col-1,sep.col),])
-      # print(df$col)
-      # print(sep.forced)
       rm(df)
     }
   }
