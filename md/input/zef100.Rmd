@@ -1,0 +1,98 @@
+---
+always_allow_html: yes
+output:
+  html_document:
+    css: ../../css/ccze.css
+params:
+  data.directory: "../../data/input/manual"
+  data.collection: !r tolower(c("finances_publiques.xlsx"))
+  data.params: NULL
+  data.template: !r c("bdf.manual.fipu.xlsx")
+  lang: "FR"
+  numpage: 22
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::read_chunk("../../R/tool.R")
+knitr::read_chunk("../../R/data.R")
+knitr::read_chunk("../../R/ccze_init_table.R")
+```
+```{r}
+<<init>>
+<<tool>>
+<<data>>
+```
+
+```{r}
+setHeader(title=c("Finances publiques","Public finance"),
+          legend=c("en % du PIB","as % of GDP"))
+```
+
+```{r}
+
+#get data & metadata
+data.collection <- getDataCollection()
+data.0 <- getData(data.collection,params$data.collection[1])
+meta <- data.0[[1]] #metadata
+data.0 <- data.0[[2]] #data
+# data <- data.0
+
+#set metadata:
+met <- data.0[,1][-1]
+
+#generate datatable:
+
+#header:
+
+# cols <- zoo::as.yearmon(as.character(data[1,]),"%Y-%m")
+cols <- data.0[1,]
+data <- data.0[-1]
+
+sketch = htmltools::withTags(table(
+  thead(
+    tr(
+      th(colspan=1,rowspan=1),
+      # getTH(base::table(as.character(format(cols,"%Y"))),"Y")
+      getTH(cols, "Y")
+    )
+    # ,
+    # tr(
+    #   getTH(as.character(format(cols,"%b")),"M")
+    # )
+  )
+))
+
+#end header
+
+#data
+t1 <- genDataTable(data,met,sketch)
+                   # countries.highlight=c("FR","EA","EU"),nbdigits=2)
+
+#ouput the table
+t1
+
+```
+
+```{r}
+
+#generate footer:
+
+footer <- htmltools::withTags(
+  list(
+    p(style="text-align: left; font-style: italic; line-height: 50%;",
+      ifelse(params$lang=="FR",
+             "Réalisation : Direction Générale des Statistiques",
+             "Produced Directorate General Statistics"))
+  )
+)
+
+footer <- setFooter(footer,source=c("INSEE, Eurostat, Commission européenne (European Economic Forecast, Spring 2016)",
+                                    "INSEE, Eurostat, European Commission (European Economic Forecast, Spring 2016)"))
+
+#output footer:
+footer
+
+```
+
+

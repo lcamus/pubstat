@@ -67,9 +67,21 @@ getDataCollection <- function(path=params$data.directory,
       df_data[,-1] <- (tail(df_data[,-1],nb.obs)-df_data.avg)/df_data.std
 
       df_meta <- names(df_data)
-
+      
       l <- list(df_meta,df_data)
 
+    }
+    
+    else if (template=="bdf.manual.fipu.xlsx") {
+      
+      suppressMessages(if (!require(openxlsx)) install.packages("openxlsx"))
+
+      df_data <- openxlsx::readWorkbook(f,sheet=params$lang)
+      df_meta <- df_data[1,]
+      df_data <- df_data[-1,]
+      
+      l <- list(df_meta,df_data)
+      
     }
 
     else if (template=="ecb.sdw.ws") {
@@ -157,7 +169,7 @@ getDataCollection <- function(path=params$data.directory,
   templates <- fixinput(templates)
   parameters <- fixinput(parameters)
   l.data <- list()
-  if (any(unique(templates) %in% c("bdf.bsme2.req","bdf.manual.xlsx"))) {
+  if (any(unique(templates) %in% c("bdf.bsme2.req","bdf.manual.xlsx","bdf.manual.fipu.xlsx"))) {
     l.f <- list.files(path,full.names=T, recursive=F)
     for (f in l.f) {
       key <- tolower(tail(strsplit(f,"/")[[1]],1))
