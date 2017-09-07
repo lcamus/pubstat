@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("ZEF040AD2.TXT","ZEF040AD1.TXT"))
   data.params: NULL
   data.template: !r c("bdf.bsme2.req","bdf.bsme2.req")
-  lang: "FR"
+  lang: "EN"
   numpage: 9
 ---
 
@@ -92,8 +92,9 @@ met <- sub(" \\w+$","",met,perl=T)
 met <- countrynameFR2EN(met)
 c.eu.us.jp <- getCountryByCode(c("eu","us","jp"),params$lang)
 c.li <- c("a","b","b")
+for (x in seq_along(c.li))
+  met <- sub(c.eu.us.jp[x],paste0(c.eu.us.jp[x]," <sup><i>(",c.li[x],")</i></sup>"),met,ignore.case=T)
 # met <- sub(c.eu,paste0(c.eu," <sup><i>(a)</i></sup>"),met,ignore.case=T)
-met <- sapply(seq_along(c.li),function(x){sub(c.eu.us.jp[x],paste0(c.eu.us.jp[x]," <sup><i>(",c.li[x],")</i></sup>"),met,ignore.case=T)})
 rm(c.eu.us.jp,c.li)
 
 #generate datatable:
@@ -148,7 +149,15 @@ footer <- htmltools::withTags(
     p(style="text-align: left; font-style: italic; line-height: 50%;",
       ifelse(params$lang=="FR",
              "Indices harmonisés sauf pour les États-Unis et le Japon",
-             "Harmonised indices except for the United States and Japan"))
+             "Harmonised indices except for the United States and Japan")),
+    tags$ol(class="laparent",style="font-style: italic; padding-left: 3px;",
+            tags$li(HTML(ifelse(params$lang=="FR",
+                                "Pour les pays européens, la zone euro et l'Union européenne, NACE Rev2. Source Eurostat",
+                                "For European Countries, Euro area and European Union, NACE Rev2. Source: Eurostat."))),
+            tags$li(HTML(ifelse(params$lang=="FR",
+                                "Pour les États-Unis et le Japon, données cvs",
+                                "Seasonally adjusted data")))
+    )
   )
 )
 
