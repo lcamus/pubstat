@@ -14,8 +14,10 @@ getDataCollection <- function(path=params$data.directory,
   }
 
   fixinput <- function(p) {
-    if (is.null(p)) p <- rep("",length(files))
-    if (length(p)<length(files)) p <- c(p,rep(p,length(files)-length(p)))
+    if (class(p) != "list") {
+      if (is.null(p)) p <- rep("",length(files))
+      if (length(p)<length(files)) p <- c(p,rep(p,length(files)-length(p)))
+    }
     return(p)
   }
 
@@ -43,8 +45,8 @@ getDataCollection <- function(path=params$data.directory,
 
       nb.obs <- 13
 
-      df_data <- openxlsx::readWorkbook(f,sheet=param)
-      df_data <- df_data[,c(1,seq(from=2,to=ncol(df_data),by=8))]
+      df_data <- openxlsx::readWorkbook(f,sheet=param[[1]])
+      df_data <- df_data[,c(1,seq(from=2,to=ncol(df_data),by=param[[2]]))]
       df_data$X1 <- format(openxlsx::convertToDate(df_data$X1,origin="1900-01-01"),"%Y-%m")
       df_data <- setNames(df_data,c("date",
                                     sub("UK","GB",
@@ -154,7 +156,6 @@ getDataCollection <- function(path=params$data.directory,
 
   templates <- fixinput(templates)
   parameters <- fixinput(parameters)
-
   l.data <- list()
   if (any(unique(templates) %in% c("bdf.bsme2.req","bdf.manual.xlsx"))) {
     l.f <- list.files(path,full.names=T, recursive=F)
@@ -162,7 +163,15 @@ getDataCollection <- function(path=params$data.directory,
       key <- tolower(tail(strsplit(f,"/")[[1]],1))
       if (key %in% files) {
         index <- which(files %in% key)
-        l.data[[key]] <- getDataResource(f,templates[index],parameters[index])
+        if (class(parameters)=="list")
+          param <- parameters[[index]]
+        else
+          param <- parameters[index]
+        # l.data[[key]] <- getDataResource(f,templates[index],ifelse(class(parameters)=="list",
+        #                                                            parameters[[index]],
+        #                                                            parameters[index]))
+        # l.data[[key]] <- getDataResource(f,templates[index],parameters[index])
+        l.data[[key]] <- getDataResource(f,templates[index],param)
       }
       else
         next
