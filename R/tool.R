@@ -296,16 +296,22 @@ customTable <- function(country.name,country.code,color,width="1px",begin,end,
       js <- c(js,
               # sapply(sep.forced$country.lib,function(x){
               sapply(unique(sep.forced$country.lib),function(x){
+                sfc <- paste0('.filter("',paste0(sapply(sep.forced$col,function(x){paste0(":eq(",x,")")}),collapse=", "),'")')
                 stringr::str_interp(paste0(
+                  # 'if (data[0]=="${x}") {
+                  #        $("td:eq(${sep.forced$col})",row).css("${sep.forced$css.property}","${sep.forced$css.value}");
+                  # }\n'
                   'if (data[0]=="${x}") {
-                         $("td:eq(${sep.forced$col})",row).css("${sep.forced$css.property}","${sep.forced$css.value}");
-                  }\n'
+                         $("td",row)${sfc}.css("${sep.forced$css.property}","${sep.forced$css.value}");
+              }\n'
                   ))
               }))
-      print(js)
+      # print(class(js))
+      # print(length(js))
       }
 
     js <- paste0('function(row,data) {\n',paste0(js,collapse=""),'}\n')
+    print(js)
 
   }
 
@@ -357,7 +363,7 @@ genDataTable <- function(data,met,sketch,
       )
       # print(df[df$col %in% c(sep.col-1,sep.col),])
       # print(df$col)
-      print(sep.forced)
+      # print(sep.forced)
       rm(df)
     }
   }
