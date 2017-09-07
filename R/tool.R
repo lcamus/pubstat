@@ -352,14 +352,20 @@ genDataTable <- function(data,met,sketch,
     df <- as.data.frame(which(is.na(data) | data=="",arr.ind=T,useNames=F))
     if (nrow(df) != 0) {
       df <- setNames(df,c("row","col"))
-      sep.forced <- list(
-        # country.lib=met[as.numeric(rownames(table(df[df$col %in% c(sep.col-1,sep.col),])))-1],
-        country.lib=met[as.numeric(names(table(df[df$col %in% c(sep.col-1,sep.col),])[,1]))],
-        col=sep.col-1,
-        css.property=sep.style.cssproperty,
-        css.value=sep.style.cssvalue
-      )
-      rm(df)
+      print(class(met))
+      print(met)
+      v.sf <- df$col %in% c(sep.col-1,sep.col)
+      sep.forced <- ifelse(any(v.sf),
+                           list(
+                             # country.lib=met[as.numeric(rownames(table(df[v.sf,])))-1],
+                             # country.lib=met[as.numeric(rownames(table(df[df$col %in% c(sep.col-1,sep.col),])))-1],
+                             country.lib=met[as.numeric(names(table(df[v.sf,])[,1]))],
+                             col=sep.col-1,
+                             css.property=sep.style.cssproperty,
+                             css.value=sep.style.cssvalue
+                           ),
+                           list())
+      rm(df,v.sf)
     }
   }
 
