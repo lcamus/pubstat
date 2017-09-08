@@ -97,7 +97,7 @@ sketch = htmltools::withTags(table(
 #end header
 
 #data
-data <- as.data.frame(data,stringsAsFactors=F)
+data <- as.data.frame(data,stringsAsFactors=F)[-1,]
 t1 <- genDataTable(data,met,sketch,
                    countries.highlight=c("FR","EA","EU"),nbdigits=2)
 
@@ -106,7 +106,7 @@ t1
 
 ```
 
-<p>&nbsp;</p>
+<!-- <p>&nbsp;</p> -->
 
 ```{r}
 

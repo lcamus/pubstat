@@ -82,7 +82,7 @@ sketch = htmltools::withTags(table(
 #end header
 
 #data
-data <- as.data.frame(data,stringsAsFactors=F)
+data <- as.data.frame(data,stringsAsFactors=F)[-1,]
 t1 <- genDataTable(data,met[-1],sketch,width=list(width='150px',targets=0))
 
 #ouput the first table (including legend)
@@ -113,7 +113,7 @@ met <- met[-7]
 #(same as first table)
 
 #data
-data <- as.data.frame(data,stringsAsFactors=F)
+data <- as.data.frame(data,stringsAsFactors=F)[-1,]
 t2 <- genDataTable(data,met[-1],sketch,width=list(width='150px',targets=0))
 
 #ouput the second table (including legend)

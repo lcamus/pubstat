@@ -96,7 +96,7 @@ met <- countrynameFR2EN(met)
 
 col.m.mc <- zoo::as.yearmon(as.character(data.m.mc[1,]),"%Y-%m")
 col.m.yoy <- zoo::as.yearmon(as.character(data.m.yoy[1,]),"%Y-%m")
-# style.sep <- "box-shadow:-2px 0 0 black;"
+# sep.style <- "box-shadow:-2px 0 0 black;"
 
 sketch = htmltools::withTags(table(
   thead(
@@ -104,9 +104,9 @@ sketch = htmltools::withTags(table(
       th(colspan=1,rowspan=3),
       th(colspan=3,rowspan=1,ifelse(params$lang=="FR","Moyenne annuelle","Annual average")),
       th(colspan=6,rowspan=1,ifelse(params$lang=="FR","Variation mensuelle","Monthly variation"),
-         style=style.sep),
+         style=sep.style),
       th(colspan=6,rowspan=1,ifelse(params$lang=="FR","Glissement annuel","Year-on-year"),
-         style=style.sep)
+         style=sep.style)
     ),
     tr(
       lapply(as.character(data.y[1,]), th, rowspan=2),
@@ -120,12 +120,10 @@ sketch = htmltools::withTags(table(
   )
 ))
 
-# rm(list=ls(pattern="style\\.(sep|fwn|fwb)|t\\.|col\\.")) #clean-up
-
 #end header
 
 #data
-data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)
+data <- as.data.frame(cbind(data.y,data.m.mc,data.m.yoy), stringsAsFactors=F)[-1,]
 t1 <- genDataTable(data,met[-1],sketch,
                    countries.highlight=c("FR","EA","EU","US","JP"),
                    sep.col=c(5,11),sep.style=sep.style)

@@ -33,7 +33,7 @@ params:
       list(lastNObservations=6)
     )  
   data.template: !r c("ecb.sdw.ws")
-  lang: "EN"
+  lang: "FR"
   numpage: 27
 ---
 

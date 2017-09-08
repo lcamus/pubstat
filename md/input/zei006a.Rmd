@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("consumer_total_sa_nace2.xlsx"))
   data.params: !r list(list(list("CONSUMER MONTHLY",13)))
   data.template: !r c("bdf.manual.xlsx")
-  lang: "FR"
+  lang: "EN"
   numpage: 11
 ---
 

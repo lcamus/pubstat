@@ -107,7 +107,7 @@ sketch = htmltools::withTags(table(
 #end header
 
 #data
-data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
+data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)[-1,]
 t1 <- genDataTable(data,met[-1],sketch,countries.highlight=c("FR","EA"),sep.col=5,sep.style=sep.style)
 
 #ouput the table
@@ -154,7 +154,7 @@ data.q <- t(data.q.0[,series])
 #same as for t1
 
 #data:
-data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
+data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)[-1,]
 t2 <- genDataTable(data[,-1],met[-1],sketch,countries.highlight=c("FR","EA"),sep.col=5,sep.style=sep.style)
 
 #ouput the table

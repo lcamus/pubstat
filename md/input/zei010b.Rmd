@@ -2,8 +2,12 @@
 always_allow_html: yes
 output:
   html_document: default
-params: 
-  lang: "FR"
+params:
+  data.directory: "../../data/input/ze!nonquot"
+  data.collection: !r tolower(c("ZEI010BD1.TXT"))
+  data.params: NULL
+  data.template: !r c("bdf.bsme2.req")
+  lang: "EN"
   numpage: 20
 ---
 
@@ -23,7 +27,7 @@ knitr::read_chunk("../../R/ccze_footer.R")
 includeCSS("../../css/ccze.css")
 ```
 ```{r}
-data.collection <- getDataCollection("../../data/input/ze!nonquot")
+data.collection <- getDataCollection()
 ```
 
 ## `r ifelse(params$lang=="FR","Indicateurs de performances au sein de la Zone euro","Performance indicators within the Euro area")`
@@ -35,8 +39,8 @@ data.collection <- getDataCollection("../../data/input/ze!nonquot")
 ```{r}
 
 #get data & metadata
-data <- getData(data.collection,"ZEI010BD1.TXT")[[2]]
-meta <- getData(data.collection,"ZEI010BD1.TXT")[[1]]
+data <- getData(data.collection,params$data.collection[1])[[2]]
+meta <- getData(data.collection,params$data.collection[1])[[1]]
 
 #select series
 series <- c(1, #variable

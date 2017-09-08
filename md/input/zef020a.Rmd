@@ -8,7 +8,7 @@ params:
   data.collection: !r tolower(c("ZEF020AD2.TXT","ZEF020AD1.TXT"))
   data.params: NULL
   data.template: !r rep("bdf.bsme2.req",2)
-  lang: "EN"
+  lang: "FR"
   numpage: 7
 ---
 
@@ -125,7 +125,7 @@ sketch = htmltools::withTags(table(
 countries.lib <- function(co) {
   met[sapply(co,function(x){grep(paste0("^",getCountryByCode(x)),met)})]
 }
-data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)
+data <- as.data.frame(cbind(data.y,data.q), stringsAsFactors=F)[-1,]
 t1 <- genDataTable(data,met[-1],sketch,
                    countries.highlight.name=countries.lib(c("FR","EA","EU","US","JP")),
                    countries.highlight=c("FR","EA","EU","US","JP"),

@@ -113,7 +113,7 @@ c.ea <- getCountryByCode("ea",params$lang)
 met <- sub(c.ea,paste0(c.ea," <sup><i>(a)</i></sup>"),met,ignore.case=T)
 rm(c.ea)
 
-t1 <- genDataTable(data,met,sketch,
+t1 <- genDataTable(data[-1,],met,sketch,
                    # countries.highlight=c("EA","GB","US","JP"),nbdigits=1,subrow=T)
                    countries.highlight=c("EA","GB","US","JP"), countries.highlight.name=met[c(1,4,7,10)],nbdigits=1,subrow=T)
 
